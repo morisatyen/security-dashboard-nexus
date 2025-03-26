@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Search, Edit, Trash, Calendar, User, Clock, Eye } from 'lucide-react';
@@ -153,17 +152,15 @@ const dispensaries = [
   { id: '5', name: 'Evergreen Dispensary' },
   { id: '6', name: 'Wellness Dispensary' },
   { id: '7', name: 'Green Zone' },
-  { id: '8', name: 'Nature's Remedy' }
+  { id: '8', name: "Nature's Remedy" }
 ];
 
-// Initialize localStorage if not already set
 const initializeLocalStorage = () => {
   if (!localStorage.getItem('serviceRequests')) {
     localStorage.setItem('serviceRequests', JSON.stringify(mockServiceRequests));
   }
 };
 
-// Call this function when the component loads
 initializeLocalStorage();
 
 const ServiceRequests: React.FC = () => {
@@ -177,7 +174,6 @@ const ServiceRequests: React.FC = () => {
   const [priorityFilter, setPriorityFilter] = useState<string>('');
   const { toast } = useToast();
   
-  // CRUD Operations with localStorage
   const { data: serviceRequests = [], refetch } = useQuery({
     queryKey: ['serviceRequests'],
     queryFn: () => {
@@ -238,12 +234,10 @@ const ServiceRequests: React.FC = () => {
     const assignedEngineer = formData.get('assignedEngineer') as string;
     const requestDate = formData.get('requestDate') as string;
 
-    // Find dispensary name
     const dispensary = dispensaries.find(d => d.id === dispensaryId);
     const dispensaryName = dispensary ? dispensary.name : 'Unknown Dispensary';
 
     if (editingRequest) {
-      // Update existing request
       const updatedRequests = serviceRequests.map(r => 
         r.id === editingRequest.id 
           ? {
@@ -265,7 +259,6 @@ const ServiceRequests: React.FC = () => {
         description: `Request ${editingRequest.requestId} has been updated successfully.`,
       });
     } else {
-      // Create new request
       const newRequestId = `SR-${new Date().getFullYear()}-${(serviceRequests.length + 1).toString().padStart(3, '0')}`;
       const newRequest: ServiceRequest = {
         id: Date.now().toString(),
@@ -319,50 +312,40 @@ const ServiceRequests: React.FC = () => {
     }
   };
 
-  // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxDisplayedPages = 5;
     
     if (totalPages <= maxDisplayedPages) {
-      // If we have fewer pages than the max, show all pages
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
       }
     } else {
-      // Always show first page
       pageNumbers.push(1);
       
-      // Calculate start and end of displayed page range
       let startPage = Math.max(2, currentPage - 1);
       let endPage = Math.min(totalPages - 1, currentPage + 1);
       
-      // Adjust if at the beginning
       if (currentPage <= 2) {
         endPage = 3;
       }
       
-      // Adjust if at the end
       if (currentPage >= totalPages - 1) {
         startPage = totalPages - 2;
       }
       
-      // Add ellipsis after first page if needed
       if (startPage > 2) {
         pageNumbers.push('ellipsis-start');
       }
       
-      // Add middle pages
       for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
       }
       
-      // Add ellipsis before last page if needed
       if (endPage < totalPages - 1) {
         pageNumbers.push('ellipsis-end');
       }
       
-      // Always show last page
       if (totalPages > 1) {
         pageNumbers.push(totalPages);
       }
@@ -656,7 +639,7 @@ const ServiceRequests: React.FC = () => {
                 value={itemsPerPage}
                 onChange={(e) => {
                   setItemsPerPage(Number(e.target.value));
-                  setCurrentPage(1); // Reset to first page when changing items per page
+                  setCurrentPage(1);
                 }}
               >
                 <option value={5}>5</option>
@@ -706,7 +689,6 @@ const ServiceRequests: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* View Service Request Dialog */}
       <Dialog open={!!viewingRequest} onOpenChange={(open) => !open && setViewingRequest(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

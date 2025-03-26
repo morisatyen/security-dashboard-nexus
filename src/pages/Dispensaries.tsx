@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Search, Edit, Trash, Calendar, User, Eye } from 'lucide-react';
@@ -110,7 +109,7 @@ const mockDispensaries: Dispensary[] = [
   },
   {
     id: '8',
-    name: 'Nature's Remedy',
+    name: "Nature's Remedy",
     location: '505 Oak Blvd, Austin, TX',
     category: 'Medical',
     status: 'closed',
@@ -127,14 +126,12 @@ const supportEngineers = [
   { id: '4', name: 'Lisa Chen' }
 ];
 
-// Initialize localStorage if not already set
 const initializeLocalStorage = () => {
   if (!localStorage.getItem('dispensaries')) {
     localStorage.setItem('dispensaries', JSON.stringify(mockDispensaries));
   }
 };
 
-// Call this function when the component loads
 initializeLocalStorage();
 
 const Dispensaries: React.FC = () => {
@@ -148,7 +145,6 @@ const Dispensaries: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const { toast } = useToast();
   
-  // CRUD Operations with localStorage
   const { data: dispensaries = [], refetch } = useQuery({
     queryKey: ['dispensaries'],
     queryFn: () => {
@@ -209,7 +205,6 @@ const Dispensaries: React.FC = () => {
     const lastServiceDate = formData.get('lastServiceDate') as string;
 
     if (editingDispensary) {
-      // Update existing dispensary
       const updatedDispensaries = dispensaries.map(d => 
         d.id === editingDispensary.id 
           ? {
@@ -229,7 +224,6 @@ const Dispensaries: React.FC = () => {
         description: `${name} has been updated successfully.`,
       });
     } else {
-      // Create new dispensary
       const newDispensary: Dispensary = {
         id: Date.now().toString(),
         name,
@@ -278,50 +272,40 @@ const Dispensaries: React.FC = () => {
     }
   };
 
-  // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxDisplayedPages = 5;
     
     if (totalPages <= maxDisplayedPages) {
-      // If we have fewer pages than the max, show all pages
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
       }
     } else {
-      // Always show first page
       pageNumbers.push(1);
       
-      // Calculate start and end of displayed page range
       let startPage = Math.max(2, currentPage - 1);
       let endPage = Math.min(totalPages - 1, currentPage + 1);
       
-      // Adjust if at the beginning
       if (currentPage <= 2) {
         endPage = 3;
       }
       
-      // Adjust if at the end
       if (currentPage >= totalPages - 1) {
         startPage = totalPages - 2;
       }
       
-      // Add ellipsis after first page if needed
       if (startPage > 2) {
         pageNumbers.push('ellipsis-start');
       }
       
-      // Add middle pages
       for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
       }
       
-      // Add ellipsis before last page if needed
       if (endPage < totalPages - 1) {
         pageNumbers.push('ellipsis-end');
       }
       
-      // Always show last page
       if (totalPages > 1) {
         pageNumbers.push(totalPages);
       }
@@ -590,7 +574,7 @@ const Dispensaries: React.FC = () => {
                 value={itemsPerPage}
                 onChange={(e) => {
                   setItemsPerPage(Number(e.target.value));
-                  setCurrentPage(1); // Reset to first page when changing items per page
+                  setCurrentPage(1);
                 }}
               >
                 <option value={5}>5</option>
@@ -640,7 +624,6 @@ const Dispensaries: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* View Dispensary Dialog */}
       <Dialog open={!!viewingDispensary} onOpenChange={(open) => !open && setViewingDispensary(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
