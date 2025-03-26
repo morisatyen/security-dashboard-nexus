@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Search, Edit, Trash, Calendar, User, Clock } from 'lucide-react';
+import { Plus, Search, Edit, Trash, Calendar, User, Clock, Eye } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
@@ -18,11 +18,13 @@ import {
   PaginationItem, 
   PaginationLink, 
   PaginationNext, 
-  PaginationPrevious 
+  PaginationPrevious,
+  PaginationEllipsis
 } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface ServiceRequest {
   id: string;
@@ -109,6 +111,30 @@ const mockServiceRequests: ServiceRequest[] = [
     assignedEngineer: null,
     requestDate: '2023-11-07',
     lastUpdated: null
+  },
+  {
+    id: '7',
+    requestId: 'SR-2023-007',
+    dispensaryName: 'Wellness Dispensary',
+    dispensaryId: '6',
+    description: 'Replace batteries in backup system',
+    status: 'in-progress',
+    priority: 'low',
+    assignedEngineer: 'David Lee',
+    requestDate: '2023-11-08',
+    lastUpdated: '2023-11-09'
+  },
+  {
+    id: '8',
+    requestId: 'SR-2023-008',
+    dispensaryName: 'Green Zone',
+    dispensaryId: '7',
+    description: 'Motion sensor calibration required',
+    status: 'pending',
+    priority: 'medium',
+    assignedEngineer: null,
+    requestDate: '2023-11-10',
+    lastUpdated: null
   }
 ];
 
@@ -124,23 +150,40 @@ const dispensaries = [
   { id: '2', name: 'Green Leaf Dispensary' },
   { id: '3', name: 'Herbal Solutions' },
   { id: '4', name: 'Healing Center' },
-  { id: '5', name: 'Evergreen Dispensary' }
+  { id: '5', name: 'Evergreen Dispensary' },
+  { id: '6', name: 'Wellness Dispensary' },
+  { id: '7', name: 'Green Zone' },
+  { id: '8', name: 'Nature's Remedy' }
 ];
+
+// Initialize localStorage if not already set
+const initializeLocalStorage = () => {
+  if (!localStorage.getItem('serviceRequests')) {
+    localStorage.setItem('serviceRequests', JSON.stringify(mockServiceRequests));
+  }
+};
+
+// Call this function when the component loads
+initializeLocalStorage();
 
 const ServiceRequests: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingRequest, setEditingRequest] = useState<ServiceRequest | null>(null);
+  const [viewingRequest, setViewingRequest] = useState<ServiceRequest | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [priorityFilter, setPriorityFilter] = useState<string>('');
   const { toast } = useToast();
   
-  // In a real app, this would fetch from an API
-  const { data: serviceRequests = mockServiceRequests } = useQuery({
+  // CRUD Operations with localStorage
+  const { data: serviceRequests = [], refetch } = useQuery({
     queryKey: ['serviceRequests'],
-    queryFn: () => Promise.resolve(mockServiceRequests),
-    initialData: mockServiceRequests,
+    queryFn: () => {
+      const storedData = localStorage.getItem('serviceRequests');
+      return Promise.resolve(storedData ? JSON.parse(storedData) : mockServiceRequests);
+    },
   });
   
   const filteredRequests = serviceRequests.filter(request => {
@@ -156,7 +199,6 @@ const ServiceRequests: React.FC = () => {
     return matchesSearch && matchesStatus && matchesPriority;
   });
   
-  const itemsPerPage = 5;
   const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
   const paginatedRequests = filteredRequests.slice(
     (currentPage - 1) * itemsPerPage,
@@ -172,13 +214,81 @@ const ServiceRequests: React.FC = () => {
     setEditingRequest(request);
     setShowAddForm(true);
   };
+
+  const handleViewRequest = (request: ServiceRequest) => {
+    setViewingRequest(request);
+  };
   
   const handleDeleteRequest = (request: ServiceRequest) => {
+    const updatedRequests = serviceRequests.filter(r => r.id !== request.id);
+    localStorage.setItem('serviceRequests', JSON.stringify(updatedRequests));
+    refetch();
+    
     toast({
       title: "Service Request Deleted",
       description: `Request ${request.requestId} has been deleted successfully.`,
     });
-    // In a real application, you would call an API to delete the service request
+  };
+
+  const handleSaveRequest = (formData: FormData) => {
+    const dispensaryId = formData.get('dispensary') as string;
+    const description = formData.get('description') as string;
+    const priority = formData.get('priority') as 'low' | 'medium' | 'high' | 'critical';
+    const status = formData.get('status') as 'pending' | 'in-progress' | 'resolved';
+    const assignedEngineer = formData.get('assignedEngineer') as string;
+    const requestDate = formData.get('requestDate') as string;
+
+    // Find dispensary name
+    const dispensary = dispensaries.find(d => d.id === dispensaryId);
+    const dispensaryName = dispensary ? dispensary.name : 'Unknown Dispensary';
+
+    if (editingRequest) {
+      // Update existing request
+      const updatedRequests = serviceRequests.map(r => 
+        r.id === editingRequest.id 
+          ? {
+              ...r,
+              dispensaryId,
+              dispensaryName,
+              description,
+              priority,
+              status,
+              assignedEngineer: assignedEngineer || null,
+              requestDate,
+              lastUpdated: new Date().toISOString().split('T')[0]
+            } 
+          : r
+      );
+      localStorage.setItem('serviceRequests', JSON.stringify(updatedRequests));
+      toast({
+        title: "Service Request Updated",
+        description: `Request ${editingRequest.requestId} has been updated successfully.`,
+      });
+    } else {
+      // Create new request
+      const newRequestId = `SR-${new Date().getFullYear()}-${(serviceRequests.length + 1).toString().padStart(3, '0')}`;
+      const newRequest: ServiceRequest = {
+        id: Date.now().toString(),
+        requestId: newRequestId,
+        dispensaryId,
+        dispensaryName,
+        description,
+        priority,
+        status,
+        assignedEngineer: assignedEngineer || null,
+        requestDate,
+        lastUpdated: null
+      };
+      const updatedRequests = [...serviceRequests, newRequest];
+      localStorage.setItem('serviceRequests', JSON.stringify(updatedRequests));
+      toast({
+        title: "Service Request Created",
+        description: `New request ${newRequestId} has been created successfully.`,
+      });
+    }
+    
+    setShowAddForm(false);
+    refetch();
   };
   
   const getStatusColor = (status: string) => {
@@ -208,6 +318,58 @@ const ServiceRequests: React.FC = () => {
         return '';
     }
   };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxDisplayedPages = 5;
+    
+    if (totalPages <= maxDisplayedPages) {
+      // If we have fewer pages than the max, show all pages
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Always show first page
+      pageNumbers.push(1);
+      
+      // Calculate start and end of displayed page range
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      // Adjust if at the beginning
+      if (currentPage <= 2) {
+        endPage = 3;
+      }
+      
+      // Adjust if at the end
+      if (currentPage >= totalPages - 1) {
+        startPage = totalPages - 2;
+      }
+      
+      // Add ellipsis after first page if needed
+      if (startPage > 2) {
+        pageNumbers.push('ellipsis-start');
+      }
+      
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+      
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pageNumbers.push('ellipsis-end');
+      }
+      
+      // Always show last page
+      if (totalPages > 1) {
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
   
   return (
     <div className="p-6 space-y-6">
@@ -225,14 +387,20 @@ const ServiceRequests: React.FC = () => {
             <CardTitle>{editingRequest ? 'Edit Service Request' : 'Add New Service Request'}</CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              handleSaveRequest(formData);
+            }}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="dispensary" className="text-sm font-medium">Dispensary</label>
                   <select 
-                    id="dispensary" 
+                    id="dispensary"
+                    name="dispensary"
                     className="w-full px-3 py-2 border rounded-md"
                     defaultValue={editingRequest?.dispensaryId || ''}
+                    required
                   >
                     <option value="">Select Dispensary</option>
                     {dispensaries.map(dispensary => (
@@ -245,17 +413,21 @@ const ServiceRequests: React.FC = () => {
                 <div className="space-y-2">
                   <label htmlFor="description" className="text-sm font-medium">Description</label>
                   <Input 
-                    id="description" 
+                    id="description"
+                    name="description"
                     placeholder="Describe the issue" 
                     defaultValue={editingRequest?.description || ''}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="priority" className="text-sm font-medium">Priority</label>
                   <select 
-                    id="priority" 
+                    id="priority"
+                    name="priority"
                     className="w-full px-3 py-2 border rounded-md"
                     defaultValue={editingRequest?.priority || 'medium'}
+                    required
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -266,9 +438,11 @@ const ServiceRequests: React.FC = () => {
                 <div className="space-y-2">
                   <label htmlFor="status" className="text-sm font-medium">Status</label>
                   <select 
-                    id="status" 
+                    id="status"
+                    name="status"
                     className="w-full px-3 py-2 border rounded-md"
                     defaultValue={editingRequest?.status || 'pending'}
+                    required
                   >
                     <option value="pending">Pending</option>
                     <option value="in-progress">In Progress</option>
@@ -278,7 +452,8 @@ const ServiceRequests: React.FC = () => {
                 <div className="space-y-2">
                   <label htmlFor="assignedEngineer" className="text-sm font-medium">Assigned Engineer</label>
                   <select 
-                    id="assignedEngineer" 
+                    id="assignedEngineer"
+                    name="assignedEngineer"
                     className="w-full px-3 py-2 border rounded-md"
                     defaultValue={editingRequest?.assignedEngineer || ''}
                   >
@@ -293,28 +468,25 @@ const ServiceRequests: React.FC = () => {
                 <div className="space-y-2">
                   <label htmlFor="requestDate" className="text-sm font-medium">Request Date</label>
                   <Input 
-                    id="requestDate" 
+                    id="requestDate"
+                    name="requestDate"
                     type="date"
                     defaultValue={editingRequest?.requestDate || new Date().toISOString().split('T')[0]}
+                    required
                   />
                 </div>
               </div>
               <div className="flex justify-end space-x-2 mt-4">
                 <Button 
-                  variant="outline" 
+                  variant="outline"
+                  type="button"
                   onClick={() => setShowAddForm(false)}
                 >
                   Cancel
                 </Button>
                 <Button 
                   className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
-                  onClick={() => {
-                    toast({
-                      title: `Service Request ${editingRequest ? 'Updated' : 'Created'}`,
-                      description: `Service request has been ${editingRequest ? 'updated' : 'created'} successfully.`,
-                    });
-                    setShowAddForm(false);
-                  }}
+                  type="submit"
                 >
                   {editingRequest ? 'Update' : 'Create'} Request
                 </Button>
@@ -440,6 +612,14 @@ const ServiceRequests: React.FC = () => {
                           <Button 
                             variant="ghost" 
                             size="icon"
+                            onClick={() => handleViewRequest(request)}
+                          >
+                            <Eye className="h-4 w-4" />
+                            <span className="sr-only">View</span>
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
                             onClick={() => handleEditRequest(request)}
                           >
                             <Edit className="h-4 w-4" />
@@ -468,40 +648,128 @@ const ServiceRequests: React.FC = () => {
             </Table>
           </div>
           
-          {filteredRequests.length > itemsPerPage && (
-            <div className="mt-4 flex justify-center">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
-                    />
-                  </PaginationItem>
-                  
-                  {Array.from({ length: totalPages }).map((_, index) => (
-                    <PaginationItem key={index}>
-                      <PaginationLink
-                        isActive={currentPage === index + 1}
-                        onClick={() => setCurrentPage(index + 1)}
-                      >
-                        {index + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
+            <div className="mb-4 sm:mb-0">
+              <span className="text-sm text-muted-foreground mr-2">Items per page:</span>
+              <select 
+                className="px-2 py-1 border rounded text-sm"
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1); // Reset to first page when changing items per page
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
             </div>
-          )}
+            
+            {filteredRequests.length > 0 && (
+              <div className="flex justify-center">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                      />
+                    </PaginationItem>
+                    
+                    {getPageNumbers().map((pageNumber, index) => (
+                      <PaginationItem key={`${pageNumber}-${index}`}>
+                        {pageNumber === 'ellipsis-start' || pageNumber === 'ellipsis-end' ? (
+                          <PaginationEllipsis />
+                        ) : (
+                          <PaginationLink
+                            isActive={currentPage === pageNumber}
+                            onClick={() => setCurrentPage(Number(pageNumber))}
+                          >
+                            {pageNumber}
+                          </PaginationLink>
+                        )}
+                      </PaginationItem>
+                    ))}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
+
+      {/* View Service Request Dialog */}
+      <Dialog open={!!viewingRequest} onOpenChange={(open) => !open && setViewingRequest(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Service Request Details</DialogTitle>
+          </DialogHeader>
+          {viewingRequest && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-2">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Request ID</h3>
+                  <p className="mt-1">{viewingRequest.requestId}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Dispensary</h3>
+                  <p className="mt-1">{viewingRequest.dispensaryName}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Description</h3>
+                  <p className="mt-1">{viewingRequest.description}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Status</h3>
+                  <Badge 
+                    variant="outline"
+                    className={getStatusColor(viewingRequest.status)}
+                  >
+                    {viewingRequest.status.charAt(0).toUpperCase() + viewingRequest.status.slice(1).replace('-', ' ')}
+                  </Badge>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Priority</h3>
+                  <Badge 
+                    variant="outline"
+                    className={getPriorityColor(viewingRequest.priority)}
+                  >
+                    {viewingRequest.priority.charAt(0).toUpperCase() + viewingRequest.priority.slice(1)}
+                  </Badge>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Assigned Engineer</h3>
+                  <p className="mt-1">{viewingRequest.assignedEngineer || "—"}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Request Date</h3>
+                  <p className="mt-1">{viewingRequest.requestDate}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Last Updated</h3>
+                  <p className="mt-1">{viewingRequest.lastUpdated || "—"}</p>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setViewingRequest(null)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

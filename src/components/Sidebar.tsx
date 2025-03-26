@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
@@ -63,7 +64,7 @@ const NestedMenuItem: React.FC<NestedMenuItemProps> = ({
   
   // Filter subItems based on permissions
   const allowedSubItems = subItems.filter(item => 
-    !item.permission || hasPermission(item.permission as any)
+    !item.permission || hasPermission(item.permission)
   );
   
   if (allowedSubItems.length === 0) return null;
