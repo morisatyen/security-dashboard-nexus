@@ -11,6 +11,11 @@ import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import AdminUsers from "./pages/AdminUsers";
+import SupportEngineers from "./pages/SupportEngineers";
+import Dispensaries from "./pages/Dispensaries";
+import ServiceRequests from "./pages/ServiceRequests";
+import Invoices from "./pages/Invoices";
 
 // Initialize data
 import { getInitialData } from "./data/initialData";
@@ -31,11 +36,11 @@ const App = () => (
             <Route path="/" element={<Layout />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="users" element={<div>Users Management</div>} />
-              <Route path="users/admin-users" element={<div>Admin Users</div>} />
-              <Route path="users/support-engineers" element={<div>Support Engineers</div>} />
-              <Route path="dispensaries" element={<div>Dispensaries Management</div>} />
-              <Route path="service-requests" element={<div>Service Requests Management</div>} />
-              <Route path="invoices" element={<div>Invoices Management</div>} />
+              <Route path="users/admin-users" element={<AdminUsers />} />
+              <Route path="users/support-engineers" element={<SupportEngineers />} />
+              <Route path="dispensaries" element={<Dispensaries />} />
+              <Route path="service-requests" element={<ServiceRequests />} />
+              <Route path="invoices" element={<Invoices />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
