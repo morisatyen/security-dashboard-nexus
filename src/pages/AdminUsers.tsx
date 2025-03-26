@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Search, Edit, Trash } from 'lucide-react';
+import { Plus, Search, Edit, Trash, Eye } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
@@ -18,11 +18,13 @@ import {
   PaginationItem, 
   PaginationLink, 
   PaginationNext, 
-  PaginationPrevious 
+  PaginationPrevious,
+  PaginationEllipsis
 } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface AdminUser {
   id: string;
@@ -63,8 +65,10 @@ const mockAdminUsers: AdminUser[] = [
 const AdminUsers: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
+  const [viewingUser, setViewingUser] = useState<AdminUser | null>(null);
   const { toast } = useToast();
   
   // In a real app, this would fetch from an API
@@ -80,7 +84,6 @@ const AdminUsers: React.FC = () => {
     user.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
-  const itemsPerPage = 5;
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const paginatedUsers = filteredUsers.slice(
     (currentPage - 1) * itemsPerPage,
@@ -97,12 +100,66 @@ const AdminUsers: React.FC = () => {
     setShowAddForm(true);
   };
   
+  const handleViewUser = (user: AdminUser) => {
+    setViewingUser(user);
+  };
+  
   const handleDeleteUser = (user: AdminUser) => {
     toast({
       title: "User Deleted",
       description: `${user.name} has been deleted successfully.`,
     });
     // In a real application, you would call an API to delete the user
+  };
+  
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxDisplayedPages = 5;
+    
+    if (totalPages <= maxDisplayedPages) {
+      // If we have fewer pages than the max, show all pages
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Always show first page
+      pageNumbers.push(1);
+      
+      // Calculate start and end of displayed page range
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      
+      // Adjust if at the beginning
+      if (currentPage <= 2) {
+        endPage = 3;
+      }
+      
+      // Adjust if at the end
+      if (currentPage >= totalPages - 1) {
+        startPage = totalPages - 2;
+      }
+      
+      // Add ellipsis after first page if needed
+      if (startPage > 2) {
+        pageNumbers.push('ellipsis-start');
+      }
+      
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+      
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pageNumbers.push('ellipsis-end');
+      }
+      
+      // Always show last page
+      pageNumbers.push(totalPages);
+    }
+    
+    return pageNumbers;
   };
   
   return (
@@ -238,6 +295,14 @@ const AdminUsers: React.FC = () => {
                           <Button 
                             variant="ghost" 
                             size="icon"
+                            onClick={() => handleViewUser(user)}
+                          >
+                            <Eye className="h-4 w-4" />
+                            <span className="sr-only">View</span>
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
                             onClick={() => handleEditUser(user)}
                           >
                             <Edit className="h-4 w-4" />
@@ -266,40 +331,111 @@ const AdminUsers: React.FC = () => {
             </Table>
           </div>
           
-          {filteredUsers.length > itemsPerPage && (
-            <div className="mt-4 flex justify-center">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
-                    />
-                  </PaginationItem>
-                  
-                  {Array.from({ length: totalPages }).map((_, index) => (
-                    <PaginationItem key={index}>
-                      <PaginationLink
-                        isActive={currentPage === index + 1}
-                        onClick={() => setCurrentPage(index + 1)}
-                      >
-                        {index + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
+            <div className="mb-4 sm:mb-0">
+              <span className="text-sm text-muted-foreground mr-2">Items per page:</span>
+              <select 
+                className="px-2 py-1 border rounded text-sm"
+                value={itemsPerPage}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1); // Reset to first page when changing items per page
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
             </div>
-          )}
+            
+            {filteredUsers.length > 0 && (
+              <div className="flex justify-center">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                      />
+                    </PaginationItem>
+                    
+                    {getPageNumbers().map((pageNumber, index) => (
+                      <PaginationItem key={`${pageNumber}-${index}`}>
+                        {pageNumber === 'ellipsis-start' || pageNumber === 'ellipsis-end' ? (
+                          <PaginationEllipsis />
+                        ) : (
+                          <PaginationLink
+                            isActive={currentPage === pageNumber}
+                            onClick={() => setCurrentPage(Number(pageNumber))}
+                          >
+                            {pageNumber}
+                          </PaginationLink>
+                        )}
+                      </PaginationItem>
+                    ))}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
+      
+      {/* View User Dialog */}
+      <Dialog open={!!viewingUser} onOpenChange={(open) => !open && setViewingUser(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>User Details</DialogTitle>
+          </DialogHeader>
+          {viewingUser && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-2">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Name</h3>
+                  <p className="mt-1">{viewingUser.name}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Email</h3>
+                  <p className="mt-1">{viewingUser.email}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Role</h3>
+                  <p className="mt-1">{viewingUser.role}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Status</h3>
+                  <Badge 
+                    variant={viewingUser.status === 'active' ? 'outline' : 'secondary'}
+                    className={viewingUser.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}
+                  >
+                    {viewingUser.status}
+                  </Badge>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Created At</h3>
+                  <p className="mt-1">{viewingUser.createdAt}</p>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setViewingUser(null)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

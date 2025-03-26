@@ -153,7 +153,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               label="User Management"
               isSidebarExpanded={isExpanded}
               subItems={[
-                { to: "", label: "All Users", permission: 'users.read' },
                 { to: "admin-users", label: "Admin Users", permission: 'users.read' },
                 { to: "support-engineers", label: "Support Engineers", permission: 'users.read' }
               ]}
@@ -169,7 +168,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
           
-          {hasPermission('serviceRequests.read') && (
+          {hasPermission('service_requests.read') && (
             <MenuItem
               to="/service-requests"
               icon={<TicketCheck className="h-5 w-5" />}
@@ -187,15 +186,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
         </nav>
-      </div>
-      
-      <div className="p-4 border-t border-gray-800">
-        {isExpanded && (
-          <div className="text-xs text-gray-400">
-            <p>Myers Security Admin</p>
-            <p className="mt-1">Version 1.0.0</p>
-          </div>
-        )}
       </div>
     </aside>
   );
