@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Edit, Trash, Calendar, User, Eye } from 'lucide-react';
 import { 
   Table, 
@@ -34,6 +36,11 @@ interface Dispensary {
   assignedEngineer: string | null;
   lastServiceDate: string | null;
   createdAt: string;
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  password?: string;
+  profilePicture?: string;
 }
 
 const mockDispensaries: Dispensary[] = [
@@ -45,7 +52,12 @@ const mockDispensaries: Dispensary[] = [
     status: 'open',
     assignedEngineer: 'Emma Roberts',
     lastServiceDate: '2023-10-15',
-    createdAt: '2023-01-05'
+    createdAt: '2023-01-05',
+    contactPerson: 'John Smith',
+    phone: '206-555-1234',
+    email: 'john@downtown.com',
+    password: 'password123',
+    profilePicture: '/placeholder.svg'
   },
   {
     id: '2',
@@ -55,7 +67,12 @@ const mockDispensaries: Dispensary[] = [
     status: 'under-maintenance',
     assignedEngineer: 'James Wilson',
     lastServiceDate: '2023-11-02',
-    createdAt: '2023-02-12'
+    createdAt: '2023-02-12',
+    contactPerson: 'Sarah Johnson',
+    phone: '503-555-6789',
+    email: 'sarah@greenleaf.com',
+    password: 'password123',
+    profilePicture: '/placeholder.svg'
   },
   {
     id: '3',
@@ -65,7 +82,12 @@ const mockDispensaries: Dispensary[] = [
     status: 'closed',
     assignedEngineer: null,
     lastServiceDate: '2023-09-20',
-    createdAt: '2023-03-18'
+    createdAt: '2023-03-18',
+    contactPerson: 'Mike Davis',
+    phone: '303-555-4321',
+    email: 'mike@herbalsolutions.com',
+    password: 'password123',
+    profilePicture: '/placeholder.svg'
   },
   {
     id: '4',
@@ -75,7 +97,12 @@ const mockDispensaries: Dispensary[] = [
     status: 'open',
     assignedEngineer: 'Lisa Chen',
     lastServiceDate: '2023-10-25',
-    createdAt: '2023-04-22'
+    createdAt: '2023-04-22',
+    contactPerson: 'Emma Williams',
+    phone: '415-555-8765',
+    email: 'emma@healingcenter.com',
+    password: 'password123',
+    profilePicture: '/placeholder.svg'
   },
   {
     id: '5',
@@ -85,7 +112,12 @@ const mockDispensaries: Dispensary[] = [
     status: 'open',
     assignedEngineer: 'David Lee',
     lastServiceDate: '2023-11-05',
-    createdAt: '2023-05-01'
+    createdAt: '2023-05-01',
+    contactPerson: 'Alex Turner',
+    phone: '702-555-9876',
+    email: 'alex@evergreen.com',
+    password: 'password123',
+    profilePicture: '/placeholder.svg'
   },
   {
     id: '6',
@@ -95,7 +127,12 @@ const mockDispensaries: Dispensary[] = [
     status: 'open',
     assignedEngineer: 'Emma Roberts',
     lastServiceDate: '2023-11-10',
-    createdAt: '2023-06-15'
+    createdAt: '2023-06-15',
+    contactPerson: 'Chris Garcia',
+    phone: '312-555-1122',
+    email: 'chris@wellness.com',
+    password: 'password123',
+    profilePicture: '/placeholder.svg'
   },
   {
     id: '7',
@@ -105,7 +142,12 @@ const mockDispensaries: Dispensary[] = [
     status: 'under-maintenance',
     assignedEngineer: 'James Wilson',
     lastServiceDate: '2023-11-08',
-    createdAt: '2023-07-22'
+    createdAt: '2023-07-22',
+    contactPerson: 'Taylor Reed',
+    phone: '617-555-3344',
+    email: 'taylor@greenzone.com',
+    password: 'password123',
+    profilePicture: '/placeholder.svg'
   },
   {
     id: '8',
@@ -115,15 +157,13 @@ const mockDispensaries: Dispensary[] = [
     status: 'closed',
     assignedEngineer: null,
     lastServiceDate: '2023-10-30',
-    createdAt: '2023-08-05'
+    createdAt: '2023-08-05',
+    contactPerson: 'Jordan Patel',
+    phone: '512-555-5566',
+    email: 'jordan@naturesremedy.com',
+    password: 'password123',
+    profilePicture: '/placeholder.svg'
   }
-];
-
-const supportEngineers = [
-  { id: '1', name: 'James Wilson' },
-  { id: '2', name: 'Emma Roberts' },
-  { id: '3', name: 'David Lee' },
-  { id: '4', name: 'Lisa Chen' }
 ];
 
 const initializeLocalStorage = () => {
@@ -138,12 +178,11 @@ const Dispensaries: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [editingDispensary, setEditingDispensary] = useState<Dispensary | null>(null);
   const [viewingDispensary, setViewingDispensary] = useState<Dispensary | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const { data: dispensaries = [], refetch } = useQuery({
     queryKey: ['dispensaries'],
@@ -172,13 +211,11 @@ const Dispensaries: React.FC = () => {
   );
   
   const handleAddDispensary = () => {
-    setShowAddForm(true);
-    setEditingDispensary(null);
+    navigate('/dispensaries/add');
   };
   
   const handleEditDispensary = (dispensary: Dispensary) => {
-    setEditingDispensary(dispensary);
-    setShowAddForm(true);
+    navigate(`/dispensaries/edit/${dispensary.id}`);
   };
 
   const handleViewDispensary = (dispensary: Dispensary) => {
@@ -194,56 +231,6 @@ const Dispensaries: React.FC = () => {
       title: "Dispensary Deleted",
       description: `${dispensary.name} has been deleted successfully.`,
     });
-  };
-
-  const handleSaveDispensary = (formData: FormData) => {
-    const name = formData.get('name') as string;
-    const location = formData.get('location') as string;
-    const category = formData.get('category') as string;
-    const status = formData.get('status') as 'open' | 'under-maintenance' | 'closed';
-    const assignedEngineer = formData.get('assignedEngineer') as string;
-    const lastServiceDate = formData.get('lastServiceDate') as string;
-
-    if (editingDispensary) {
-      const updatedDispensaries = dispensaries.map(d => 
-        d.id === editingDispensary.id 
-          ? {
-              ...d,
-              name,
-              location,
-              category,
-              status,
-              assignedEngineer: assignedEngineer || null,
-              lastServiceDate: lastServiceDate || null
-            } 
-          : d
-      );
-      localStorage.setItem('dispensaries', JSON.stringify(updatedDispensaries));
-      toast({
-        title: "Dispensary Updated",
-        description: `${name} has been updated successfully.`,
-      });
-    } else {
-      const newDispensary: Dispensary = {
-        id: Date.now().toString(),
-        name,
-        location,
-        category,
-        status,
-        assignedEngineer: assignedEngineer || null,
-        lastServiceDate: lastServiceDate || null,
-        createdAt: new Date().toISOString().split('T')[0]
-      };
-      const updatedDispensaries = [...dispensaries, newDispensary];
-      localStorage.setItem('dispensaries', JSON.stringify(updatedDispensaries));
-      toast({
-        title: "Dispensary Created",
-        description: `${name} has been created successfully.`,
-      });
-    }
-    
-    setShowAddForm(false);
-    refetch();
   };
   
   const getStatusColor = (status: string) => {
@@ -323,112 +310,6 @@ const Dispensaries: React.FC = () => {
           Add Dispensary
         </Button>
       </div>
-      
-      {showAddForm && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>{editingDispensary ? 'Edit Dispensary' : 'Add New Dispensary'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-4" onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              handleSaveDispensary(formData);
-            }}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium">Dispensary Name</label>
-                  <Input 
-                    id="name"
-                    name="name"
-                    placeholder="Enter name" 
-                    defaultValue={editingDispensary?.name || ''}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="location" className="text-sm font-medium">Location</label>
-                  <Input 
-                    id="location"
-                    name="location"
-                    placeholder="Enter location" 
-                    defaultValue={editingDispensary?.location || ''}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="category" className="text-sm font-medium">Category</label>
-                  <select 
-                    id="category"
-                    name="category"
-                    className="w-full px-3 py-2 border rounded-md"
-                    defaultValue={editingDispensary?.category || ''}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    <option value="Recreational">Recreational</option>
-                    <option value="Medical">Medical</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="status" className="text-sm font-medium">Status</label>
-                  <select 
-                    id="status"
-                    name="status"
-                    className="w-full px-3 py-2 border rounded-md"
-                    defaultValue={editingDispensary?.status || 'open'}
-                    required
-                  >
-                    <option value="open">Open</option>
-                    <option value="under-maintenance">Under Maintenance</option>
-                    <option value="closed">Closed</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="assignedEngineer" className="text-sm font-medium">Assigned Engineer</label>
-                  <select 
-                    id="assignedEngineer"
-                    name="assignedEngineer"
-                    className="w-full px-3 py-2 border rounded-md"
-                    defaultValue={editingDispensary?.assignedEngineer || ''}
-                  >
-                    <option value="">None</option>
-                    {supportEngineers.map(engineer => (
-                      <option key={engineer.id} value={engineer.name}>
-                        {engineer.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="lastServiceDate" className="text-sm font-medium">Last Service Date</label>
-                  <Input 
-                    id="lastServiceDate"
-                    name="lastServiceDate"
-                    type="date"
-                    defaultValue={editingDispensary?.lastServiceDate || ''}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2 mt-4">
-                <Button 
-                  variant="outline" 
-                  type="button"
-                  onClick={() => setShowAddForm(false)}
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
-                  type="submit"
-                >
-                  {editingDispensary ? 'Update' : 'Create'} Dispensary
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
       
       <Card>
         <CardHeader className="pb-2">
@@ -652,6 +533,18 @@ const Dispensaries: React.FC = () => {
                   >
                     {getStatusLabel(viewingDispensary.status)}
                   </Badge>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Contact Person</h3>
+                  <p className="mt-1">{viewingDispensary.contactPerson || "—"}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Phone</h3>
+                  <p className="mt-1">{viewingDispensary.phone || "—"}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Email</h3>
+                  <p className="mt-1">{viewingDispensary.email || "—"}</p>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Assigned Engineer</h3>

@@ -15,6 +15,8 @@ import NotFound from "./pages/NotFound";
 import AdminUsers from "./pages/AdminUsers";
 import SupportEngineers from "./pages/SupportEngineers";
 import Dispensaries from "./pages/Dispensaries";
+import DispensaryAdd from "./pages/DispensaryAdd";
+import DispensaryEdit from "./pages/DispensaryEdit";
 import ServiceRequests from "./pages/ServiceRequests";
 import Invoices from "./pages/Invoices";
 import KnowledgeBase from "./pages/KnowledgeBase";
@@ -44,6 +46,8 @@ const App = () => {
                 <Route path="users/admin-users" element={<AdminUsers />} />
                 <Route path="users/support-engineers" element={<SupportEngineers />} />
                 <Route path="dispensaries" element={<Dispensaries />} />
+                <Route path="dispensaries/add" element={<DispensaryAdd />} />
+                <Route path="dispensaries/edit/:id" element={<DispensaryEdit />} />
                 <Route path="service-requests" element={<ServiceRequests />} />
                 <Route path="invoices" element={<Invoices />} />
                 <Route path="knowledge-base" element={<KnowledgeBase />} />
