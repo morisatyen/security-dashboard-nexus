@@ -19,6 +19,7 @@ interface MenuItemProps {
   label: string;
   isSidebarExpanded: boolean;
   permission?: string | undefined;
+  onMenuItemClick?: () => void;
 }
 
 interface NestedMenuItemProps extends MenuItemProps {
@@ -33,7 +34,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
   to, 
   icon, 
   label, 
-  isSidebarExpanded 
+  isSidebarExpanded,
+  onMenuItemClick 
 }) => {
   return (
     <NavLink
@@ -46,6 +48,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
         }
         ${!isSidebarExpanded ? 'justify-center' : ''}
       `}
+      onClick={onMenuItemClick}
     >
       <span className="flex-shrink-0">{icon}</span>
       {isSidebarExpanded && <span className="ml-3">{label}</span>}
@@ -58,7 +61,8 @@ const NestedMenuItem: React.FC<NestedMenuItemProps> = ({
   icon, 
   label, 
   subItems, 
-  isSidebarExpanded 
+  isSidebarExpanded,
+  onMenuItemClick 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { hasPermission } = useAuth();
@@ -99,6 +103,7 @@ const NestedMenuItem: React.FC<NestedMenuItemProps> = ({
                 block px-4 py-2 text-sm transition-colors
                 ${isActive ? 'text-myers-yellow font-medium' : 'text-gray-400 hover:text-white'}
               `}
+              onClick={onMenuItemClick}
             >
               {item.label}
             </NavLink>
@@ -111,18 +116,19 @@ const NestedMenuItem: React.FC<NestedMenuItemProps> = ({
 
 interface SidebarProps {
   isExpanded: boolean;
+  onMenuItemClick?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onMenuItemClick }) => {
   const { hasPermission } = useAuth();
   
   return (
     <aside 
       className={`
         bg-myers-darkBlue text-white 
-        fixed left-0 top-0 bottom-0 z-40
+        fixed left-0 top-[112px] bottom-0 z-40
         transform transition-all duration-300 ease-in-out
-        ${isExpanded ? 'w-60' : 'w-16'} 
+        ${isExpanded ? 'w-60 translate-x-0' : 'w-16 -translate-x-full md:translate-x-0'} 
         flex flex-col
       `}
     >
@@ -144,6 +150,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               icon={<LayoutDashboard className="h-5 w-5" />}
               label="Dashboard"
               isSidebarExpanded={isExpanded}
+              onMenuItemClick={onMenuItemClick}
             />
           )}
           
@@ -153,6 +160,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               icon={<Users className="h-5 w-5" />}
               label="User Management"
               isSidebarExpanded={isExpanded}
+              onMenuItemClick={onMenuItemClick}
               subItems={[
                 { to: "admin-users", label: "Admin Users", permission: 'users.read' },
                 { to: "support-engineers", label: "Support Engineers", permission: 'users.read' }
@@ -166,6 +174,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               icon={<Store className="h-5 w-5" />}
               label="Dispensaries"
               isSidebarExpanded={isExpanded}
+              onMenuItemClick={onMenuItemClick}
             />
           )}
           
@@ -175,6 +184,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               icon={<TicketCheck className="h-5 w-5" />}
               label="Service Requests"
               isSidebarExpanded={isExpanded}
+              onMenuItemClick={onMenuItemClick}
             />
           )}
           
@@ -184,6 +194,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               icon={<FileText className="h-5 w-5" />}
               label="Invoices"
               isSidebarExpanded={isExpanded}
+              onMenuItemClick={onMenuItemClick}
             />
           )}
           
@@ -193,6 +204,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               icon={<BookOpen className="h-5 w-5" />}
               label="Knowledge Base"
               isSidebarExpanded={isExpanded}
+              onMenuItemClick={onMenuItemClick}
             />
           )}
         </nav>

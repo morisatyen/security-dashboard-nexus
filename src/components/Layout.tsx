@@ -10,6 +10,24 @@ const Layout: React.FC = () => {
   const { isAuthenticated, loading } = useAuth();
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Check if mobile and update state
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth < 768) {
+        setSidebarExpanded(false);
+      }
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
   
   useEffect(() => {
     // Check user preference for dark mode
@@ -35,6 +53,13 @@ const Layout: React.FC = () => {
     }
   };
   
+  // Close sidebar when a menu item is clicked (only on mobile)
+  const handleMenuItemClick = () => {
+    if (isMobile) {
+      setSidebarExpanded(false);
+    }
+  };
+  
   // Show loading state
   if (loading) {
     return (
@@ -50,24 +75,31 @@ const Layout: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <Sidebar isExpanded={sidebarExpanded} />
-      
-      <div 
-        className={`transition-all duration-300 ease-in-out ${
-          sidebarExpanded ? 'ml-60' : 'ml-16'
-        }`}
-      >
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 flex flex-col">
+      <div className="fixed top-0 z-50 w-full">
         <Header 
           toggleSidebar={toggleSidebar} 
           toggleTheme={toggleTheme}
           isDarkMode={isDarkMode}
         />
         <Breadcrumb />
+      </div>
+      
+      <div className="flex flex-1 pt-[112px]">
+        <Sidebar 
+          isExpanded={sidebarExpanded} 
+          onMenuItemClick={handleMenuItemClick}
+        />
         
-        <main className="p-6">
-          <Outlet />
-        </main>
+        <div 
+          className={`flex-1 transition-all duration-300 ease-in-out overflow-auto h-[calc(100vh-112px)] ${
+            sidebarExpanded ? 'md:ml-60' : 'ml-0 md:ml-16'
+          }`}
+        >
+          <main className="p-6">
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
   );
