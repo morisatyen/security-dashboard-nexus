@@ -9,6 +9,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Splash from "./components/Splash";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import AdminUsers from "./pages/AdminUsers";
@@ -16,6 +17,9 @@ import SupportEngineers from "./pages/SupportEngineers";
 import Dispensaries from "./pages/Dispensaries";
 import ServiceRequests from "./pages/ServiceRequests";
 import Invoices from "./pages/Invoices";
+import KnowledgeBase from "./pages/KnowledgeBase";
+import KnowledgeBaseAdd from "./pages/KnowledgeBaseAdd";
+import KnowledgeBaseEdit from "./pages/KnowledgeBaseEdit";
 
 // Initialize data
 import { getInitialData } from "./data/initialData";
@@ -34,6 +38,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Splash />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/" element={<Layout />}>
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="users/admin-users" element={<AdminUsers />} />
@@ -41,6 +46,9 @@ const App = () => {
                 <Route path="dispensaries" element={<Dispensaries />} />
                 <Route path="service-requests" element={<ServiceRequests />} />
                 <Route path="invoices" element={<Invoices />} />
+                <Route path="knowledge-base" element={<KnowledgeBase />} />
+                <Route path="knowledge-base/add" element={<KnowledgeBaseAdd />} />
+                <Route path="knowledge-base/edit/:id" element={<KnowledgeBaseEdit />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

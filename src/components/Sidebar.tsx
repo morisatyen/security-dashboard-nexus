@@ -8,7 +8,8 @@ import {
   TicketCheck, 
   FileText, 
   ChevronDown, 
-  ChevronRight 
+  ChevronRight,
+  BookOpen 
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -17,14 +18,14 @@ interface MenuItemProps {
   icon: React.ReactNode;
   label: string;
   isSidebarExpanded: boolean;
-  permission?: string;
+  permission?: string | undefined;
 }
 
 interface NestedMenuItemProps extends MenuItemProps {
   subItems: {
     to: string;
     label: string;
-    permission?: string;
+    permission?: string | undefined;
   }[];
 }
 
@@ -64,7 +65,7 @@ const NestedMenuItem: React.FC<NestedMenuItemProps> = ({
   
   // Filter subItems based on permissions
   const allowedSubItems = subItems.filter(item => 
-    !item.permission || hasPermission(item.permission)
+    !item.permission || hasPermission(item.permission as any)
   );
   
   if (allowedSubItems.length === 0) return null;
@@ -137,7 +138,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
       
       <div className="overflow-y-auto flex-grow scrollbar-hide">
         <nav className="mt-4 space-y-1 px-2">
-          {hasPermission('users.read') && (
+          {hasPermission('users.read' as any) && (
             <MenuItem
               to="/dashboard"
               icon={<LayoutDashboard className="h-5 w-5" />}
@@ -146,7 +147,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
           
-          {(hasPermission('users.read') || hasPermission('roles.read')) && (
+          {(hasPermission('users.read' as any) || hasPermission('roles.read' as any)) && (
             <NestedMenuItem
               to="/users"
               icon={<Users className="h-5 w-5" />}
@@ -159,7 +160,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
           
-          {hasPermission('dispensaries.read') && (
+          {hasPermission('dispensaries.read' as any) && (
             <MenuItem
               to="/dispensaries"
               icon={<Store className="h-5 w-5" />}
@@ -168,7 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
           
-          {hasPermission('service_requests.read') && (
+          {hasPermission('service_requests.read' as any) && (
             <MenuItem
               to="/service-requests"
               icon={<TicketCheck className="h-5 w-5" />}
@@ -177,11 +178,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
           
-          {hasPermission('invoices.read') && (
+          {hasPermission('invoices.read' as any) && (
             <MenuItem
               to="/invoices"
               icon={<FileText className="h-5 w-5" />}
               label="Invoices"
+              isSidebarExpanded={isExpanded}
+            />
+          )}
+          
+          {hasPermission('knowledge_base.read' as any) && (
+            <MenuItem
+              to="/knowledge-base"
+              icon={<BookOpen className="h-5 w-5" />}
+              label="Knowledge Base"
               isSidebarExpanded={isExpanded}
             />
           )}
