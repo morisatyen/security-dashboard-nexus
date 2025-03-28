@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Search, Edit, Trash, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash, Eye, ChevronUp, ChevronDown } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
@@ -104,6 +104,9 @@ const initializeLocalStorage = () => {
   }
 };
 
+type SortField = 'name' | 'email' | 'status' | 'joinedDate';
+type SortDirection = 'asc' | 'desc';
+
 const SupportEngineers: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -111,12 +114,41 @@ const SupportEngineers: React.FC = () => {
   const [viewingEngineer, setViewingEngineer] = useState<SupportEngineer | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [regionFilter, setRegionFilter] = useState<string>('');
+  const [sortField, setSortField] = useState<SortField>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const { toast } = useToast();
   const navigate = useNavigate();
+  const tableCardRef = useRef<HTMLDivElement>(null);
   
   // Initialize localStorage when component mounts
   useEffect(() => {
     initializeLocalStorage();
+  }, []);
+  
+  // Setup intersection observer for sticky card header
+  useEffect(() => {
+    if (!tableCardRef.current) return;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.target instanceof HTMLElement) {
+          if (!entry.isIntersecting) {
+            entry.target.classList.add('sticky-card');
+          } else {
+            entry.target.classList.remove('sticky-card');
+          }
+        }
+      },
+      { threshold: 0 }
+    );
+    
+    observer.observe(tableCardRef.current);
+    
+    return () => {
+      if (tableCardRef.current) {
+        observer.unobserve(tableCardRef.current);
+      }
+    };
   }, []);
   
   // CRUD Operations with localStorage
@@ -142,11 +174,38 @@ const SupportEngineers: React.FC = () => {
     return matchesSearch && matchesStatus && matchesRegion;
   });
   
-  const totalPages = Math.ceil(filteredEngineers.length / itemsPerPage);
-  const paginatedEngineers = filteredEngineers.slice(
+  // Apply sorting
+  const sortedEngineers = [...filteredEngineers].sort((a, b) => {
+    let comparison = 0;
+    
+    switch(sortField) {
+      case 'name':
+        const aName = a.name || `${a.firstName} ${a.lastName}`;
+        const bName = b.name || `${b.firstName} ${b.lastName}`;
+        comparison = aName.localeCompare(bName);
+        break;
+      case 'email':
+        comparison = a.email.localeCompare(b.email);
+        break;
+      case 'status':
+        comparison = a.status.localeCompare(b.status);
+        break;
+      case 'joinedDate':
+        comparison = new Date(a.joinedDate).getTime() - new Date(b.joinedDate).getTime();
+        break;
+    }
+    
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+  
+  const totalPages = Math.ceil(sortedEngineers.length / itemsPerPage);
+  const paginatedEngineers = sortedEngineers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+  
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(startIndex + paginatedEngineers.length - 1, sortedEngineers.length);
   
   const handleAddEngineer = () => {
     navigate('/users/support-engineers/add');
@@ -173,6 +232,22 @@ const SupportEngineers: React.FC = () => {
         description: `${engineer.name || `${engineer.firstName} ${engineer.lastName}`} has been deleted successfully.`,
       });
     }
+  };
+  
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+  
+  const renderSortIcon = (field: SortField) => {
+    if (sortField !== field) return <ChevronUp className="h-4 w-4 opacity-30" />;
+    return sortDirection === 'asc' ? 
+      <ChevronUp className="h-4 w-4" /> : 
+      <ChevronDown className="h-4 w-4" />;
   };
   
   const getStatusColor = (status: string) => {
@@ -248,7 +323,7 @@ const SupportEngineers: React.FC = () => {
         </Button>
       </div>
       
-      <Card>
+      <Card ref={tableCardRef} className="scroll-margin-top">
         <CardHeader className="pb-2">
           <div className="flex flex-col space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -299,13 +374,45 @@ const SupportEngineers: React.FC = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSort('name')}
+                  >
+                    <div className="flex items-center">
+                      Name
+                      <span className="ml-2">{renderSortIcon('name')}</span>
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSort('email')}
+                  >
+                    <div className="flex items-center">
+                      Email
+                      <span className="ml-2">{renderSortIcon('email')}</span>
+                    </div>
+                  </TableHead>
                   <TableHead>Specialization</TableHead>
                   <TableHead>Region</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSort('status')}
+                  >
+                    <div className="flex items-center">
+                      Status
+                      <span className="ml-2">{renderSortIcon('status')}</span>
+                    </div>
+                  </TableHead>
                   <TableHead>Active Requests</TableHead>
-                  <TableHead>Joined Date</TableHead>
+                  <TableHead 
+                    className="cursor-pointer"
+                    onClick={() => handleSort('joinedDate')}
+                  >
+                    <div className="flex items-center">
+                      Joined Date
+                      <span className="ml-2">{renderSortIcon('joinedDate')}</span>
+                    </div>
+                  </TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -371,59 +478,67 @@ const SupportEngineers: React.FC = () => {
           </div>
           
           <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
-            <div className="mb-4 sm:mb-0">
-              <span className="text-sm text-muted-foreground mr-2">Items per page:</span>
-              <select 
-                className="px-2 py-1 border rounded text-sm"
-                value={itemsPerPage}
-                onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value));
-                  setCurrentPage(1); // Reset to first page when changing items per page
-                }}
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-              </select>
-            </div>
-            
-            {filteredEngineers.length > 0 && (
-              <div className="flex justify-center">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious 
-                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
-                      />
-                    </PaginationItem>
-                    
-                    {getPageNumbers().map((pageNumber, index) => (
-                      <PaginationItem key={`${pageNumber}-${index}`}>
-                        {pageNumber === 'ellipsis-start' || pageNumber === 'ellipsis-end' ? (
-                          <PaginationEllipsis />
-                        ) : (
-                          <PaginationLink
-                            isActive={currentPage === pageNumber}
-                            onClick={() => setCurrentPage(Number(pageNumber))}
-                          >
-                            {pageNumber}
-                          </PaginationLink>
-                        )}
-                      </PaginationItem>
-                    ))}
-                    
-                    <PaginationItem>
-                      <PaginationNext 
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+            {sortedEngineers.length > 0 && (
+              <div className="mb-4 sm:mb-0 text-sm text-muted-foreground">
+                Showing {startIndex} to {endIndex} of {sortedEngineers.length} results
               </div>
             )}
+            
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div>
+                <span className="text-sm text-muted-foreground mr-2">Items per page:</span>
+                <select 
+                  className="px-2 py-1 border rounded text-sm"
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1); // Reset to first page when changing items per page
+                  }}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+              
+              {filteredEngineers.length > 0 && (
+                <div className="flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                          className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                        />
+                      </PaginationItem>
+                      
+                      {getPageNumbers().map((pageNumber, index) => (
+                        <PaginationItem key={`${pageNumber}-${index}`}>
+                          {pageNumber === 'ellipsis-start' || pageNumber === 'ellipsis-end' ? (
+                            <PaginationEllipsis />
+                          ) : (
+                            <PaginationLink
+                              isActive={currentPage === pageNumber}
+                              onClick={() => setCurrentPage(Number(pageNumber))}
+                            >
+                              {pageNumber}
+                            </PaginationLink>
+                          )}
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                          className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -491,6 +606,16 @@ const SupportEngineers: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
+      
+      {/* CSS for sticky table card */}
+      <style jsx>{`
+        .sticky-card {
+          position: sticky;
+          top: 121px; /* Height of header + breadcrumb */
+          z-index: 10;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+      `}</style>
     </div>
   );
 };
