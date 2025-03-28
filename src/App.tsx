@@ -14,6 +14,8 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import AdminUsers from "./pages/AdminUsers";
 import SupportEngineers from "./pages/SupportEngineers";
+import SupportEngineerAdd from "./pages/SupportEngineerAdd";
+import SupportEngineerEdit from "./pages/SupportEngineerEdit";
 import Dispensaries from "./pages/Dispensaries";
 import DispensaryAdd from "./pages/DispensaryAdd";
 import DispensaryEdit from "./pages/DispensaryEdit";
@@ -45,6 +47,8 @@ const App = () => {
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="users/admin-users" element={<AdminUsers />} />
                 <Route path="users/support-engineers" element={<SupportEngineers />} />
+                <Route path="users/support-engineers/add" element={<SupportEngineerAdd />} />
+                <Route path="users/support-engineers/edit/:id" element={<SupportEngineerEdit />} />
                 <Route path="dispensaries" element={<Dispensaries />} />
                 <Route path="dispensaries/add" element={<DispensaryAdd />} />
                 <Route path="dispensaries/edit/:id" element={<DispensaryEdit />} />

@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Search, Edit, Trash, Eye } from 'lucide-react';
 import { 
@@ -28,20 +29,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 interface SupportEngineer {
   id: string;
-  name: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   specialization: string;
   region: string;
   status: 'available' | 'on-leave' | 'assigned';
   activeRequests: number;
   joinedDate: string;
+  phone?: string;
 }
 
+// Mock data for initial load
 const mockSupportEngineers: SupportEngineer[] = [
   {
     id: '1',
+    firstName: 'James',
+    lastName: 'Wilson',
     name: 'James Wilson',
     email: 'james@myerssecurity.com',
+    phone: '555-123-4567',
     specialization: 'Hardware Installation',
     region: 'North',
     status: 'available',
@@ -50,8 +58,11 @@ const mockSupportEngineers: SupportEngineer[] = [
   },
   {
     id: '2',
+    firstName: 'Emma',
+    lastName: 'Roberts',
     name: 'Emma Roberts',
     email: 'emma@myerssecurity.com',
+    phone: '555-987-6543',
     specialization: 'Software Troubleshooting',
     region: 'East',
     status: 'assigned',
@@ -60,8 +71,11 @@ const mockSupportEngineers: SupportEngineer[] = [
   },
   {
     id: '3',
+    firstName: 'David',
+    lastName: 'Lee',
     name: 'David Lee',
     email: 'david@myerssecurity.com',
+    phone: '555-456-7890',
     specialization: 'Network Configuration',
     region: 'West',
     status: 'on-leave',
@@ -70,8 +84,11 @@ const mockSupportEngineers: SupportEngineer[] = [
   },
   {
     id: '4',
+    firstName: 'Lisa',
+    lastName: 'Chen',
     name: 'Lisa Chen',
     email: 'lisa@myerssecurity.com',
+    phone: '555-789-0123',
     specialization: 'Software Troubleshooting',
     region: 'South',
     status: 'assigned',
@@ -80,28 +97,50 @@ const mockSupportEngineers: SupportEngineer[] = [
   }
 ];
 
+// Initialize localStorage if not already set
+const initializeLocalStorage = () => {
+  if (!localStorage.getItem('supportEngineers')) {
+    localStorage.setItem('supportEngineers', JSON.stringify(mockSupportEngineers));
+  }
+};
+
 const SupportEngineers: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [editingEngineer, setEditingEngineer] = useState<SupportEngineer | null>(null);
   const [viewingEngineer, setViewingEngineer] = useState<SupportEngineer | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [regionFilter, setRegionFilter] = useState<string>('');
   const { toast } = useToast();
+  const navigate = useNavigate();
   
-  // In a real app, this would fetch from an API
-  const { data: engineers = mockSupportEngineers } = useQuery({
+  // Initialize localStorage when component mounts
+  useEffect(() => {
+    initializeLocalStorage();
+  }, []);
+  
+  // CRUD Operations with localStorage
+  const { data: engineers = [], refetch } = useQuery({
     queryKey: ['supportEngineers'],
-    queryFn: () => Promise.resolve(mockSupportEngineers),
-    initialData: mockSupportEngineers,
+    queryFn: () => {
+      const storedData = localStorage.getItem('supportEngineers');
+      return Promise.resolve(storedData ? JSON.parse(storedData) : mockSupportEngineers);
+    },
   });
   
-  const filteredEngineers = engineers.filter(engineer => 
-    engineer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    engineer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    engineer.specialization.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    engineer.region.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredEngineers = engineers.filter(engineer => {
+    const engineerName = engineer.name || `${engineer.firstName} ${engineer.lastName}`;
+    const matchesSearch = 
+      engineerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      engineer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      engineer.specialization.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      engineer.region.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter ? engineer.status === statusFilter : true;
+    const matchesRegion = regionFilter ? engineer.region === regionFilter : true;
+    
+    return matchesSearch && matchesStatus && matchesRegion;
+  });
   
   const totalPages = Math.ceil(filteredEngineers.length / itemsPerPage);
   const paginatedEngineers = filteredEngineers.slice(
@@ -110,13 +149,11 @@ const SupportEngineers: React.FC = () => {
   );
   
   const handleAddEngineer = () => {
-    setShowAddForm(true);
-    setEditingEngineer(null);
+    navigate('/users/support-engineers/add');
   };
   
   const handleEditEngineer = (engineer: SupportEngineer) => {
-    setEditingEngineer(engineer);
-    setShowAddForm(true);
+    navigate(`/users/support-engineers/edit/${engineer.id}`);
   };
   
   const handleViewEngineer = (engineer: SupportEngineer) => {
@@ -124,11 +161,18 @@ const SupportEngineers: React.FC = () => {
   };
   
   const handleDeleteEngineer = (engineer: SupportEngineer) => {
-    toast({
-      title: "Engineer Deleted",
-      description: `${engineer.name} has been deleted successfully.`,
-    });
-    // In a real application, you would call an API to delete the engineer
+    const confirmed = window.confirm(`Are you sure you want to delete ${engineer.name || `${engineer.firstName} ${engineer.lastName}`}?`);
+    
+    if (confirmed) {
+      const updatedEngineers = engineers.filter(e => e.id !== engineer.id);
+      localStorage.setItem('supportEngineers', JSON.stringify(updatedEngineers));
+      refetch();
+      
+      toast({
+        title: "Engineer Deleted",
+        description: `${engineer.name || `${engineer.firstName} ${engineer.lastName}`} has been deleted successfully.`,
+      });
+    }
   };
   
   const getStatusColor = (status: string) => {
@@ -204,108 +248,49 @@ const SupportEngineers: React.FC = () => {
         </Button>
       </div>
       
-      {showAddForm && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>{editingEngineer ? 'Edit Support Engineer' : 'Add New Support Engineer'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium">Name</label>
-                  <Input 
-                    id="name" 
-                    placeholder="Enter name" 
-                    defaultValue={editingEngineer?.name || ''}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium">Email</label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="Enter email" 
-                    defaultValue={editingEngineer?.email || ''}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="specialization" className="text-sm font-medium">Specialization</label>
-                  <select 
-                    id="specialization" 
-                    className="w-full px-3 py-2 border rounded-md"
-                    defaultValue={editingEngineer?.specialization || ''}
-                  >
-                    <option value="">Select Specialization</option>
-                    <option value="Hardware Installation">Hardware Installation</option>
-                    <option value="Software Troubleshooting">Software Troubleshooting</option>
-                    <option value="Network Configuration">Network Configuration</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="region" className="text-sm font-medium">Region</label>
-                  <select 
-                    id="region" 
-                    className="w-full px-3 py-2 border rounded-md"
-                    defaultValue={editingEngineer?.region || ''}
-                  >
-                    <option value="">Select Region</option>
-                    <option value="North">North</option>
-                    <option value="South">South</option>
-                    <option value="East">East</option>
-                    <option value="West">West</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="status" className="text-sm font-medium">Status</label>
-                  <select 
-                    id="status" 
-                    className="w-full px-3 py-2 border rounded-md"
-                    defaultValue={editingEngineer?.status || 'available'}
-                  >
-                    <option value="available">Available</option>
-                    <option value="assigned">Assigned</option>
-                    <option value="on-leave">On Leave</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2 mt-4">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowAddForm(false)}
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
-                  onClick={() => {
-                    toast({
-                      title: `Engineer ${editingEngineer ? 'Updated' : 'Created'}`,
-                      description: `Engineer has been ${editingEngineer ? 'updated' : 'created'} successfully.`,
-                    });
-                    setShowAddForm(false);
-                  }}
-                >
-                  {editingEngineer ? 'Update' : 'Create'} Engineer
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-      
       <Card>
         <CardHeader className="pb-2">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle>Support Engineers List</CardTitle>
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search engineers..."
-                className="pl-8 w-full sm:w-64"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <CardTitle>Support Engineers List</CardTitle>
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search engineers..."
+                  className="pl-8 w-full sm:w-64"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <div>
+                <select
+                  className="px-3 py-2 rounded-md border text-sm"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="available">Available</option>
+                  <option value="assigned">Assigned</option>
+                  <option value="on-leave">On Leave</option>
+                </select>
+              </div>
+              
+              <div>
+                <select
+                  className="px-3 py-2 rounded-md border text-sm"
+                  value={regionFilter}
+                  onChange={(e) => setRegionFilter(e.target.value)}
+                >
+                  <option value="">All Regions</option>
+                  <option value="North">North</option>
+                  <option value="South">South</option>
+                  <option value="East">East</option>
+                  <option value="West">West</option>
+                </select>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -328,7 +313,9 @@ const SupportEngineers: React.FC = () => {
                 {paginatedEngineers.length > 0 ? (
                   paginatedEngineers.map((engineer) => (
                     <TableRow key={engineer.id}>
-                      <TableCell className="font-medium">{engineer.name}</TableCell>
+                      <TableCell className="font-medium">
+                        {engineer.name || `${engineer.firstName} ${engineer.lastName}`}
+                      </TableCell>
                       <TableCell>{engineer.email}</TableCell>
                       <TableCell>{engineer.specialization}</TableCell>
                       <TableCell>{engineer.region}</TableCell>
@@ -452,12 +439,20 @@ const SupportEngineers: React.FC = () => {
               <div className="grid grid-cols-1 gap-2">
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Name</h3>
-                  <p className="mt-1">{viewingEngineer.name}</p>
+                  <p className="mt-1">
+                    {viewingEngineer.name || `${viewingEngineer.firstName} ${viewingEngineer.lastName}`}
+                  </p>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Email</h3>
                   <p className="mt-1">{viewingEngineer.email}</p>
                 </div>
+                {viewingEngineer.phone && (
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Phone</h3>
+                    <p className="mt-1">{viewingEngineer.phone}</p>
+                  </div>
+                )}
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Specialization</h3>
                   <p className="mt-1">{viewingEngineer.specialization}</p>
