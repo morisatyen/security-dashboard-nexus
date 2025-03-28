@@ -1,41 +1,41 @@
-
-import React, { useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, Lock, Mail, AlertTriangle } from 'lucide-react';
+import React, { useState } from "react";
+import { Navigate, Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { Eye, EyeOff, Lock, Mail, AlertTriangle } from "lucide-react";
+import logo from "../images/blackroundlogo.png"
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { login, isAuthenticated } = useAuth();
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
-    
+
     try {
       const success = await login(email, password);
-      
+
       if (!success) {
-        setError('Invalid email or password');
+        setError("Invalid email or password");
       }
     } catch (err) {
-      setError('An error occurred during login');
+      setError("An error occurred during login");
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-myers-darkBlue px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
@@ -43,33 +43,35 @@ const Login: React.FC = () => {
           {/* Top Section (Black background with logo) */}
           <div className="bg-black text-white py-8 px-4 sm:px-10 flex flex-col items-center relative">
             <div className="w-16 h-16 bg-myers-yellow rounded-full flex items-center justify-center mb-4">
-              <svg 
+              <svg
                 className="w-10 h-10 text-myers-darkBlue"
-                viewBox="0 0 24 24" 
-                fill="none" 
+                viewBox="0 0 24 24"
+                fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path 
-                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" 
-                  stroke="currentColor" 
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  stroke="currentColor"
                   strokeWidth="2"
                 />
-                <path 
-                  d="M8 12H16M12 16V8" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
+                <path
+                  d="M8 12H16M12 16V8"
+                  stroke="currentColor"
+                  strokeWidth="2"
                   strokeLinecap="round"
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold">Myers Security</h2>
-            <p className="mt-1 text-sm text-gray-300">Sign in to access the admin dashboard</p>
-            
+            <h2 className="text-2xl font-bold">Welocme Dashboard</h2>
+            <p className="mt-1 text-sm text-gray-300">
+              Sign in to access the admin dashboard
+            </p>
+
             {/* Wave Divider */}
             <div className="absolute -bottom-5 left-0 w-full overflow-hidden">
-              <svg 
-                className="w-full h-5" 
-                viewBox="0 0 1200 120" 
+              <svg
+                className="w-full h-5"
+                viewBox="0 0 1200 120"
                 preserveAspectRatio="none"
                 fill="white"
                 xmlns="http://www.w3.org/2000/svg"
@@ -78,19 +80,24 @@ const Login: React.FC = () => {
               </svg>
             </div>
           </div>
-          
+
           {/* Bottom Section (White background with form) */}
           <div className="bg-white dark:bg-gray-800 py-8 px-4 sm:px-10">
             {error && (
               <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg flex items-start">
                 <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mr-2 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-red-800 dark:text-red-300">{error}</span>
+                <span className="text-sm text-red-800 dark:text-red-300">
+                  {error}
+                </span>
               </div>
             )}
-            
+
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Email address
                 </label>
                 <div className="mt-1 relative">
@@ -110,9 +117,12 @@ const Login: React.FC = () => {
                   />
                 </div>
               </div>
-              
+
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Password
                 </label>
                 <div className="mt-1 relative">
@@ -142,16 +152,16 @@ const Login: React.FC = () => {
                     )}
                   </button>
                 </div>
-                <div className="flex justify-between mt-1">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Demo: Use any email from the app with any password
-                  </p>
-                  <Link to="/forgot-password" className="text-xs text-myers-yellow hover:underline">
+                <div className="flex justify-end mt-2">
+                  <Link
+                    to="/forgot-password"
+                    className="text-xm text-myers-yellow hover:underline"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
               </div>
-              
+
               <div>
                 <button
                   type="submit"
@@ -160,20 +170,36 @@ const Login: React.FC = () => {
                 >
                   {isLoading ? (
                     <span className="flex items-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-myers-darkBlue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-myers-darkBlue"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
                       Signing in...
                     </span>
                   ) : (
-                    'Sign in'
+                    "Sign in"
                   )}
                 </button>
               </div>
             </form>
-            
-            <div className="mt-6">
+
+            {/* <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
@@ -219,7 +245,7 @@ const Login: React.FC = () => {
                   Regular User
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
