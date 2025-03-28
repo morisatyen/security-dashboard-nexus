@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Search, Edit, Trash, Eye, ArrowUpDown } from 'lucide-react';
 import { 
@@ -25,7 +26,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useNavigate } from 'react-router-dom';
 
 interface KnowledgeBaseItem {
   id: string;
@@ -39,6 +39,7 @@ interface KnowledgeBaseItem {
   createdAt: string;
 }
 
+// Mock data for initial load
 const mockKnowledgeBaseItems: KnowledgeBaseItem[] = [
   {
     id: '1',
