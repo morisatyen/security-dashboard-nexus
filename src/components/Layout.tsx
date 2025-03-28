@@ -54,18 +54,20 @@ const Layout: React.FC = () => {
       <Sidebar isExpanded={sidebarExpanded} />
       
       <div 
-        className={`transition-all duration-300 ease-in-out ${
+        className={`transition-all duration-300 ease-in-out flex flex-col h-screen ${
           sidebarExpanded ? 'ml-60' : 'ml-16'
         }`}
       >
-        <Header 
-          toggleSidebar={toggleSidebar} 
-          toggleTheme={toggleTheme}
-          isDarkMode={isDarkMode}
-        />
-        <Breadcrumb />
+        <div className="sticky top-0 z-40 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+          <Header 
+            toggleSidebar={toggleSidebar} 
+            toggleTheme={toggleTheme}
+            isDarkMode={isDarkMode}
+          />
+          <Breadcrumb />
+        </div>
         
-        <main className="p-6">
+        <main className="flex-1 p-6 overflow-y-auto">
           <Outlet />
         </main>
       </div>
