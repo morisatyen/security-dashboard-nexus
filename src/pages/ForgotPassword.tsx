@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, AlertTriangle, ArrowLeft } from 'lucide-react';
-
+import logo from "../images/Logo1.png"
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -37,8 +37,8 @@ const ForgotPassword: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
           {/* Top Section (Black background with logo) */}
           <div className="bg-black text-white py-8 px-4 sm:px-10 flex flex-col items-center relative">
-            <div className="w-16 h-16 bg-myers-yellow rounded-full flex items-center justify-center mb-4">
-              <svg 
+            <div className="w-32 h-16 flex items-center justify-center mb-4">
+              {/* <svg 
                 className="w-10 h-10 text-myers-darkBlue"
                 viewBox="0 0 24 24" 
                 fill="none" 
@@ -55,7 +55,8 @@ const ForgotPassword: React.FC = () => {
                   strokeWidth="2" 
                   strokeLinecap="round"
                 />
-              </svg>
+              </svg> */}
+               <img src={logo} alt="User Avatar"  />
             </div>
             <h2 className="text-2xl font-bold">Reset Password</h2>
             <p className="mt-1 text-sm text-gray-300">Enter your email to reset your password</p>

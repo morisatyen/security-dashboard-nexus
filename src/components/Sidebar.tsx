@@ -159,7 +159,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               ]}
             />
           )}
-          
+          {hasPermission('dispensaries.read' as any) && (
+            <MenuItem
+              to="/knowledge-base"
+              icon={<BookOpen className="h-5 w-5" />}
+              label="Knowledge Base"
+              isSidebarExpanded={isExpanded}
+            />
+          )}
           {hasPermission('dispensaries.read' as any) && (
             <MenuItem
               to="/dispensaries"
@@ -169,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
           
-          {hasPermission('service_requests.read' as any) && (
+          {hasPermission('serviceRequests.read' as any) && (
             <MenuItem
               to="/service-requests"
               icon={<TicketCheck className="h-5 w-5" />}
@@ -187,14 +194,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
           
-          {hasPermission('knowledge_base.read' as any) && (
-            <MenuItem
-              to="/knowledge-base"
-              icon={<BookOpen className="h-5 w-5" />}
-              label="Knowledge Base"
-              isSidebarExpanded={isExpanded}
-            />
-          )}
+          
         </nav>
       </div>
     </aside>

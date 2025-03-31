@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({
           <Menu className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
         
-        <div className={`relative hidden sm:block ${searchFocused ? 'ring-2 ring-myers-yellow' : ''}`}>
+        {/* <div className={`relative hidden sm:block ${searchFocused ? 'ring-2 ring-myers-yellow' : ''}`}>
           <input
             type="text"
             placeholder="Search..."
@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({
             onBlur={() => setSearchFocused(false)}
           />
           <Search className="h-4 w-4 text-gray-400 absolute left-3 top-2.5" />
-        </div>
+        </div> */}
       </div>
       
       {/* Right Side */}

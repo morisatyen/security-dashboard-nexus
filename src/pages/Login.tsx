@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Eye, EyeOff, Lock, Mail, AlertTriangle } from "lucide-react";
-import logo from "../images/blackroundlogo.png"
+import logo from "../images/Logo1.png"
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -42,8 +42,8 @@ const Login: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
           {/* Top Section (Black background with logo) */}
           <div className="bg-black text-white py-8 px-4 sm:px-10 flex flex-col items-center relative">
-            <div className="w-16 h-16 bg-myers-yellow rounded-full flex items-center justify-center mb-4">
-              <svg
+            <div className="w-32 h-16  flex items-center justify-center mb-4">
+              {/* <svg
                 className="w-10 h-10 text-myers-darkBlue"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -60,7 +60,8 @@ const Login: React.FC = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
-              </svg>
+              </svg> */}
+              <img src={logo} alt="User Avatar"  />
             </div>
             <h2 className="text-2xl font-bold">Welocme Dashboard</h2>
             <p className="mt-1 text-sm text-gray-300">
@@ -155,7 +156,7 @@ const Login: React.FC = () => {
                 <div className="flex justify-end mt-2">
                   <Link
                     to="/forgot-password"
-                    className="text-xm text-myers-yellow hover:underline"
+                    className="text-xm text-blue-500 hover:underline"
                   >
                     Forgot Password?
                   </Link>

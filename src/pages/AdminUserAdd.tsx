@@ -16,12 +16,12 @@ interface SupportEngineer {
   phone: string;
   specialization: string;
   region: string;
-  status: 'available' | 'on-leave' | 'assigned';
+  status: 'active' | 'inactive';
   activeRequests: number;
   joinedDate: string;
 }
 
-const SupportEngineerAdd: React.FC = () => {
+const AdminUserAdd: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -38,7 +38,7 @@ const SupportEngineerAdd: React.FC = () => {
     const phone = formData.get('phone') as string;
     const specialization = formData.get('specialization') as string;
     const region = formData.get('region') as string;
-    const status = formData.get('status') as 'available' | 'on-leave' | 'assigned';
+    const status = formData.get('status') as 'active' | 'inactive';
     
     const newEngineer: SupportEngineer = {
       id: Date.now().toString(),
@@ -62,18 +62,18 @@ const SupportEngineerAdd: React.FC = () => {
     
     // Show success message
     toast({
-      title: "Support Engineer Created",
+      title: "Admin User Created",
       description: `${firstName} ${lastName} has been created successfully.`
     });
     
     // Redirect back to the list page
     setTimeout(() => {
-      navigate('/users/support-engineers');
+      navigate('/users/admin-users');
     }, 1000);
   };
   
   const handleCancel = () => {
-    navigate('/users/support-engineers');
+    navigate('/users/admin-users');
   };
   
   return (
@@ -86,12 +86,12 @@ const SupportEngineerAdd: React.FC = () => {
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Add Support Engineer</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Add Admin User</h1>
       </div>
       
       <Card>
         <CardHeader>
-          <CardTitle>Create a new support engineer</CardTitle>
+          <CardTitle>Create a new Admin User</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -147,38 +147,6 @@ const SupportEngineerAdd: React.FC = () => {
                   required 
                 />
               </div>
-              
-              {/* <div className="space-y-2">
-                <label htmlFor="specialization" className="text-sm font-medium">Specialization <span className="text-red-500">*</span></label>
-                <select 
-                  id="specialization" 
-                  name="specialization" 
-                  className="w-full px-3 py-2 border rounded-md"
-                  required
-                >
-                  <option value="">Select Specialization</option>
-                  <option value="Hardware Installation">Hardware Installation</option>
-                  <option value="Software Troubleshooting">Software Troubleshooting</option>
-                  <option value="Network Configuration">Network Configuration</option>
-                </select>
-              </div>
-              
-              <div className="space-y-2">
-                <label htmlFor="region" className="text-sm font-medium">Region <span className="text-red-500">*</span></label>
-                <select 
-                  id="region" 
-                  name="region" 
-                  className="w-full px-3 py-2 border rounded-md"
-                  required
-                >
-                  <option value="">Select Region</option>
-                  <option value="North">North</option>
-                  <option value="South">South</option>
-                  <option value="East">East</option>
-                  <option value="West">West</option>
-                </select>
-              </div> */}
-              
               <div className="space-y-2">
                 <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
                 <select 
@@ -187,9 +155,9 @@ const SupportEngineerAdd: React.FC = () => {
                   className="w-full px-3 py-2 border rounded-md"
                   required
                 >
-                  <option value="available">Available</option>
-                  <option value="assigned">Assigned</option>
-                  <option value="on-leave">On Leave</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  
                 </select>
               </div>
             </div>
@@ -207,7 +175,7 @@ const SupportEngineerAdd: React.FC = () => {
                 disabled={isSubmitting}
                 className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
               >
-                {isSubmitting ? 'Creating...' : 'Create Support Engineer'}
+                {isSubmitting ? 'Creating...' : 'Create Admin User'}
               </Button>
             </div>
           </form>
@@ -217,4 +185,4 @@ const SupportEngineerAdd: React.FC = () => {
   );
 };
 
-export default SupportEngineerAdd;
+export default AdminUserAdd;

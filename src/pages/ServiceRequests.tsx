@@ -358,10 +358,10 @@ const ServiceRequests: React.FC = () => {
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Service Requests</h1>
-        <Button onClick={handleAddRequest} className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400">
+        {/* <Button onClick={handleAddRequest} className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400">
           <Plus className="h-4 w-4 mr-2" />
           Add Service Request
-        </Button>
+        </Button> */}
       </div>
       
       {showAddForm && (
@@ -532,7 +532,7 @@ const ServiceRequests: React.FC = () => {
                 <TableRow>
                   <TableHead>Request ID</TableHead>
                   <TableHead>Dispensary</TableHead>
-                  <TableHead>Description</TableHead>
+                  {/* <TableHead>Description</TableHead> */}
                   <TableHead>Status</TableHead>
                   <TableHead>Priority</TableHead>
                   <TableHead>Assigned Engineer</TableHead>
@@ -547,7 +547,7 @@ const ServiceRequests: React.FC = () => {
                     <TableRow key={request.id}>
                       <TableCell className="font-medium">{request.requestId}</TableCell>
                       <TableCell>{request.dispensaryName}</TableCell>
-                      <TableCell className="max-w-xs truncate">{request.description}</TableCell>
+                      {/* <TableCell className="max-w-xs truncate">{request.description}</TableCell> */}
                       <TableCell>
                         <Badge 
                           variant="outline"

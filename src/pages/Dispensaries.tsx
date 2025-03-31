@@ -1,38 +1,42 @@
-
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Edit, Trash, Calendar, User, Eye } from 'lucide-react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { Plus, Search, Edit, Trash, Calendar, User, Eye } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
   PaginationPrevious,
-  PaginationEllipsis
+  PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Dispensary {
   id: string;
   name: string;
   location: string;
   category: string;
-  status: 'open' | 'under-maintenance' | 'closed';
+  status: "active" | "inactive";
   assignedEngineer: string | null;
   lastServiceDate: string | null;
   createdAt: string;
@@ -45,175 +49,186 @@ interface Dispensary {
 
 const mockDispensaries: Dispensary[] = [
   {
-    id: '1',
-    name: 'Downtown Dispensary',
-    location: '123 Main St, Seattle, WA',
-    category: 'Recreational',
-    status: 'open',
-    assignedEngineer: 'Emma Roberts',
-    lastServiceDate: '2023-10-15',
-    createdAt: '2023-01-05',
-    contactPerson: 'John Smith',
-    phone: '206-555-1234',
-    email: 'john@downtown.com',
-    password: 'password123',
-    profilePicture: '/placeholder.svg'
+    id: "1",
+    name: "Downtown Dispensary",
+    location: "123 Main St, Seattle, WA",
+    category: "Recreational",
+    status: "active",
+    assignedEngineer: "Emma Roberts",
+    lastServiceDate: "2023-10-15",
+    createdAt: "2023-01-05",
+    contactPerson: "John Smith",
+    phone: "206-555-1234",
+    email: "john@downtown.com",
+    password: "password123",
+    profilePicture: "/placeholder.svg",
   },
   {
-    id: '2',
-    name: 'Green Leaf Dispensary',
-    location: '456 Oak Ave, Portland, OR',
-    category: 'Medical',
-    status: 'under-maintenance',
-    assignedEngineer: 'James Wilson',
-    lastServiceDate: '2023-11-02',
-    createdAt: '2023-02-12',
-    contactPerson: 'Sarah Johnson',
-    phone: '503-555-6789',
-    email: 'sarah@greenleaf.com',
-    password: 'password123',
-    profilePicture: '/placeholder.svg'
+    id: "2",
+    name: "Green Leaf Dispensary",
+    location: "456 Oak Ave, Portland, OR",
+    category: "Medical",
+    status: "inactive",
+    assignedEngineer: "James Wilson",
+    lastServiceDate: "2023-11-02",
+    createdAt: "2023-02-12",
+    contactPerson: "Sarah Johnson",
+    phone: "503-555-6789",
+    email: "sarah@greenleaf.com",
+    password: "password123",
+    profilePicture: "/placeholder.svg",
   },
   {
-    id: '3',
-    name: 'Herbal Solutions',
-    location: '789 Pine St, Denver, CO',
-    category: 'Recreational',
-    status: 'closed',
+    id: "3",
+    name: "Herbal Solutions",
+    location: "789 Pine St, Denver, CO",
+    category: "Recreational",
+    status: "active",
     assignedEngineer: null,
-    lastServiceDate: '2023-09-20',
-    createdAt: '2023-03-18',
-    contactPerson: 'Mike Davis',
-    phone: '303-555-4321',
-    email: 'mike@herbalsolutions.com',
-    password: 'password123',
-    profilePicture: '/placeholder.svg'
+    lastServiceDate: "2023-09-20",
+    createdAt: "2023-03-18",
+    contactPerson: "Mike Davis",
+    phone: "303-555-4321",
+    email: "mike@herbalsolutions.com",
+    password: "password123",
+    profilePicture: "/placeholder.svg",
   },
   {
-    id: '4',
-    name: 'Healing Center',
-    location: '101 Maple Rd, San Francisco, CA',
-    category: 'Medical',
-    status: 'open',
-    assignedEngineer: 'Lisa Chen',
-    lastServiceDate: '2023-10-25',
-    createdAt: '2023-04-22',
-    contactPerson: 'Emma Williams',
-    phone: '415-555-8765',
-    email: 'emma@healingcenter.com',
-    password: 'password123',
-    profilePicture: '/placeholder.svg'
+    id: "4",
+    name: "Healing Center",
+    location: "101 Maple Rd, San Francisco, CA",
+    category: "Medical",
+    status: "inactive",
+    assignedEngineer: "Lisa Chen",
+    lastServiceDate: "2023-10-25",
+    createdAt: "2023-04-22",
+    contactPerson: "Emma Williams",
+    phone: "415-555-8765",
+    email: "emma@healingcenter.com",
+    password: "password123",
+    profilePicture: "/placeholder.svg",
   },
   {
-    id: '5',
-    name: 'Evergreen Dispensary',
-    location: '202 Cedar Blvd, Las Vegas, NV',
-    category: 'Recreational',
-    status: 'open',
-    assignedEngineer: 'David Lee',
-    lastServiceDate: '2023-11-05',
-    createdAt: '2023-05-01',
-    contactPerson: 'Alex Turner',
-    phone: '702-555-9876',
-    email: 'alex@evergreen.com',
-    password: 'password123',
-    profilePicture: '/placeholder.svg'
+    id: "5",
+    name: "Evergreen Dispensary",
+    location: "202 Cedar Blvd, Las Vegas, NV",
+    category: "Recreational",
+    status: "active",
+    assignedEngineer: "David Lee",
+    lastServiceDate: "2023-11-05",
+    createdAt: "2023-05-01",
+    contactPerson: "Alex Turner",
+    phone: "702-555-9876",
+    email: "alex@evergreen.com",
+    password: "password123",
+    profilePicture: "/placeholder.svg",
   },
   {
-    id: '6',
-    name: 'Wellness Dispensary',
-    location: '303 Pine Ave, Chicago, IL',
-    category: 'Medical',
-    status: 'open',
-    assignedEngineer: 'Emma Roberts',
-    lastServiceDate: '2023-11-10',
-    createdAt: '2023-06-15',
-    contactPerson: 'Chris Garcia',
-    phone: '312-555-1122',
-    email: 'chris@wellness.com',
-    password: 'password123',
-    profilePicture: '/placeholder.svg'
+    id: "6",
+    name: "Wellness Dispensary",
+    location: "303 Pine Ave, Chicago, IL",
+    category: "Medical",
+    status: "active",
+    assignedEngineer: "Emma Roberts",
+    lastServiceDate: "2023-11-10",
+    createdAt: "2023-06-15",
+    contactPerson: "Chris Garcia",
+    phone: "312-555-1122",
+    email: "chris@wellness.com",
+    password: "password123",
+    profilePicture: "/placeholder.svg",
   },
   {
-    id: '7',
-    name: 'Green Zone',
-    location: '404 Elm St, Boston, MA',
-    category: 'Recreational',
-    status: 'under-maintenance',
-    assignedEngineer: 'James Wilson',
-    lastServiceDate: '2023-11-08',
-    createdAt: '2023-07-22',
-    contactPerson: 'Taylor Reed',
-    phone: '617-555-3344',
-    email: 'taylor@greenzone.com',
-    password: 'password123',
-    profilePicture: '/placeholder.svg'
+    id: "7",
+    name: "Green Zone",
+    location: "404 Elm St, Boston, MA",
+    category: "Recreational",
+    status: "active",
+    assignedEngineer: "James Wilson",
+    lastServiceDate: "2023-11-08",
+    createdAt: "2023-07-22",
+    contactPerson: "Taylor Reed",
+    phone: "617-555-3344",
+    email: "taylor@greenzone.com",
+    password: "password123",
+    profilePicture: "/placeholder.svg",
   },
   {
-    id: '8',
+    id: "8",
     name: "Nature's Remedy",
-    location: '505 Oak Blvd, Austin, TX',
-    category: 'Medical',
-    status: 'closed',
+    location: "505 Oak Blvd, Austin, TX",
+    category: "Medical",
+    status: "active",
     assignedEngineer: null,
-    lastServiceDate: '2023-10-30',
-    createdAt: '2023-08-05',
-    contactPerson: 'Jordan Patel',
-    phone: '512-555-5566',
-    email: 'jordan@naturesremedy.com',
-    password: 'password123',
-    profilePicture: '/placeholder.svg'
-  }
+    lastServiceDate: "2023-10-30",
+    createdAt: "2023-08-05",
+    contactPerson: "Jordan Patel",
+    phone: "512-555-5566",
+    email: "jordan@naturesremedy.com",
+    password: "password123",
+    profilePicture: "/placeholder.svg",
+  },
 ];
 
 const initializeLocalStorage = () => {
-  if (!localStorage.getItem('dispensaries')) {
-    localStorage.setItem('dispensaries', JSON.stringify(mockDispensaries));
+  if (!localStorage.getItem("dispensaries")) {
+    localStorage.setItem("dispensaries", JSON.stringify(mockDispensaries));
   }
 };
 
 initializeLocalStorage();
 
 const Dispensaries: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [viewingDispensary, setViewingDispensary] = useState<Dispensary | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('');
-  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [viewingDispensary, setViewingDispensary] = useState<Dispensary | null>(
+    null
+  );
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
   const { toast } = useToast();
   const navigate = useNavigate();
-  
+
   const { data: dispensaries = [], refetch } = useQuery({
-    queryKey: ['dispensaries'],
+    queryKey: ["dispensaries"],
     queryFn: () => {
-      const storedData = localStorage.getItem('dispensaries');
-      return Promise.resolve(storedData ? JSON.parse(storedData) : mockDispensaries);
+      const storedData = localStorage.getItem("dispensaries");
+      return Promise.resolve(
+        storedData ? JSON.parse(storedData) : mockDispensaries
+      );
     },
   });
-  
-  const filteredDispensaries = dispensaries.filter(dispensary => {
-    const matchesSearch = 
+
+  const filteredDispensaries = dispensaries.filter((dispensary) => {
+    const matchesSearch =
       dispensary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dispensary.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (dispensary.assignedEngineer?.toLowerCase().includes(searchTerm.toLowerCase()) || false);
-    
-    const matchesStatus = statusFilter ? dispensary.status === statusFilter : true;
-    const matchesCategory = categoryFilter ? dispensary.category === categoryFilter : true;
-    
+      dispensary.assignedEngineer
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      false;
+
+    const matchesStatus = statusFilter
+      ? dispensary.status === statusFilter
+      : true;
+    const matchesCategory = categoryFilter
+      ? dispensary.category === categoryFilter
+      : true;
+
     return matchesSearch && matchesStatus && matchesCategory;
   });
-  
+
   const totalPages = Math.ceil(filteredDispensaries.length / itemsPerPage);
   const paginatedDispensaries = filteredDispensaries.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  
+
   const handleAddDispensary = () => {
-    navigate('/dispensaries/add');
+    navigate("/dispensaries/add");
   };
-  
+
   const handleEditDispensary = (dispensary: Dispensary) => {
     navigate(`/dispensaries/edit/${dispensary.id}`);
   };
@@ -221,39 +236,37 @@ const Dispensaries: React.FC = () => {
   const handleViewDispensary = (dispensary: Dispensary) => {
     setViewingDispensary(dispensary);
   };
-  
+
   const handleDeleteDispensary = (dispensary: Dispensary) => {
-    const updatedDispensaries = dispensaries.filter(d => d.id !== dispensary.id);
-    localStorage.setItem('dispensaries', JSON.stringify(updatedDispensaries));
+    const updatedDispensaries = dispensaries.filter(
+      (d) => d.id !== dispensary.id
+    );
+    localStorage.setItem("dispensaries", JSON.stringify(updatedDispensaries));
     refetch();
-    
+
     toast({
       title: "Dispensary Deleted",
       description: `${dispensary.name} has been deleted successfully.`,
     });
   };
-  
+
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-      case 'under-maintenance':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
-      case 'closed':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      case "active":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+      case "inactive":
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
       default:
-        return '';
+        return "";
     }
   };
-  
+
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'open':
-        return 'Open';
-      case 'under-maintenance':
-        return 'Under Maintenance';
-      case 'closed':
-        return 'Closed';
+      case "active":
+        return "Active";
+      case "inactive":
+        return "Inactive";
       default:
         return status;
     }
@@ -262,55 +275,60 @@ const Dispensaries: React.FC = () => {
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxDisplayedPages = 5;
-    
+
     if (totalPages <= maxDisplayedPages) {
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
       }
     } else {
       pageNumbers.push(1);
-      
+
       let startPage = Math.max(2, currentPage - 1);
       let endPage = Math.min(totalPages - 1, currentPage + 1);
-      
+
       if (currentPage <= 2) {
         endPage = 3;
       }
-      
+
       if (currentPage >= totalPages - 1) {
         startPage = totalPages - 2;
       }
-      
+
       if (startPage > 2) {
-        pageNumbers.push('ellipsis-start');
+        pageNumbers.push("ellipsis-start");
       }
-      
+
       for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
       }
-      
+
       if (endPage < totalPages - 1) {
-        pageNumbers.push('ellipsis-end');
+        pageNumbers.push("ellipsis-end");
       }
-      
+
       if (totalPages > 1) {
         pageNumbers.push(totalPages);
       }
     }
-    
+
     return pageNumbers;
   };
-  
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dispensaries</h1>
-        <Button onClick={handleAddDispensary} className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Dispensaries
+        </h1>
+        <Button
+          onClick={handleAddDispensary}
+          className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Dispensary
         </Button>
       </div>
-      
+
       <Card>
         <CardHeader className="pb-2">
           <div className="flex flex-col space-y-4">
@@ -326,7 +344,7 @@ const Dispensaries: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div className="flex flex-wrap gap-2">
               <div>
                 <select
@@ -335,12 +353,11 @@ const Dispensaries: React.FC = () => {
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
                   <option value="">All Statuses</option>
-                  <option value="open">Open</option>
-                  <option value="under-maintenance">Under Maintenance</option>
-                  <option value="closed">Closed</option>
+                  <option value="active">Active</option>                  
+                  <option value="inactive">Inactive</option>
                 </select>
               </div>
-              
+
               <div>
                 <select
                   className="px-3 py-2 rounded-md border text-sm"
@@ -361,11 +378,11 @@ const Dispensaries: React.FC = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Category</TableHead>
+                  <TableHead>Address</TableHead>
+                  {/* <TableHead>Category</TableHead> */}
                   <TableHead>Status</TableHead>
-                  <TableHead>Assigned Engineer</TableHead>
-                  <TableHead>Last Service Date</TableHead>
+                  {/* <TableHead>Assigned Engineer</TableHead> */}
+                  {/* <TableHead>Last Service Date</TableHead> */}
                   <TableHead>Created Date</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -374,25 +391,29 @@ const Dispensaries: React.FC = () => {
                 {paginatedDispensaries.length > 0 ? (
                   paginatedDispensaries.map((dispensary) => (
                     <TableRow key={dispensary.id}>
-                      <TableCell className="font-medium">{dispensary.name}</TableCell>
+                      <TableCell className="font-medium">
+                        {dispensary.name}
+                      </TableCell>
                       <TableCell>{dispensary.location}</TableCell>
-                      <TableCell>{dispensary.category}</TableCell>
+                      {/* <TableCell>{dispensary.category}</TableCell> */}
                       <TableCell>
-                        <Badge 
+                        <Badge
                           variant="outline"
                           className={getStatusColor(dispensary.status)}
                         >
                           {getStatusLabel(dispensary.status)}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      {/* <TableCell>
                         {dispensary.assignedEngineer ? (
                           <div className="flex items-center">
                             <User className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
                             {dispensary.assignedEngineer}
                           </div>
                         ) : (
-                          <span className="text-gray-500 dark:text-gray-400">—</span>
+                          <span className="text-gray-500 dark:text-gray-400">
+                            —
+                          </span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -402,30 +423,32 @@ const Dispensaries: React.FC = () => {
                             {dispensary.lastServiceDate}
                           </div>
                         ) : (
-                          <span className="text-gray-500 dark:text-gray-400">—</span>
+                          <span className="text-gray-500 dark:text-gray-400">
+                            —
+                          </span>
                         )}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>{dispensary.createdAt}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => handleViewDispensary(dispensary)}
                           >
                             <Eye className="h-4 w-4" />
                             <span className="sr-only">View</span>
                           </Button>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => handleEditDispensary(dispensary)}
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>
                           </Button>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => handleDeleteDispensary(dispensary)}
                           >
@@ -438,7 +461,10 @@ const Dispensaries: React.FC = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-6 text-muted-foreground">
+                    <TableCell
+                      colSpan={8}
+                      className="text-center py-6 text-muted-foreground"
+                    >
                       No dispensaries found
                     </TableCell>
                   </TableRow>
@@ -446,11 +472,13 @@ const Dispensaries: React.FC = () => {
               </TableBody>
             </Table>
           </div>
-          
+
           <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
             <div className="mb-4 sm:mb-0">
-              <span className="text-sm text-muted-foreground mr-2">Items per page:</span>
-              <select 
+              <span className="text-sm text-muted-foreground mr-2">
+                Items per page:
+              </span>
+              <select
                 className="px-2 py-1 border rounded text-sm"
                 value={itemsPerPage}
                 onChange={(e) => {
@@ -464,21 +492,28 @@ const Dispensaries: React.FC = () => {
                 <option value={50}>50</option>
               </select>
             </div>
-            
+
             {filteredDispensaries.length > 0 && (
               <div className="flex justify-center">
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
-                      <PaginationPrevious 
-                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                      <PaginationPrevious
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                        className={
+                          currentPage === 1
+                            ? "pointer-events-none opacity-50"
+                            : ""
+                        }
                       />
                     </PaginationItem>
-                    
+
                     {getPageNumbers().map((pageNumber, index) => (
                       <PaginationItem key={`${pageNumber}-${index}`}>
-                        {pageNumber === 'ellipsis-start' || pageNumber === 'ellipsis-end' ? (
+                        {pageNumber === "ellipsis-start" ||
+                        pageNumber === "ellipsis-end" ? (
                           <PaginationEllipsis />
                         ) : (
                           <PaginationLink
@@ -490,11 +525,19 @@ const Dispensaries: React.FC = () => {
                         )}
                       </PaginationItem>
                     ))}
-                    
+
                     <PaginationItem>
-                      <PaginationNext 
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                      <PaginationNext
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, totalPages)
+                          )
+                        }
+                        className={
+                          currentPage === totalPages
+                            ? "pointer-events-none opacity-50"
+                            : ""
+                        }
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -505,7 +548,10 @@ const Dispensaries: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={!!viewingDispensary} onOpenChange={(open) => !open && setViewingDispensary(null)}>
+      <Dialog
+        open={!!viewingDispensary}
+        onOpenChange={(open) => !open && setViewingDispensary(null)}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Dispensary Details</DialogTitle>
@@ -518,16 +564,20 @@ const Dispensaries: React.FC = () => {
                   <p className="mt-1">{viewingDispensary.name}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Location</h3>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Location
+                  </h3>
                   <p className="mt-1">{viewingDispensary.location}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Category</h3>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Category
+                  </h3>
                   <p className="mt-1">{viewingDispensary.category}</p>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Status</h3>
-                  <Badge 
+                  <Badge
                     variant="outline"
                     className={getStatusColor(viewingDispensary.status)}
                   >
@@ -535,8 +585,12 @@ const Dispensaries: React.FC = () => {
                   </Badge>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Contact Person</h3>
-                  <p className="mt-1">{viewingDispensary.contactPerson || "—"}</p>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Contact Person
+                  </h3>
+                  <p className="mt-1">
+                    {viewingDispensary.contactPerson || "—"}
+                  </p>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Phone</h3>
@@ -547,21 +601,31 @@ const Dispensaries: React.FC = () => {
                   <p className="mt-1">{viewingDispensary.email || "—"}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Assigned Engineer</h3>
-                  <p className="mt-1">{viewingDispensary.assignedEngineer || "—"}</p>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Assigned Engineer
+                  </h3>
+                  <p className="mt-1">
+                    {viewingDispensary.assignedEngineer || "—"}
+                  </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Last Service Date</h3>
-                  <p className="mt-1">{viewingDispensary.lastServiceDate || "—"}</p>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Last Service Date
+                  </h3>
+                  <p className="mt-1">
+                    {viewingDispensary.lastServiceDate || "—"}
+                  </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Created At</h3>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Created At
+                  </h3>
                   <p className="mt-1">{viewingDispensary.createdAt}</p>
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setViewingDispensary(null)}
                 >
                   Close

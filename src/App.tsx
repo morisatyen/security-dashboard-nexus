@@ -27,6 +27,8 @@ import KnowledgeBaseEdit from "./pages/KnowledgeBaseEdit";
 
 // Initialize data
 import { getInitialData } from "./data/initialData";
+import AdminUserAdd from "./pages/AdminUserAdd";
+import AdminUserEdit from "./pages/AdminUserEdit";
 getInitialData();
 
 const queryClient = new QueryClient();
@@ -46,6 +48,8 @@ const App = () => {
               <Route path="/" element={<Layout />}>
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="users/admin-users" element={<AdminUsers />} />
+                <Route path="users/admin-users/add" element={<AdminUserAdd />} />
+                <Route path="users/admin-users/edit/:id" element={<AdminUserEdit />} />
                 <Route path="users/support-engineers" element={<SupportEngineers />} />
                 <Route path="users/support-engineers/add" element={<SupportEngineerAdd />} />
                 <Route path="users/support-engineers/edit/:id" element={<SupportEngineerEdit />} />

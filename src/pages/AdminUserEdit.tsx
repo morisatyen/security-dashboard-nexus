@@ -16,12 +16,12 @@ interface SupportEngineer {
   phone: string;
   specialization: string;
   region: string;
-  status: 'available' | 'on-leave' | 'assigned';
+  status: 'active' | 'inactive';
   activeRequests: number;
   joinedDate: string;
 }
 
-const SupportEngineerEdit: React.FC = () => {
+const AdminUserEdit: React.FC = () => {
   const [engineer, setEngineer] = useState<SupportEngineer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,11 +39,11 @@ const SupportEngineerEdit: React.FC = () => {
         setEngineer(foundEngineer);
       } else {
         toast({
-          title: "Engineer Not Found",
-          description: "The requested support engineer could not be found.",
+          title: "User Not Found",
+          description: "The requested Admin users could not be found.",
           variant: "destructive"
         });
-        navigate('/users/support-engineers');
+        navigate('/users/admin-users');
       }
     }
     setIsLoading(false);
@@ -61,7 +61,7 @@ const SupportEngineerEdit: React.FC = () => {
     const phone = formData.get('phone') as string;
     const specialization = formData.get('specialization') as string;
     const region = formData.get('region') as string;
-    const status = formData.get('status') as 'available' | 'on-leave' | 'assigned';
+    const status = formData.get('status') as 'active' | 'inactive';
     
     const updatedEngineer: SupportEngineer = {
       id: engineer!.id,
@@ -86,19 +86,19 @@ const SupportEngineerEdit: React.FC = () => {
       
       // Show success message
       toast({
-        title: "Support Engineer Updated",
+        title: "Admin User Updated",
         description: `${firstName} ${lastName} has been updated successfully.`
       });
       
       // Redirect back to the list page
       setTimeout(() => {
-        navigate('/users/support-engineers');
+        navigate('/users/admin-users');
       }, 1000);
     }
   };
   
   const handleCancel = () => {
-    navigate('/users/support-engineers');
+    navigate('/users/admin-users');
   };
   
   if (isLoading) {
@@ -123,12 +123,12 @@ const SupportEngineerEdit: React.FC = () => {
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Support Engineer</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Admin User</h1>
       </div>
       
       <Card>
         <CardHeader>
-          <CardTitle>Edit support engineer</CardTitle>
+          <CardTitle>Edit Admin User</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -231,9 +231,8 @@ const SupportEngineerEdit: React.FC = () => {
                   defaultValue={engineer.status}
                   required
                 >
-                  <option value="available">Available</option>
-                  <option value="assigned">Assigned</option>
-                  <option value="on-leave">On Leave</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>                  
                 </select>
               </div>
             </div>
@@ -251,7 +250,7 @@ const SupportEngineerEdit: React.FC = () => {
                 disabled={isSubmitting}
                 className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
               >
-                {isSubmitting ? 'Updating...' : 'Update Support Engineer'}
+                {isSubmitting ? 'Updating...' : 'Update Admin User'}
               </Button>
             </div>
           </form>
@@ -261,4 +260,4 @@ const SupportEngineerEdit: React.FC = () => {
   );
 };
 
-export default SupportEngineerEdit;
+export default AdminUserEdit;

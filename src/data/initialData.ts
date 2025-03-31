@@ -16,7 +16,7 @@ export interface Dispensary {
   name: string;
   address: string;
   category: 'retail' | 'medical' | 'hybrid';
-  status: 'open' | 'closed' | 'maintenance';
+  status: 'active' | 'inactive';
   supportEngineerId: string;
   createdAt: string;
 }
@@ -94,7 +94,7 @@ export const initialDispensaries: Dispensary[] = [
     name: 'Green Leaf Dispensary',
     address: '123 Main St, Anytown, CA',
     category: 'retail',
-    status: 'open',
+    status: 'active',
     supportEngineerId: '4',
     createdAt: new Date().toISOString(),
   },
@@ -103,7 +103,7 @@ export const initialDispensaries: Dispensary[] = [
     name: 'Medical Care Cannabis',
     address: '456 Oak Ave, Somewhere, CA',
     category: 'medical',
-    status: 'open',
+    status: 'inactive',
     supportEngineerId: '5',
     createdAt: new Date().toISOString(),
   },
@@ -112,7 +112,7 @@ export const initialDispensaries: Dispensary[] = [
     name: 'Hybrid Solutions',
     address: '789 Pine Rd, Nowhere, CA',
     category: 'hybrid',
-    status: 'maintenance',
+    status: 'active',
     supportEngineerId: '4',
     createdAt: new Date().toISOString(),
   },
@@ -121,7 +121,7 @@ export const initialDispensaries: Dispensary[] = [
     name: 'Nature\'s Remedy',
     address: '101 River St, Othertown, CA',
     category: 'retail',
-    status: 'closed',
+    status: 'active',
     supportEngineerId: '5',
     createdAt: new Date().toISOString(),
   },
@@ -130,7 +130,7 @@ export const initialDispensaries: Dispensary[] = [
     name: 'Wellness Cannabis Center',
     address: '202 Mountain Blvd, Summit, CA',
     category: 'medical',
-    status: 'open',
+    status: 'active',
     supportEngineerId: '4',
     createdAt: new Date().toISOString(),
   },

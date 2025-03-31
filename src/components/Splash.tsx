@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-
+import logo from "../images/myerslogo.webp"
 const Splash: React.FC = () => {
   const [redirect, setRedirect] = useState(false);
   const { isAuthenticated } = useAuth();
@@ -10,7 +10,7 @@ const Splash: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setRedirect(true);
-    }, 2500); // 2.5 seconds delay
+    }, 3000); // 2.5 seconds delay
     
     return () => clearTimeout(timer);
   }, []);
@@ -22,10 +22,10 @@ const Splash: React.FC = () => {
   return (
     <div className="fixed inset-0 bg-myers-darkBlue dark:bg-myers-darkBlue flex items-center justify-center z-50">
       <div className="flex flex-col items-center">
-        <div className="w-24 h-24 mb-8 relative animate-float">
-          <div className="absolute inset-0 bg-myers-yellow rounded-full opacity-75 animate-pulse"></div>
+        <div className="w-40 h-20 mb-2 relative">
+          <div className="absolute inset-0  opacity-75 animate-pulse"></div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <svg 
+            {/* <svg 
               className="w-16 h-16 text-myers-darkBlue"
               viewBox="0 0 24 24" 
               fill="none" 
@@ -42,10 +42,11 @@ const Splash: React.FC = () => {
                 strokeWidth="2" 
                 strokeLinecap="round"
               />
-            </svg>
+            </svg> */}
+            <img src={logo} alt="User Avatar" className="h-20 w-40" />
           </div>
         </div>
-        <h1 className="text-myers-yellow text-3xl font-bold mb-4 animate-fade-in">Myers Security</h1>
+        {/* <h1 className="text-myers-yellow text-3xl font-bold mb-4 animate-fade-in">Myers Security</h1> */}
         <div className="w-48 h-1 bg-myers-yellow rounded-full overflow-hidden">
           <div className="h-full bg-white animate-[pulse_1.5s_ease-in-out_infinite]"></div>
         </div>
