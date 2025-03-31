@@ -19,6 +19,7 @@ import SupportEngineerEdit from "./pages/SupportEngineerEdit";
 import Dispensaries from "./pages/Dispensaries";
 import DispensaryAdd from "./pages/DispensaryAdd";
 import DispensaryEdit from "./pages/DispensaryEdit";
+import DispensaryView from "./pages/DispensaryView";
 import ServiceRequests from "./pages/ServiceRequests";
 import Invoices from "./pages/Invoices";
 import KnowledgeBase from "./pages/KnowledgeBase";
@@ -56,6 +57,7 @@ const App = () => {
                 <Route path="dispensaries" element={<Dispensaries />} />
                 <Route path="dispensaries/add" element={<DispensaryAdd />} />
                 <Route path="dispensaries/edit/:id" element={<DispensaryEdit />} />
+                <Route path="dispensaries/view/:id" element={<DispensaryView />} />
                 <Route path="service-requests" element={<ServiceRequests />} />
                 <Route path="invoices" element={<Invoices />} />
                 <Route path="knowledge-base" element={<KnowledgeBase />} />
