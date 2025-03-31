@@ -37,6 +37,11 @@ interface Invoice {
   description: string;
 }
 
+interface InvoicesProps {
+  dispensaryId?: string;
+  viewMode?: boolean;
+}
+
 const mockInvoices: Invoice[] = [
   {
     id: '1',
@@ -108,7 +113,7 @@ const dispensaries = [
   { id: '5', name: 'Evergreen Dispensary' }
 ];
 
-const Invoices: React.FC = () => {
+const Invoices: React.FC<InvoicesProps> = ({ dispensaryId, viewMode = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -119,9 +124,19 @@ const Invoices: React.FC = () => {
   
   // In a real app, this would fetch from an API
   const { data: invoices = mockInvoices } = useQuery({
-    queryKey: ['invoices'],
-    queryFn: () => Promise.resolve(mockInvoices),
-    initialData: mockInvoices,
+    queryKey: ['invoices', dispensaryId],
+    queryFn: () => {
+      // If in dispensary view mode, filter invoices by dispensaryId
+      if (dispensaryId) {
+        return Promise.resolve(
+          mockInvoices.filter(invoice => invoice.dispensaryId === dispensaryId)
+        );
+      }
+      return Promise.resolve(mockInvoices);
+    },
+    initialData: dispensaryId 
+      ? mockInvoices.filter(invoice => invoice.dispensaryId === dispensaryId)
+      : mockInvoices,
   });
   
   const filteredInvoices = invoices.filter(invoice => {
@@ -192,11 +207,19 @@ const Invoices: React.FC = () => {
         return '';
     }
   };
+
+  // Calculate the "Showing X to Y of Z results" text
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, filteredInvoices.length);
+  const totalItems = filteredInvoices.length;
+  const resultsText = `Showing ${startItem} to ${endItem} of ${totalItems} results`;
   
   return (
-    <div className="p-6 space-y-6">
+    <div className={viewMode ? "" : "p-6 space-y-6"}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Invoices</h1>
+        {!viewMode && (
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Invoices</h1>
+        )}
         <Button onClick={handleAddInvoice} className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400">
           <Plus className="h-4 w-4 mr-2" />
           Generate New Invoice
@@ -216,7 +239,8 @@ const Invoices: React.FC = () => {
                   <select 
                     id="dispensary" 
                     className="w-full px-3 py-2 border rounded-md"
-                    defaultValue=""
+                    defaultValue={dispensaryId || ""}
+                    disabled={!!dispensaryId}
                   >
                     <option value="">Select Dispensary</option>
                     {dispensaries.map(dispensary => (
@@ -335,7 +359,7 @@ const Invoices: React.FC = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Invoice #</TableHead>
-                  <TableHead>Dispensary</TableHead>
+                  {!dispensaryId && <TableHead>Dispensary</TableHead>}
                   <TableHead>Amount</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Issued Date</TableHead>
@@ -349,7 +373,7 @@ const Invoices: React.FC = () => {
                   paginatedInvoices.map((invoice) => (
                     <TableRow key={invoice.id}>
                       <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
-                      <TableCell>{invoice.dispensaryName}</TableCell>
+                      {!dispensaryId && <TableCell>{invoice.dispensaryName}</TableCell>}
                       <TableCell>${invoice.amount.toFixed(2)}</TableCell>
                       <TableCell>
                         <Badge 
@@ -405,7 +429,7 @@ const Invoices: React.FC = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-6 text-muted-foreground">
+                    <TableCell colSpan={dispensaryId ? 7 : 8} className="text-center py-6 text-muted-foreground">
                       No invoices found
                     </TableCell>
                   </TableRow>
@@ -414,8 +438,12 @@ const Invoices: React.FC = () => {
             </Table>
           </div>
           
-          {filteredInvoices.length > itemsPerPage && (
-            <div className="mt-4 flex justify-center">
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
+            <div className="text-sm text-muted-foreground mb-4 sm:mb-0">
+              {resultsText}
+            </div>
+            
+            {filteredInvoices.length > itemsPerPage && (
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
@@ -425,16 +453,11 @@ const Invoices: React.FC = () => {
                     />
                   </PaginationItem>
                   
-                  {Array.from({ length: totalPages }).map((_, index) => (
-                    <PaginationItem key={index}>
-                      <PaginationLink
-                        isActive={currentPage === index + 1}
-                        onClick={() => setCurrentPage(index + 1)}
-                      >
-                        {index + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
+                  <PaginationItem>
+                    <PaginationLink isActive={true}>
+                      {currentPage}
+                    </PaginationLink>
+                  </PaginationItem>
                   
                   <PaginationItem>
                     <PaginationNext 
@@ -444,8 +467,8 @@ const Invoices: React.FC = () => {
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
-            </div>
-          )}
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>

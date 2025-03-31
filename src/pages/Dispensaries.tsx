@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, Edit, Trash, Calendar, User, Eye } from "lucide-react";
+import { Plus, Search, Edit, Trash, Calendar, User, Eye, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -19,7 +19,6 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-  PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -178,6 +177,9 @@ const initializeLocalStorage = () => {
 
 initializeLocalStorage();
 
+type SortField = "name" | "createdAt";
+type SortDirection = "asc" | "desc";
+
 const Dispensaries: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -187,6 +189,8 @@ const Dispensaries: React.FC = () => {
   );
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [sortField, setSortField] = useState<SortField>("name");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -200,24 +204,48 @@ const Dispensaries: React.FC = () => {
     },
   });
 
-  const filteredDispensaries = dispensaries.filter((dispensary) => {
-    const matchesSearch =
-      dispensary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dispensary.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dispensary.assignedEngineer
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      false;
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
 
-    const matchesStatus = statusFilter
-      ? dispensary.status === statusFilter
-      : true;
-    const matchesCategory = categoryFilter
-      ? dispensary.category === categoryFilter
-      : true;
+  const filteredDispensaries = useMemo(() => {
+    const filtered = dispensaries.filter((dispensary) => {
+      const matchesSearch =
+        dispensary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        dispensary.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        dispensary.assignedEngineer
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        false;
 
-    return matchesSearch && matchesStatus && matchesCategory;
-  });
+      const matchesStatus = statusFilter
+        ? dispensary.status === statusFilter
+        : true;
+      const matchesCategory = categoryFilter
+        ? dispensary.category === categoryFilter
+        : true;
+
+      return matchesSearch && matchesStatus && matchesCategory;
+    });
+
+    return [...filtered].sort((a, b) => {
+      if (sortField === "name") {
+        return sortDirection === "asc" 
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      } else if (sortField === "createdAt") {
+        return sortDirection === "asc"
+          ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      return 0;
+    });
+  }, [dispensaries, searchTerm, statusFilter, categoryFilter, sortField, sortDirection]);
 
   const totalPages = Math.ceil(filteredDispensaries.length / itemsPerPage);
   const paginatedDispensaries = filteredDispensaries.slice(
@@ -234,7 +262,7 @@ const Dispensaries: React.FC = () => {
   };
 
   const handleViewDispensary = (dispensary: Dispensary) => {
-    setViewingDispensary(dispensary);
+    navigate(`/dispensaries/view/${dispensary.id}`);
   };
 
   const handleDeleteDispensary = (dispensary: Dispensary) => {
@@ -272,47 +300,10 @@ const Dispensaries: React.FC = () => {
     }
   };
 
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxDisplayedPages = 5;
-
-    if (totalPages <= maxDisplayedPages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      pageNumbers.push(1);
-
-      let startPage = Math.max(2, currentPage - 1);
-      let endPage = Math.min(totalPages - 1, currentPage + 1);
-
-      if (currentPage <= 2) {
-        endPage = 3;
-      }
-
-      if (currentPage >= totalPages - 1) {
-        startPage = totalPages - 2;
-      }
-
-      if (startPage > 2) {
-        pageNumbers.push("ellipsis-start");
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (endPage < totalPages - 1) {
-        pageNumbers.push("ellipsis-end");
-      }
-
-      if (totalPages > 1) {
-        pageNumbers.push(totalPages);
-      }
-    }
-
-    return pageNumbers;
-  };
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, filteredDispensaries.length);
+  const totalItems = filteredDispensaries.length;
+  const resultsText = `Showing ${startItem} to ${endItem} of ${totalItems} results`;
 
   return (
     <div className="p-6 space-y-6">
@@ -366,13 +357,38 @@ const Dispensaries: React.FC = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                    onClick={() => handleSort("name")}
+                  >
+                    <div className="flex items-center">
+                      Name
+                      {sortField === "name" && (
+                        sortDirection === "asc" ? (
+                          <ArrowUp className="ml-1 h-4 w-4" />
+                        ) : (
+                          <ArrowDown className="ml-1 h-4 w-4" />
+                        )
+                      )}
+                    </div>
+                  </TableHead>
                   <TableHead>Address</TableHead>
-                  {/* <TableHead>Category</TableHead> */}
                   <TableHead>Status</TableHead>
-                  {/* <TableHead>Assigned Engineer</TableHead> */}
-                  {/* <TableHead>Last Service Date</TableHead> */}
-                  <TableHead>Created Date</TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                    onClick={() => handleSort("createdAt")}
+                  >
+                    <div className="flex items-center">
+                      Created Date
+                      {sortField === "createdAt" && (
+                        sortDirection === "asc" ? (
+                          <ArrowUp className="ml-1 h-4 w-4" />
+                        ) : (
+                          <ArrowDown className="ml-1 h-4 w-4" />
+                        )
+                      )}
+                    </div>
+                  </TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -381,10 +397,24 @@ const Dispensaries: React.FC = () => {
                   paginatedDispensaries.map((dispensary) => (
                     <TableRow key={dispensary.id}>
                       <TableCell className="font-medium">
-                        {dispensary.name}
+                        <div className="flex items-center gap-3">
+                          {dispensary.profilePicture ? (
+                            <img
+                              src={dispensary.profilePicture}
+                              alt={`${dispensary.name} profile`}
+                              className="h-10 w-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                              <span className="text-gray-500">
+                                {dispensary.name.charAt(0)}
+                              </span>
+                            </div>
+                          )}
+                          {dispensary.name}
+                        </div>
                       </TableCell>
                       <TableCell>{dispensary.location}</TableCell>
-                      {/* <TableCell>{dispensary.category}</TableCell> */}
                       <TableCell>
                         <Badge
                           variant="outline"
@@ -393,30 +423,6 @@ const Dispensaries: React.FC = () => {
                           {getStatusLabel(dispensary.status)}
                         </Badge>
                       </TableCell>
-                      {/* <TableCell>
-                        {dispensary.assignedEngineer ? (
-                          <div className="flex items-center">
-                            <User className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                            {dispensary.assignedEngineer}
-                          </div>
-                        ) : (
-                          <span className="text-gray-500 dark:text-gray-400">
-                            —
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {dispensary.lastServiceDate ? (
-                          <div className="flex items-center">
-                            <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                            {dispensary.lastServiceDate}
-                          </div>
-                        ) : (
-                          <span className="text-gray-500 dark:text-gray-400">
-                            —
-                          </span>
-                        )}
-                      </TableCell> */}
                       <TableCell>{dispensary.createdAt}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
@@ -451,7 +457,7 @@ const Dispensaries: React.FC = () => {
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={8}
+                      colSpan={5}
                       className="text-center py-6 text-muted-foreground"
                     >
                       No dispensaries found
@@ -463,23 +469,8 @@ const Dispensaries: React.FC = () => {
           </div>
 
           <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
-            <div className="mb-4 sm:mb-0">
-              <span className="text-sm text-muted-foreground mr-2">
-                Items per page:
-              </span>
-              <select
-                className="px-2 py-1 border rounded text-sm"
-                value={itemsPerPage}
-                onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-              </select>
+            <div className="text-sm text-muted-foreground mb-4 sm:mb-0">
+              {resultsText}
             </div>
 
             {filteredDispensaries.length > 0 && (
@@ -499,21 +490,11 @@ const Dispensaries: React.FC = () => {
                       />
                     </PaginationItem>
 
-                    {getPageNumbers().map((pageNumber, index) => (
-                      <PaginationItem key={`${pageNumber}-${index}`}>
-                        {pageNumber === "ellipsis-start" ||
-                        pageNumber === "ellipsis-end" ? (
-                          <PaginationEllipsis />
-                        ) : (
-                          <PaginationLink
-                            isActive={currentPage === pageNumber}
-                            onClick={() => setCurrentPage(Number(pageNumber))}
-                          >
-                            {pageNumber}
-                          </PaginationLink>
-                        )}
-                      </PaginationItem>
-                    ))}
+                    <PaginationItem>
+                      <PaginationLink isActive={true}>
+                        {currentPage}
+                      </PaginationLink>
+                    </PaginationItem>
 
                     <PaginationItem>
                       <PaginationNext
