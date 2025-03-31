@@ -836,17 +836,6 @@ const SupportEngineers: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
-
-      {/* CSS for sticky table card */}
-      <style jsx>{`
-        .sticky-card {
-          position: sticky;
-          top: 121px; /* Height of header + breadcrumb */
-          z-index: 10;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-            0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-      `}</style>
     </div>
   );
 };

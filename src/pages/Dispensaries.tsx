@@ -357,18 +357,7 @@ const Dispensaries: React.FC = () => {
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
-
-              <div>
-                <select
-                  className="px-3 py-2 rounded-md border text-sm"
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                >
-                  <option value="">All Categories</option>
-                  <option value="Recreational">Recreational</option>
-                  <option value="Medical">Medical</option>
-                </select>
-              </div>
+             
             </div>
           </div>
         </CardHeader>
