@@ -23,6 +23,9 @@ export default {
         sans: ["Poppins", "Roboto", "system-ui", "sans-serif"],
       },
       colors: {
+        gray: {
+          900: "#161616",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -57,8 +60,8 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         myers: {
-          yellow: "#FEF001",
-          darkBlue: "#161616",
+          yellow: "#FCD147",
+          darkBlue: "#14386B",
           black: "#000000",
           white: "#FFFFFF",
           gray: "#F5F5F5",

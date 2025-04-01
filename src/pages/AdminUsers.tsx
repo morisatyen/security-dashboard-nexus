@@ -492,7 +492,7 @@ const AdminUsers: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               <div>
                 <select
-                  className="px-3 py-2 rounded-md border text-sm"
+                  className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
@@ -649,7 +649,7 @@ const AdminUsers: React.FC = () => {
                   Items per page:
                 </span>
                 <select
-                  className="px-2 py-1 border rounded text-sm"
+                  className="px-2 py-1 border rounded text-myers-darkBlue"
                   value={itemsPerPage}
                   onChange={(e) => {
                     setItemsPerPage(Number(e.target.value));

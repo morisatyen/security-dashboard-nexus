@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, AlertTriangle, ArrowLeft } from 'lucide-react';
-import logo from "../images/Logo1.png"
+import logo from "../images/Onlylogo.png"
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ const ForgotPassword: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
           {/* Top Section (Black background with logo) */}
           <div className="bg-black text-white py-8 px-4 sm:px-10 flex flex-col items-center relative">
-            <div className="w-32 h-16 flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-[#ffffff] rounded-full flex items-center justify-center mb-4">
               {/* <svg 
                 className="w-10 h-10 text-myers-darkBlue"
                 viewBox="0 0 24 24" 
@@ -63,7 +63,7 @@ const ForgotPassword: React.FC = () => {
             
             {/* Wave Divider */}
             <div className="absolute -bottom-5 left-0 w-full overflow-hidden">
-              <svg 
+              {/* <svg 
                 className="w-full h-5" 
                 viewBox="0 0 1200 120" 
                 preserveAspectRatio="none"
@@ -71,7 +71,7 @@ const ForgotPassword: React.FC = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
-              </svg>
+              </svg> */}
             </div>
           </div>
           

@@ -11,7 +11,7 @@ const Breadcrumb: React.FC = () => {
   const pathMap: Record<string, string> = {
     'dashboard': 'Dashboard',
     'users': 'Users',
-    'dispensaries': 'Dispensaries',
+    'dispensaries': 'Customers',
     'service-requests': 'Service Requests',
     'admin-users': 'Admin Users',
     'support-engineers': 'Support Engineers',

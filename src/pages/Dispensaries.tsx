@@ -1,7 +1,17 @@
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, Edit, Trash, Calendar, User, Eye, ArrowUp, ArrowDown } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash,
+  Calendar,
+  User,
+  Eye,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -177,7 +187,7 @@ const initializeLocalStorage = () => {
 
 initializeLocalStorage();
 
-type SortField = "name" | "createdAt";
+type SortField = "name" | "contactPerson" | "createdAt";
 type SortDirection = "asc" | "desc";
 
 const Dispensaries: React.FC = () => {
@@ -235,17 +245,28 @@ const Dispensaries: React.FC = () => {
 
     return [...filtered].sort((a, b) => {
       if (sortField === "name") {
-        return sortDirection === "asc" 
+        return sortDirection === "asc"
           ? a.name.localeCompare(b.name)
           : b.name.localeCompare(a.name);
       } else if (sortField === "createdAt") {
         return sortDirection === "asc"
           ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }else if(sortField === "contactPerson"){
+        return sortDirection === "asc"
+          ? a.contactPerson.localeCompare(b.contactPerson)
+          : b.contactPerson.localeCompare(a.contactPerson);
       }
       return 0;
     });
-  }, [dispensaries, searchTerm, statusFilter, categoryFilter, sortField, sortDirection]);
+  }, [
+    dispensaries,
+    searchTerm,
+    statusFilter,
+    categoryFilter,
+    sortField,
+    sortDirection,
+  ]);
 
   const totalPages = Math.ceil(filteredDispensaries.length / itemsPerPage);
   const paginatedDispensaries = filteredDispensaries.slice(
@@ -301,7 +322,10 @@ const Dispensaries: React.FC = () => {
   };
 
   const startItem = (currentPage - 1) * itemsPerPage + 1;
-  const endItem = Math.min(currentPage * itemsPerPage, filteredDispensaries.length);
+  const endItem = Math.min(
+    currentPage * itemsPerPage,
+    filteredDispensaries.length
+  );
   const totalItems = filteredDispensaries.length;
   const resultsText = `Showing ${startItem} to ${endItem} of ${totalItems} results`;
 
@@ -309,14 +333,14 @@ const Dispensaries: React.FC = () => {
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Dispensaries
+          Customers
         </h1>
         <Button
           onClick={handleAddDispensary}
           className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add Dispensary
+          Add Customer
         </Button>
       </div>
 
@@ -324,11 +348,11 @@ const Dispensaries: React.FC = () => {
         <CardHeader className="pb-2">
           <div className="flex flex-col space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <CardTitle>Dispensaries List</CardTitle>
+              <CardTitle>Customers List</CardTitle>
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search dispensaries..."
+                  placeholder="Search customers..."
                   className="pl-8 w-full sm:w-64"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -339,16 +363,15 @@ const Dispensaries: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               <div>
                 <select
-                  className="px-3 py-2 rounded-md border text-sm"
+                  className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
                   <option value="">All Statuses</option>
-                  <option value="active">Active</option>                  
+                  <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
-             
             </div>
           </div>
         </CardHeader>
@@ -357,36 +380,49 @@ const Dispensaries: React.FC = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead 
+                  <TableHead
                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
                     onClick={() => handleSort("name")}
                   >
                     <div className="flex items-center">
-                      Name
-                      {sortField === "name" && (
-                        sortDirection === "asc" ? (
+                      Dispensaries Name
+                      {sortField === "name" &&
+                        (sortDirection === "asc" ? (
                           <ArrowUp className="ml-1 h-4 w-4" />
                         ) : (
                           <ArrowDown className="ml-1 h-4 w-4" />
-                        )
-                      )}
+                        ))}
                     </div>
                   </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                    onClick={() => handleSort("contactPerson")}
+                  >
+                    <div className="flex items-center">
+                      Customers Name
+                      {sortField === "contactPerson" &&
+                        (sortDirection === "asc" ? (
+                          <ArrowUp className="ml-1 h-4 w-4" />
+                        ) : (
+                          <ArrowDown className="ml-1 h-4 w-4" />
+                        ))}
+                    </div>
+                  </TableHead>
+                  <TableHead>Email</TableHead>
                   <TableHead>Address</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead 
+                  <TableHead
                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
                     onClick={() => handleSort("createdAt")}
                   >
                     <div className="flex items-center">
                       Created Date
-                      {sortField === "createdAt" && (
-                        sortDirection === "asc" ? (
+                      {sortField === "createdAt" &&
+                        (sortDirection === "asc" ? (
                           <ArrowUp className="ml-1 h-4 w-4" />
                         ) : (
                           <ArrowDown className="ml-1 h-4 w-4" />
-                        )
-                      )}
+                        ))}
                     </div>
                   </TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -414,6 +450,8 @@ const Dispensaries: React.FC = () => {
                           {dispensary.name}
                         </div>
                       </TableCell>
+                      <TableCell>{dispensary.contactPerson}</TableCell>
+                      <TableCell>{dispensary.email}</TableCell>
                       <TableCell>{dispensary.location}</TableCell>
                       <TableCell>
                         <Badge
@@ -524,7 +562,7 @@ const Dispensaries: React.FC = () => {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Dispensary Details</DialogTitle>
+            <DialogTitle>Customer Details</DialogTitle>
           </DialogHeader>
           {viewingDispensary && (
             <div className="space-y-4">

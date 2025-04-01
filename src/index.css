@@ -133,3 +133,6 @@
     scrollbar-width: none;  /* Firefox */
   }
 }
+.dark .bg-myers-darkBlue, .dark .dark\:bg-myers-darkBlue:is(.dark *) {
+  background-color: #161616;
+}

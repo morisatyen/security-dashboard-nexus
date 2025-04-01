@@ -178,7 +178,7 @@ const DispensaryView: React.FC = () => {
       <div className="p-6">
         <Card>
           <CardContent className="pt-6">
-            <p>Loading dispensary details...</p>
+            <p>Loading customers details...</p>
           </CardContent>
         </Card>
       </div>
@@ -239,7 +239,7 @@ const DispensaryView: React.FC = () => {
         <TabsContent value="details">
           <Card>
             <CardHeader>
-              <CardTitle>Dispensary Details</CardTitle>
+              <CardTitle>Customer Details</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -263,22 +263,22 @@ const DispensaryView: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Name</h3>
+                    <h3 className="text-sm font-medium text-gray-500">Dispensary Name</h3>
                     <p className="mt-1">{dispensary.name}</p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Location</h3>
                     <p className="mt-1">{dispensary.location}</p>
                   </div>
-                  <div>
+                  {/* <div>
                     <h3 className="text-sm font-medium text-gray-500">Category</h3>
                     <p className="mt-1">{dispensary.category}</p>
-                  </div>
+                  </div> */}
                 </div>
                 
                 <div className="flex flex-col gap-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Contact Person</h3>
+                    <h3 className="text-sm font-medium text-gray-500">Customer Name</h3>
                     <p className="mt-1">{dispensary.contactPerson || "—"}</p>
                   </div>
                   <div>

@@ -498,7 +498,7 @@ const ServiceRequests: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               <div>
                 <select
-                  className="px-3 py-2 rounded-md border text-sm"
+                  className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
@@ -511,7 +511,7 @@ const ServiceRequests: React.FC = () => {
               
               <div>
                 <select
-                  className="px-3 py-2 rounded-md border text-sm"
+                  className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
                 >
@@ -635,7 +635,7 @@ const ServiceRequests: React.FC = () => {
             <div className="mb-4 sm:mb-0">
               <span className="text-sm text-muted-foreground mr-2">Items per page:</span>
               <select 
-                className="px-2 py-1 border rounded text-sm"
+                className="px-2 py-1 border rounded text-myers-darkBlue"
                 value={itemsPerPage}
                 onChange={(e) => {
                   setItemsPerPage(Number(e.target.value));

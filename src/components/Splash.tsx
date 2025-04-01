@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import logo from "../images/myerslogo.webp"
+import logo from "../images/logofull.png"
 const Splash: React.FC = () => {
   const [redirect, setRedirect] = useState(false);
   const { isAuthenticated } = useAuth();
@@ -20,7 +20,7 @@ const Splash: React.FC = () => {
   }
   
   return (
-    <div className="fixed inset-0 bg-myers-darkBlue dark:bg-myers-darkBlue flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[#161616] dark:bg-[#161616] flex items-center justify-center z-50">
       <div className="flex flex-col items-center">
         <div className="w-40 h-20 mb-2 relative">
           <div className="absolute inset-0  opacity-75 animate-pulse"></div>

@@ -80,7 +80,7 @@ const DispensaryAdd: React.FC = () => {
 
     // Show success message
     toast({
-      title: "Dispensary Created",
+      title: "Customer Created",
       description: `${name} has been created successfully.`,
     });
 
@@ -101,13 +101,13 @@ const DispensaryAdd: React.FC = () => {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Add Dispensary
+          Add Customers
         </h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Create a new dispensary</CardTitle>
+          <CardTitle>Create a new Customers</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -138,12 +138,12 @@ const DispensaryAdd: React.FC = () => {
 
               <div className="space-y-2">
                 <label htmlFor="contactPerson" className="text-sm font-medium">
-                  Contact Person <span className="text-red-500">*</span>
+                  Customer Name <span className="text-red-500">*</span>
                 </label>
                 <Input
                   id="contactPerson"
                   name="contactPerson"
-                  placeholder="Enter contact person name"
+                  placeholder="Enter customer name"
                   required
                 />
               </div>
@@ -268,7 +268,7 @@ const DispensaryAdd: React.FC = () => {
                 disabled={isSubmitting}
                 className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
               >
-                {isSubmitting ? "Creating..." : "Create Dispensary"}
+                {isSubmitting ? "Creating..." : "Create Customer"}
               </Button>
             </div>
           </form>
