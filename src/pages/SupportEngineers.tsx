@@ -537,7 +537,7 @@ const SupportEngineers: React.FC = () => {
                 >
                   <option value="">All Statuses</option>
                   <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>                  
+                  <option value="inactive">Inactive</option>
                 </select>
               </div>
 
@@ -720,21 +720,11 @@ const SupportEngineers: React.FC = () => {
                         />
                       </PaginationItem>
 
-                      {getPageNumbers().map((pageNumber, index) => (
-                        <PaginationItem key={`${pageNumber}-${index}`}>
-                          {pageNumber === "ellipsis-start" ||
-                          pageNumber === "ellipsis-end" ? (
-                            <PaginationEllipsis />
-                          ) : (
-                            <PaginationLink
-                              isActive={currentPage === pageNumber}
-                              onClick={() => setCurrentPage(Number(pageNumber))}
-                            >
-                              {pageNumber}
-                            </PaginationLink>
-                          )}
-                        </PaginationItem>
-                      ))}
+                      <PaginationItem>
+                        <PaginationLink isActive={true}>
+                          {currentPage}
+                        </PaginationLink>
+                      </PaginationItem>
 
                       <PaginationItem>
                         <PaginationNext
@@ -808,7 +798,9 @@ const SupportEngineers: React.FC = () => {
                         : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                     }
                   >
-                    {viewingEngineer.status === "active" ? "Active" : "Inactive"}
+                    {viewingEngineer.status === "active"
+                      ? "Active"
+                      : "Inactive"}
                   </Badge>
                 </div>
                 <div>

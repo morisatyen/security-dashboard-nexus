@@ -252,7 +252,7 @@ const Dispensaries: React.FC = () => {
         return sortDirection === "asc"
           ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }else if(sortField === "contactPerson"){
+      } else if (sortField === "contactPerson") {
         return sortDirection === "asc"
           ? a.contactPerson.localeCompare(b.contactPerson)
           : b.contactPerson.localeCompare(a.contactPerson);
@@ -327,7 +327,7 @@ const Dispensaries: React.FC = () => {
     filteredDispensaries.length
   );
   const totalItems = filteredDispensaries.length;
-  const resultsText = `Showing ${startItem} to ${endItem} of ${totalItems} results`;
+  const resultsText = `Showing ${startItem ?? 0} to ${endItem ?? 0} of ${totalItems ?? 0} results`;
 
   return (
     <div className="p-6 space-y-6">
@@ -510,48 +510,67 @@ const Dispensaries: React.FC = () => {
             <div className="text-sm text-muted-foreground mb-4 sm:mb-0">
               {resultsText}
             </div>
-
-            {filteredDispensaries.length > 0 && (
-              <div className="flex justify-center">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.max(prev - 1, 1))
-                        }
-                        className={
-                          currentPage === 1
-                            ? "pointer-events-none opacity-50"
-                            : ""
-                        }
-                      />
-                    </PaginationItem>
-
-                    <PaginationItem>
-                      <PaginationLink isActive={true}>
-                        {currentPage}
-                      </PaginationLink>
-                    </PaginationItem>
-
-                    <PaginationItem>
-                      <PaginationNext
-                        onClick={() =>
-                          setCurrentPage((prev) =>
-                            Math.min(prev + 1, totalPages)
-                          )
-                        }
-                        className={
-                          currentPage === totalPages
-                            ? "pointer-events-none opacity-50"
-                            : ""
-                        }
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div>
+              <span className="text-sm text-muted-foreground mr-2">
+                  Items per page:
+                </span>
+                <select
+                  className="px-2 py-1 border rounded text-myers-darkBlue"
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1); // Reset to first page when changing items per page
+                  }}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
               </div>
-            )}
+              {filteredDispensaries.length > 0 && (
+                <div className="flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() =>
+                            setCurrentPage((prev) => Math.max(prev - 1, 1))
+                          }
+                          className={
+                            currentPage === 1
+                              ? "pointer-events-none opacity-50"
+                              : ""
+                          }
+                        />
+                      </PaginationItem>
+
+                      <PaginationItem>
+                        <PaginationLink isActive={true}>
+                          {currentPage}
+                        </PaginationLink>
+                      </PaginationItem>
+
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() =>
+                            setCurrentPage((prev) =>
+                              Math.min(prev + 1, totalPages)
+                            )
+                          }
+                          className={
+                            currentPage === totalPages
+                              ? "pointer-events-none opacity-50"
+                              : ""
+                          }
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

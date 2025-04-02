@@ -678,23 +678,12 @@ const AdminUsers: React.FC = () => {
                               : ""
                           }
                         />
+                      </PaginationItem>                      
+                      <PaginationItem>
+                        <PaginationLink isActive={true}>
+                          {currentPage}
+                        </PaginationLink>
                       </PaginationItem>
-
-                      {getPageNumbers().map((pageNumber, index) => (
-                        <PaginationItem key={`${pageNumber}-${index}`}>
-                          {pageNumber === "ellipsis-start" ||
-                          pageNumber === "ellipsis-end" ? (
-                            <PaginationEllipsis />
-                          ) : (
-                            <PaginationLink
-                              isActive={currentPage === pageNumber}
-                              onClick={() => setCurrentPage(Number(pageNumber))}
-                            >
-                              {pageNumber}
-                            </PaginationLink>
-                          )}
-                        </PaginationItem>
-                      ))}
 
                       <PaginationItem>
                         <PaginationNext
