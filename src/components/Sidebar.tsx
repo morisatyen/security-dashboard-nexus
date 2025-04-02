@@ -132,20 +132,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
         bg-myers-darkBlue text-white 
         fixed left-0 top-0 bottom-0 z-40
         transform transition-all duration-300 ease-in-out
-        ${isExpanded ? "w-60" : "w-16"} 
+        ${isExpanded ? "w-60" : "w-20"} 
         flex flex-col
       `}
     >
       <div className="h-16 flex items-center px-4 border-b border-gray-800">
         {isExpanded ? (
           <div className="flex items-center gap-x-2">
-            <img src={logo} alt="Logo" className="w-8" />
+            <img src={logo} alt="Logo" className="w-12" />
             <h1 className="text-lg font-bold text-myers-yellow">
               Myers Security
             </h1>
           </div>
         ) : (
-          <div className="w-8 flex items-center justify-center text-myers-darkBlue font-bold">
+          <div className="w-12 flex items-center justify-center text-myers-darkBlue font-bold">
             <img src={logo} alt="User Avatar" />
           </div>
         )}

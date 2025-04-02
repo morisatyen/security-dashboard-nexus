@@ -48,7 +48,7 @@ export const initialUsers: User[] = [
   {
     id: '1',
     name: 'Admin User',
-    email: 'admin@myers.security',
+    email: 'admin@myerssecurity.com',
     role: 'admin',
     status: 'active',
     createdAt: new Date().toISOString(),
@@ -56,7 +56,7 @@ export const initialUsers: User[] = [
   {
     id: '2',
     name: 'Manager User',
-    email: 'manager@myers.security',
+    email: 'manager@myerssecurity.com',
     role: 'manager',
     status: 'active',
     createdAt: new Date().toISOString(),
@@ -64,7 +64,7 @@ export const initialUsers: User[] = [
   {
     id: '3',
     name: 'Regular User',
-    email: 'user@myers.security',
+    email: 'user@myerssecurity.com',
     role: 'user',
     status: 'active',
     createdAt: new Date().toISOString(),
@@ -72,7 +72,7 @@ export const initialUsers: User[] = [
   {
     id: '4',
     name: 'John Engineer',
-    email: 'john@myers.security',
+    email: 'john@myerssecurity.com',
     role: 'user',
     status: 'active',
     createdAt: new Date().toISOString(),
@@ -80,7 +80,7 @@ export const initialUsers: User[] = [
   {
     id: '5',
     name: 'Sarah Support',
-    email: 'sarah@myers.security',
+    email: 'sarah@myerssecurity.com',
     role: 'user',
     status: 'active',
     createdAt: new Date().toISOString(),

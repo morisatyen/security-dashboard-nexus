@@ -5,8 +5,8 @@ import { Eye, EyeOff, Lock, Mail, AlertTriangle } from "lucide-react";
 import logo from "../images/Onlylogo.png"
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@myerssecurity.com");
+  const [password, setPassword] = useState("password");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -112,7 +112,7 @@ const Login: React.FC = () => {
                     autoComplete="email"
                     required
                     className="pl-10 py-2 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-gray-900 dark:text-white rounded-md shadow-sm focus:ring-myers-yellow focus:border-myers-yellow"
-                    placeholder="admin@myers.security"
+                    placeholder="admin@myerssecurity.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -216,7 +216,7 @@ const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setEmail('admin@myers.security');
+                    setEmail('admin@myerssecurity.com');
                     setPassword('password');
                   }}
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
@@ -227,7 +227,7 @@ const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setEmail('manager@myers.security');
+                    setEmail('manager@myerssecurity.com');
                     setPassword('password');
                   }}
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
@@ -238,7 +238,7 @@ const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setEmail('user@myers.security');
+                    setEmail('user@myerssecurity.com');
                     setPassword('password');
                   }}
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"

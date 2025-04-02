@@ -55,7 +55,7 @@ const Layout: React.FC = () => {
       
       <div 
         className={`transition-all duration-300 ease-in-out flex flex-col h-screen ${
-          sidebarExpanded ? 'ml-60' : 'ml-16'
+          sidebarExpanded ? 'ml-60' : 'ml-20'
         }`}
       >
         <div className="sticky top-0 z-40 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
