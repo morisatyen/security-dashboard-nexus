@@ -12,6 +12,7 @@ const Breadcrumb: React.FC = () => {
     'dashboard': 'Dashboard',
     'users': 'Users',
     'dispensaries': 'Customers',
+    'knowledge-base':'Knowledge Base',
     'service-requests': 'Service Requests',
     'admin-users': 'Admin Users',
     'support-engineers': 'Support Engineers',
@@ -38,12 +39,12 @@ const Breadcrumb: React.FC = () => {
           {pathSegments.map((segment, index) => {
             const url = `/${pathSegments.slice(0, index + 1).join('/')}`;
             const isLast = index === pathSegments.length - 1;
-            
+            const isDisabled = segment === "edit" || !isNaN(Number(segment)) || segment === "users"; 
             return (
               <li key={segment} className="flex items-center">
                 <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />
-                {isLast ? (
-                  <span className="font-medium text-gray-900 dark:text-white">
+                {isLast || isDisabled  ? (
+                  <span className="font-medium text-gray-400 dark:text-white">
                     {pathMap[segment] || segment}
                   </span>
                 ) : (

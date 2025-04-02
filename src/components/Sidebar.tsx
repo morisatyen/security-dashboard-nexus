@@ -142,13 +142,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
       <div className="h-16 flex items-center px-4 border-b border-gray-800">
         {isExpanded ? (
           <div className="flex items-center gap-x-2">
-            <img src={logo} alt="Logo" className="h-8 w-8 bg-[#ffffff] rounded-full" />
+            <img src={logo} alt="Logo" className="w-8" />
             <h1 className="text-lg font-bold text-myers-yellow">
               Myers Security
             </h1>
           </div>
         ) : (
-          <div className="h-8 w-8 bg-[#ffffff] rounded-full flex items-center justify-center text-myers-darkBlue font-bold">
+          <div className="w-8 flex items-center justify-center text-myers-darkBlue font-bold">
             <img src={logo} alt="User Avatar" />
           </div>
         )}
