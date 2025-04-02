@@ -235,7 +235,7 @@ const Invoices: React.FC<InvoicesProps> = ({ dispensaryId, viewMode = false }) =
             <form className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="dispensary" className="text-sm font-medium">Dispensary</label>
+                  <label htmlFor="dispensary" className="text-sm font-medium">Dispensary Name</label>
                   <select 
                     id="dispensary" 
                     className="w-full px-3 py-2 border rounded-md"
@@ -328,7 +328,7 @@ const Invoices: React.FC<InvoicesProps> = ({ dispensaryId, viewMode = false }) =
             <div className="flex flex-wrap gap-2">
               <div>
                 <select
-                  className="px-3 py-2 rounded-md border text-sm"
+                  className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
@@ -341,7 +341,7 @@ const Invoices: React.FC<InvoicesProps> = ({ dispensaryId, viewMode = false }) =
               
               <div>
                 <select
-                  className="px-3 py-2 rounded-md border text-sm"
+                  className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
                 >

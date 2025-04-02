@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -63,25 +63,22 @@ const NestedMenuItem: React.FC<NestedMenuItemProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { hasPermission } = useAuth();
-
+  const location = useLocation();
   // Filter subItems based on permissions
   const allowedSubItems = subItems.filter(
     (item) => !item.permission || hasPermission(item.permission as any)
   );
 
   if (allowedSubItems.length === 0) return null;
-
+  const isActive = allowedSubItems.some((item) =>
+    location.pathname.includes(`${to}/${item.to}`)
+  );
   return (
     <div>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`
-          w-full flex items-center px-4 py-3 text-sm transition-colors
-          ${
-            isOpen
-              ? "bg-gray-800 text-myers-yellow font-medium"
-              : "text-gray-300 hover:bg-gray-800 hover:text-white"
-          }
+        className={`w-full flex items-center px-4 py-3 text-sm transition-colors
+          ${isActive ? "bg-gray-800 text-myers-yellow font-medium" : "text-gray-300 hover:bg-gray-800 hover:text-white"}
           ${!isSidebarExpanded ? "justify-center" : ""}
         `}
       >

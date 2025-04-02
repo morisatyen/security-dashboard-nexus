@@ -36,7 +36,7 @@ const ForgotPassword: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
           {/* Top Section (Black background with logo) */}
-          <div className="bg-black text-white py-8 px-4 sm:px-10 flex flex-col items-center relative">
+          <div className="bg-[#14386B] dark:bg-black text-white py-8 px-4 sm:px-10 flex flex-col items-center relative">
             <div className="w-16 h-16 bg-[#ffffff] rounded-full flex items-center justify-center mb-4">
               {/* <svg 
                 className="w-10 h-10 text-myers-darkBlue"

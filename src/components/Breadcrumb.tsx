@@ -39,7 +39,7 @@ const Breadcrumb: React.FC = () => {
           {pathSegments.map((segment, index) => {
             const url = `/${pathSegments.slice(0, index + 1).join('/')}`;
             const isLast = index === pathSegments.length - 1;
-            const isDisabled = segment === "edit" || !isNaN(Number(segment)) || segment === "users"; 
+            const isDisabled = segment === "edit" || segment === "view" || !isNaN(Number(segment)) || segment === "users"; 
             return (
               <li key={segment} className="flex items-center">
                 <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />
