@@ -19,6 +19,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   updateUserProfile?: (updatedUser: User) => void;
+  hasPermission: (permission: string) => boolean; // Add hasPermission function
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -27,6 +28,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   login: async () => {},
   logout: () => {},
+  hasPermission: () => false, // Add default implementation
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -102,6 +104,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(updatedUser);
   };
 
+  // Implement hasPermission function
+  const hasPermission = (permission: string): boolean => {
+    // For demo purposes, let's implement a simple permission system
+    // In a real application, this would check against user's roles and permissions
+    if (!user) return false;
+    
+    // Admin has all permissions
+    if (user.role === 'Administrator') return true;
+    
+    // Define common permissions based on role
+    const rolePermissions: Record<string, string[]> = {
+      'Administrator': ['users.read', 'users.write', 'dispensaries.read', 'dispensaries.write', 'serviceRequests.read', 'serviceRequests.write', 'roles.read', 'roles.write'],
+      'Support Engineer': ['dispensaries.read', 'serviceRequests.read', 'serviceRequests.write'],
+      'Manager': ['users.read', 'dispensaries.read', 'serviceRequests.read'],
+    };
+    
+    // Check if the user's role has the required permission
+    return rolePermissions[user.role]?.includes(permission) || false;
+  };
+
   return (
     <AuthContext.Provider value={{ 
       isAuthenticated, 
@@ -109,7 +131,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       loading, 
       login, 
       logout,
-      updateUserProfile
+      updateUserProfile,
+      hasPermission
     }}>
       {children}
     </AuthContext.Provider>
