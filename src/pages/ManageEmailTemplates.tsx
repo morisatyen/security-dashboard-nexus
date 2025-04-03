@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 // Dummy email templates data
 const initialTemplates = [
@@ -81,6 +82,25 @@ Myers Security Financial Team
   }
 ];
 
+// Quill editor modules and formats
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{'list': 'ordered'}, {'list': 'bullet'}],
+    [{'indent': '-1'}, {'indent': '+1'}],
+    ['link'],
+    ['clean']
+  ],
+};
+
+const quillFormats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike',
+  'list', 'bullet', 'indent',
+  'link'
+];
+
 const ManageEmailTemplates: React.FC = () => {
   const [templates, setTemplates] = useState(initialTemplates);
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
@@ -119,6 +139,10 @@ const ManageEmailTemplates: React.FC = () => {
       setEditData(currentTemplate);
     }
     setIsEditing(false);
+  };
+
+  const handleContentChange = (content: string) => {
+    setEditData({ ...editData, content });
   };
 
   const template = templates.find(t => t.id === selectedTemplate) || templates[0];
@@ -194,15 +218,18 @@ const ManageEmailTemplates: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email Content
                     </label>
-                    <textarea
-                      value={editData.content}
-                      onChange={(e) => setEditData({ ...editData, content: e.target.value })}
-                      className="w-full min-h-[300px] p-2 border rounded-md dark:bg-gray-800 dark:text-white"
-                      rows={10}
-                    />
+                    <div className="min-h-[300px]">
+                      <ReactQuill
+                        value={editData.content}
+                        onChange={handleContentChange}
+                        modules={quillModules}
+                        formats={quillFormats}
+                        className="bg-white dark:bg-gray-800 h-[250px] mb-12 rounded-md"
+                      />
+                    </div>
                   </div>
                   
-                  <div className="flex justify-end space-x-2">
+                  <div className="flex justify-end space-x-2 pt-8">
                     <Button variant="outline" onClick={handleCancel}>
                       Cancel
                     </Button>

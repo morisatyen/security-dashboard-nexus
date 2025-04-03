@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Menu, Bell, Sun, Moon, Settings, LogOut, Search } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { getInitials } from '../utils/helpers';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -18,9 +19,15 @@ const Header: React.FC<HeaderProps> = ({
   const { user, logout } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const navigate = useNavigate();
 
   const toggleProfile = () => {
     setProfileOpen(!profileOpen);
+  };
+
+  const handleEditProfile = () => {
+    setProfileOpen(false);
+    navigate('/edit-profile');
   };
 
   return (
@@ -33,17 +40,6 @@ const Header: React.FC<HeaderProps> = ({
         >
           <Menu className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
-        
-        {/* <div className={`relative hidden sm:block ${searchFocused ? 'ring-2 ring-myers-yellow' : ''}`}>
-          <input
-            type="text"
-            placeholder="Search..."
-            className="pl-10 pr-4 py-2 rounded-full text-sm border border-gray-300 dark:border-gray-700 focus:outline-none w-64 bg-gray-50 dark:bg-gray-800 dark:text-white transition-all"
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-          />
-          <Search className="h-4 w-4 text-gray-400 absolute left-3 top-2.5" />
-        </div> */}
       </div>
       
       {/* Right Side */}
@@ -84,13 +80,13 @@ const Header: React.FC<HeaderProps> = ({
                 </div>
               </div>
               
-              <a 
-                href="#settings" 
-                className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+              <button 
+                onClick={handleEditProfile}
+                className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left"
               >
                 <Settings className="w-4 h-4 mr-2" /> 
                 Settings
-              </a>
+              </button>
               
               <button 
                 onClick={logout}

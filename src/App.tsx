@@ -28,6 +28,7 @@ import KnowledgeBaseAdd from "./pages/KnowledgeBaseAdd";
 import KnowledgeBaseEdit from "./pages/KnowledgeBaseEdit";
 import ManageCMS from "./pages/ManageCMS";
 import ManageEmailTemplates from "./pages/ManageEmailTemplates";
+import EditProfile from "./pages/EditProfile";
 
 // Initialize data
 import { getInitialData } from "./data/initialData";
@@ -69,6 +70,7 @@ const App = () => {
                 <Route path="knowledge-base/edit/:id" element={<KnowledgeBaseEdit />} />
                 <Route path="manage-cms" element={<ManageCMS />} />
                 <Route path="email-templates" element={<ManageEmailTemplates />} />
+                <Route path="edit-profile" element={<EditProfile />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

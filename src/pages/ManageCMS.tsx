@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 // Dummy data for the About Us page
 const initialAboutUsData = {
@@ -19,6 +21,25 @@ With over a decade of experience in the cannabis security sector, Myers Security
   `,
 };
 
+// Quill editor modules and formats
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{'list': 'ordered'}, {'list': 'bullet'}],
+    [{'indent': '-1'}, {'indent': '+1'}],
+    ['link', 'image'],
+    ['clean']
+  ],
+};
+
+const quillFormats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike',
+  'list', 'bullet', 'indent',
+  'link', 'image'
+];
+
 const ManageCMS: React.FC = () => {
   const [aboutUsData, setAboutUsData] = useState(initialAboutUsData);
   const [isEditing, setIsEditing] = useState(false);
@@ -31,6 +52,10 @@ const ManageCMS: React.FC = () => {
       description: "The About Us page has been updated successfully.",
     });
     setIsEditing(false);
+  };
+
+  const handleContentChange = (content: string) => {
+    setAboutUsData({ ...aboutUsData, content });
   };
 
   return (
@@ -61,15 +86,17 @@ const ManageCMS: React.FC = () => {
                 <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Page Content
                 </label>
-                <textarea
-                  id="content"
-                  value={aboutUsData.content}
-                  onChange={(e) => setAboutUsData({ ...aboutUsData, content: e.target.value })}
-                  className="w-full min-h-[300px] p-2 border rounded-md dark:bg-gray-800 dark:text-white"
-                  rows={10}
-                />
+                <div className="min-h-[300px]">
+                  <ReactQuill
+                    value={aboutUsData.content}
+                    onChange={handleContentChange}
+                    modules={quillModules}
+                    formats={quillFormats}
+                    className="bg-white dark:bg-gray-800 h-[250px] mb-12 rounded-md"
+                  />
+                </div>
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2 pt-8">
                 <Button variant="outline" onClick={() => setIsEditing(false)}>
                   Cancel
                 </Button>
