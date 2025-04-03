@@ -63,7 +63,7 @@ We have issued a new invoice for your recent services with Myers Security.
 Invoice Details:
 - Invoice Number: {{invoice_number}}
 - Date: {{invoice_date}}
-- Amount Due: ${{invoice_amount}}
+- Amount Due: {{invoice_amount}}
 - Due Date: {{due_date}}
 
 To view and pay your invoice, please log in to your customer portal at portal.myers-security.com or click the link below:

@@ -264,7 +264,7 @@ const ServiceRequestEdit: React.FC = () => {
                     <SelectValue placeholder="Select Engineer" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    {/* <SelectItem value="">None</SelectItem> */}
                     {supportEngineers.map((engineer) => (
                       <SelectItem key={engineer.id} value={engineer.name}>
                         {engineer.name}

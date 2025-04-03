@@ -16,6 +16,8 @@ const Breadcrumb: React.FC = () => {
     'service-requests': 'Service Requests',
     'admin-users': 'Admin Users',
     'support-engineers': 'Support Engineers',
+    'manage-cms':'Manage CMS',
+    'email-templates':'Email Templates',
     'invoices': 'Invoices',
     'add': 'Add',
     'edit': 'Edit',
