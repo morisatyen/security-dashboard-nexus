@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { Edit, CheckCircle } from "lucide-react";
 
 // Dummy email templates data
 const initialTemplates = [
@@ -103,7 +103,7 @@ const quillFormats = [
 
 const ManageEmailTemplates: React.FC = () => {
   const [templates, setTemplates] = useState(initialTemplates);
-  const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(templates[0]);
   const { toast } = useToast();
@@ -113,12 +113,8 @@ const ManageEmailTemplates: React.FC = () => {
     if (template) {
       setSelectedTemplate(templateId);
       setEditData(template);
-      setIsEditing(false);
+      setIsEditing(true);
     }
-  };
-
-  const handleEdit = () => {
-    setIsEditing(true);
   };
 
   const handleSave = () => {
@@ -127,6 +123,7 @@ const ManageEmailTemplates: React.FC = () => {
     );
     setTemplates(updatedTemplates);
     setIsEditing(false);
+    setSelectedTemplate(null);
     toast({
       title: "Template updated",
       description: `Email template "${editData.name}" has been updated successfully.`,
@@ -134,18 +131,13 @@ const ManageEmailTemplates: React.FC = () => {
   };
 
   const handleCancel = () => {
-    const currentTemplate = templates.find(t => t.id === selectedTemplate);
-    if (currentTemplate) {
-      setEditData(currentTemplate);
-    }
     setIsEditing(false);
+    setSelectedTemplate(null);
   };
 
   const handleContentChange = (content: string) => {
     setEditData({ ...editData, content });
   };
-
-  const template = templates.find(t => t.id === selectedTemplate) || templates[0];
 
   return (
     <div className="p-6 space-y-6">
@@ -160,37 +152,61 @@ const ManageEmailTemplates: React.FC = () => {
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-1 space-y-4">
-              <Select value={selectedTemplate} onValueChange={handleSelectTemplate}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a template" />
-                </SelectTrigger>
-                <SelectContent>
-                  {templates.map(template => (
-                    <SelectItem key={template.id} value={template.id}>
-                      {template.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm">Available Variables</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {template.variables.map((variable) => (
-                      <div key={variable} className="bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-md text-sm">
-                        {`{{${variable}}}`}
+              <div className="space-y-4">
+                {templates.map(template => (
+                  <div 
+                    key={template.id} 
+                    className={`
+                      p-4 rounded-md border transition-all duration-200
+                      ${selectedTemplate === template.id 
+                        ? 'border-myers-yellow bg-gray-50 dark:bg-gray-800' 
+                        : 'border-gray-200 dark:border-gray-700 hover:border-myers-yellow'
+                      }
+                    `}
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-medium">{template.name}</h3>
+                      {selectedTemplate === template.id && isEditing ? (
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                      ) : (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleSelectTemplate(template.id)}
+                          className="px-2"
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                      Subject: {template.subject}
+                    </p>
+                    {selectedTemplate === template.id && (
+                      <div className="mt-3 space-y-2">
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                          Available Variables:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {template.variables.map((variable) => (
+                            <div 
+                              key={variable} 
+                              className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md text-xs"
+                            >
+                              {`{{${variable}}}`}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    ))}
+                    )}
                   </div>
-                </CardContent>
-              </Card>
+                ))}
+              </div>
             </div>
 
             <div className="lg:col-span-2">
-              {isEditing ? (
+              {isEditing && selectedTemplate ? (
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -242,31 +258,14 @@ const ManageEmailTemplates: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-medium text-lg">{template.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      Subject: {template.subject}
+                <div className="flex items-center justify-center h-full min-h-[250px] bg-gray-50 dark:bg-gray-800 rounded-md p-6">
+                  <div className="text-center">
+                    <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Select a Template
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Choose a template from the list to edit its content.
                     </p>
-                  </div>
-                  
-                  <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md mt-4">
-                    <div className="prose dark:prose-invert max-w-none">
-                      {template.content.split('\n\n').map((paragraph, index) => (
-                        <p key={index} className="mb-4 whitespace-pre-line" dangerouslySetInnerHTML={{ __html: paragraph }}>
-                          
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-end">
-                    <Button
-                      onClick={handleEdit}
-                      className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
-                    >
-                      Edit Template
-                    </Button>
                   </div>
                 </div>
               )}
