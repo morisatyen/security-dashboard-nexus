@@ -253,8 +253,8 @@ const ManageEmailTemplates: React.FC = () => {
                   <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md mt-4">
                     <div className="prose dark:prose-invert max-w-none">
                       {template.content.split('\n\n').map((paragraph, index) => (
-                        <p key={index} className="mb-4 whitespace-pre-line">
-                          {paragraph}
+                        <p key={index} className="mb-4 whitespace-pre-line" dangerouslySetInnerHTML={{ __html: paragraph }}>
+                          
                         </p>
                       ))}
                     </div>

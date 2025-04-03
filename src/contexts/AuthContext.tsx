@@ -69,14 +69,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Demo user credentials check
-      if (email !== 'admin@example.com' || password !== 'password') {
+      if (email !== 'admin@myerssecurity.com' || password !== 'password') {
         throw new Error('Invalid email or password');
       }
       
       const mockUser: User = {
         id: '1',
         name: 'Admin User',
-        email: 'admin@example.com',
+        email: 'admin@myerssecurity.com',
         role: 'Administrator',
         bio: 'Security specialist with over 5 years of experience in the cannabis industry.',
         phone: '+1 (555) 123-4567',

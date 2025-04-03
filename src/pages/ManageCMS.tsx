@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 // Dummy data for the About Us page
 const initialAboutUsData = {
@@ -24,20 +23,26 @@ With over a decade of experience in the cannabis security sector, Myers Security
 // Quill editor modules and formats
 const quillModules = {
   toolbar: [
-    [{ 'header': [1, 2, 3, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{'list': 'ordered'}, {'list': 'bullet'}],
-    [{'indent': '-1'}, {'indent': '+1'}],
-    ['link', 'image'],
-    ['clean']
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    ["link", "image"],
+    ["clean"],
   ],
 };
 
 const quillFormats = [
-  'header',
-  'bold', 'italic', 'underline', 'strike',
-  'list', 'bullet', 'indent',
-  'link', 'image'
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "list",
+  "bullet",
+  "indent",
+  "link",
+  "image",
 ];
 
 const ManageCMS: React.FC = () => {
@@ -61,7 +66,9 @@ const ManageCMS: React.FC = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Manage CMS Pages</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Manage CMS Pages
+        </h1>
       </div>
 
       <Card>
@@ -72,18 +79,26 @@ const ManageCMS: React.FC = () => {
           {isEditing ? (
             <div className="space-y-4">
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="title"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Page Title
                 </label>
                 <Input
                   id="title"
                   value={aboutUsData.title}
-                  onChange={(e) => setAboutUsData({ ...aboutUsData, title: e.target.value })}
+                  onChange={(e) =>
+                    setAboutUsData({ ...aboutUsData, title: e.target.value })
+                  }
                   className="w-full"
                 />
               </div>
               <div>
-                <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="content"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Page Content
                 </label>
                 <div className="min-h-[300px]">
@@ -100,7 +115,10 @@ const ManageCMS: React.FC = () => {
                 <Button variant="outline" onClick={() => setIsEditing(false)}>
                   Cancel
                 </Button>
-                <Button onClick={handleSave} className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400">
+                <Button
+                  onClick={handleSave}
+                  className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
+                >
                   Save Changes
                 </Button>
               </div>
@@ -108,17 +126,22 @@ const ManageCMS: React.FC = () => {
           ) : (
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold mb-2">{aboutUsData.title}</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  {aboutUsData.title}
+                </h3>
                 <div className="prose dark:prose-invert max-w-none">
-                  {aboutUsData.content.split('\n\n').map((paragraph, index) => (
-                    <p key={index} className="mb-4 text-gray-700 dark:text-gray-300">
-                      {paragraph}
+                  {aboutUsData.content.split("\n\n").map((paragraph, index) => (
+                    <p
+                      key={index}
+                      className="mb-4 text-gray-700 dark:text-gray-300"
+                      dangerouslySetInnerHTML={{ __html: paragraph }}
+                    >                      
                     </p>
                   ))}
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button 
+                <Button
                   onClick={() => setIsEditing(true)}
                   className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
                 >

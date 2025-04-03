@@ -21,9 +21,9 @@ const Login: React.FC = () => {
     try {
       const success = await login(email, password);
 
-      if (!success) {
-        setError("Invalid email or password");
-      }
+      // if (!success) {
+      //   setError("Invalid email or password");
+      // }
     } catch (err) {
       setError("An error occurred during login");
       console.error(err);
