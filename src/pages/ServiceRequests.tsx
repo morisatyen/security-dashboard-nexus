@@ -38,6 +38,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Link } from "react-router-dom";
 
 interface ServiceRequest {
   id: string;
@@ -683,10 +684,12 @@ const ServiceRequests: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleEditRequest(request)}
+                            asChild
                           >
-                            <Edit className="h-4 w-4" />
-                            <span className="sr-only">Edit</span>
+                            <Link to={`/service-requests/edit/${request.id}`}>
+                              <Edit className="h-4 w-4" />
+                              <span className="sr-only">Edit</span>
+                            </Link>
                           </Button>
                           <Button
                             variant="ghost"

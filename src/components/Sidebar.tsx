@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -9,6 +10,8 @@ import {
   ChevronDown,
   ChevronRight,
   BookOpen,
+  Settings,
+  Mail,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import logo from "../images/Onlylogo.png";
@@ -209,14 +212,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
 
-          {/* {hasPermission('invoices.read' as any) && (
+          {hasPermission("dispensaries.read" as any) && (
             <MenuItem
-              to="/invoices"
+              to="/manage-cms"
               icon={<FileText className="h-5 w-5" />}
-              label="Invoices"
+              label="Manage CMS"
               isSidebarExpanded={isExpanded}
             />
-          )} */}
+          )}
+
+          {hasPermission("dispensaries.read" as any) && (
+            <MenuItem
+              to="/email-templates"
+              icon={<Mail className="h-5 w-5" />}
+              label="Email Templates"
+              isSidebarExpanded={isExpanded}
+            />
+          )}
         </nav>
       </div>
     </aside>
