@@ -13,6 +13,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import AdminUsers from "./pages/AdminUsers";
+import AdminUserAdd from "./pages/AdminUserAdd";
+import AdminUserEdit from "./pages/AdminUserEdit";
 import SupportEngineers from "./pages/SupportEngineers";
 import SupportEngineerAdd from "./pages/SupportEngineerAdd";
 import SupportEngineerEdit from "./pages/SupportEngineerEdit";
@@ -30,11 +32,11 @@ import ManageCMS from "./pages/ManageCMS";
 import ManageEmailTemplates from "./pages/ManageEmailTemplates";
 import EmailTemplateEdit from "./pages/EmailTemplateEdit";
 import EditProfile from "./pages/EditProfile";
+import Chat from "./pages/Chat";
+import CustomerChat from "./pages/CustomerChat";
 
 // Initialize data
 import { getInitialData } from "./data/initialData";
-import AdminUserAdd from "./pages/AdminUserAdd";
-import AdminUserEdit from "./pages/AdminUserEdit";
 getInitialData();
 
 const queryClient = new QueryClient();
@@ -73,6 +75,8 @@ const App = () => {
                 <Route path="email-templates" element={<ManageEmailTemplates />} />
                 <Route path="email-templates/edit/:id" element={<EmailTemplateEdit />} />
                 <Route path="edit-profile" element={<EditProfile />} />
+                <Route path="chat" element={<Chat />} />
+                <Route path="customer-chat/:id" element={<CustomerChat />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
