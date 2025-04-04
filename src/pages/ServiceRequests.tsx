@@ -38,7 +38,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface ServiceRequest {
   id: string;
@@ -195,6 +195,7 @@ const ServiceRequests: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [priorityFilter, setPriorityFilter] = useState<string>("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const { data: serviceRequests = [], refetch } = useQuery({
     queryKey: ["serviceRequests"],
@@ -241,7 +242,7 @@ const ServiceRequests: React.FC = () => {
   };
 
   const handleViewRequest = (request: ServiceRequest) => {
-    setViewingRequest(request);
+    navigate(`/service-requests/view/${request.id}`);
   };
 
   const handleDeleteRequest = (request: ServiceRequest) => {
@@ -393,6 +394,7 @@ const ServiceRequests: React.FC = () => {
 
     return pageNumbers;
   };
+
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, filteredRequests.length);
   const totalItems = filteredRequests.length;
@@ -676,10 +678,12 @@ const ServiceRequests: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleViewRequest(request)}
+                            asChild
                           >
-                            <Eye className="h-4 w-4" />
-                            <span className="sr-only">View</span>
+                            <Link to={`/service-requests/view/${request.id}`}>
+                              <Eye className="h-4 w-4" />
+                              <span className="sr-only">View</span>
+                            </Link>
                           </Button>
                           <Button
                             variant="ghost"
