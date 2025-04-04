@@ -85,7 +85,7 @@ const Header: React.FC<HeaderProps> = ({
                 className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left"
               >
                 <Settings className="w-4 h-4 mr-2" /> 
-                Settings
+                Update Profile
               </button>
               
               <button 

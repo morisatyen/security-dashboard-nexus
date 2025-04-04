@@ -22,7 +22,6 @@ import DispensaryEdit from "./pages/DispensaryEdit";
 import DispensaryView from "./pages/DispensaryView";
 import ServiceRequests from "./pages/ServiceRequests";
 import ServiceRequestEdit from "./pages/ServiceRequestEdit";
-import Invoices from "./pages/Invoices";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import KnowledgeBaseAdd from "./pages/KnowledgeBaseAdd";
 import KnowledgeBaseEdit from "./pages/KnowledgeBaseEdit";
@@ -62,10 +61,9 @@ const App = () => {
                 <Route path="dispensaries" element={<Dispensaries />} />
                 <Route path="dispensaries/add" element={<DispensaryAdd />} />
                 <Route path="dispensaries/edit/:id" element={<DispensaryEdit />} />
-                <Route path="dispensaries/view/:id" element={<DispensaryView />} />
+                <Route path="dispensaries/view/:id" element={<DispensaryView />} />                
                 <Route path="service-requests" element={<ServiceRequests />} />
-                <Route path="service-requests/edit/:id" element={<ServiceRequestEdit />} />
-                <Route path="invoices" element={<Invoices />} />
+                <Route path="service-requests/edit/:id" element={<ServiceRequestEdit />} />                
                 <Route path="knowledge-base" element={<KnowledgeBase />} />
                 <Route path="knowledge-base/add" element={<KnowledgeBaseAdd />} />
                 <Route path="knowledge-base/edit/:id" element={<KnowledgeBaseEdit />} />

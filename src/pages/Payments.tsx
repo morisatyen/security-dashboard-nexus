@@ -121,7 +121,7 @@ const dispensaries = [
   { id: "5", name: "Evergreen Dispensary" },
 ];
 
-const Invoices: React.FC<InvoicesProps> = ({
+const Payments: React.FC<InvoicesProps> = ({
   dispensaryId,
   viewMode = false,
 }) => {
@@ -131,6 +131,7 @@ const Invoices: React.FC<InvoicesProps> = ({
   const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<string>("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
 
   // In a real app, this would fetch from an API
@@ -196,16 +197,16 @@ const Invoices: React.FC<InvoicesProps> = ({
 
   const handleDeleteInvoice = (invoice: Invoice) => {
     toast({
-      title: "Invoice Deleted",
-      description: `Invoice ${invoice.invoiceNumber} has been deleted successfully.`,
+      title: "Payment Deleted",
+      description: `Payment ${invoice.invoiceNumber} has been deleted successfully.`,
     });
     // In a real application, you would call an API to delete the invoice
   };
 
   const handleDownloadInvoice = (invoice: Invoice) => {
     toast({
-      title: "Invoice Downloaded",
-      description: `Invoice ${invoice.invoiceNumber} has been downloaded successfully.`,
+      title: "Payment Details Downloaded",
+      description: `Payment ${invoice.invoiceNumber} has been downloaded successfully.`,
     });
     // In a real application, you would generate a PDF and trigger a download
   };
@@ -222,6 +223,17 @@ const Invoices: React.FC<InvoicesProps> = ({
         return "";
     }
   };
+  //Privew of image
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Calculate the "Showing X to Y of Z results" text
   const startItem = (currentPage - 1) * itemsPerPage + 1;
@@ -234,7 +246,7 @@ const Invoices: React.FC<InvoicesProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         {!viewMode && (
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Invoices
+            Payments
           </h1>
         )}
         <div className="sm:ml-auto mb-2 sm:mt-0">
@@ -243,7 +255,7 @@ const Invoices: React.FC<InvoicesProps> = ({
             className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add New Invoice
+            Add New Payment
           </Button>
         </div>
       </div>
@@ -251,28 +263,21 @@ const Invoices: React.FC<InvoicesProps> = ({
       {showAddForm && (
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Add New Invoice</CardTitle>
+            <CardTitle>Add New Payment</CardTitle>
           </CardHeader>
           <CardContent>
             <form className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="dispensary" className="text-sm font-medium">
-                    Title
+                  <label htmlFor="location" className="text-sm font-medium">
+                    Method <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    id="dispensary"
-                    className="w-full px-3 py-2 border rounded-md"
-                    defaultValue={dispensaryId || ""}
-                    disabled={!!dispensaryId}
-                  >
-                    <option value="">Select Dispensary</option>
-                    {dispensaries.map((dispensary) => (
-                      <option key={dispensary.id} value={dispensary.id}>
-                        {dispensary.name}
-                      </option>
-                    ))}
-                  </select>
+                  <Input
+                    id="location"
+                    name="location"
+                    placeholder="Enter address"
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="amount" className="text-sm font-medium">
@@ -288,7 +293,7 @@ const Invoices: React.FC<InvoicesProps> = ({
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="issuedDate" className="text-sm font-medium">
-                    Invoice Date
+                    Payment Date
                   </label>
                   <Input
                     id="issuedDate"
@@ -297,35 +302,26 @@ const Invoices: React.FC<InvoicesProps> = ({
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="dueDate" className="text-sm font-medium">
-                    Due Date
-                  </label>
-                  <Input id="dueDate" type="date" />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="invoiceFile" className="text-sm font-medium">
-                    Invoice File (Image or Document)
-                  </label>
-                  <input
-                    id="invoiceFile"
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="status" className="text-sm font-medium">
-                    Status
-                  </label>
-                  <select
-                    id="status"
-                    className="w-full px-3 py-2 border rounded-md"
-                    defaultValue="pending"
+                  <label
+                    htmlFor="profilePicture"
+                    className="text-sm font-medium"
                   >
-                    <option value="pending">Pending</option>
-                    <option value="paid">Paid</option>
-                    <option value="overdue">Overdue</option>
-                  </select>
+                    Payment File
+                  </label>
+                  <Input
+                    id="profilePicture"
+                    name="profilePicture"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                  {imagePreview && (
+                    <img
+                      src={imagePreview}
+                      alt="Profile Preview"
+                      className="w-24 h-24 rounded-md mt-2 border"
+                    />
+                  )}
                 </div>
               </div>
               <div className="flex justify-end space-x-2 mt-4">
@@ -336,13 +332,13 @@ const Invoices: React.FC<InvoicesProps> = ({
                   className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
                   onClick={() => {
                     toast({
-                      title: "Invoice Generated",
-                      description: "Invoice has been generated successfully.",
+                      title: "Payment Generated",
+                      description: "Payment has been generated successfully.",
                     });
                     setShowAddForm(false);
                   }}
                 >
-                  Add Invoice
+                  Add Payment
                 </Button>
               </div>
             </form>
@@ -354,31 +350,13 @@ const Invoices: React.FC<InvoicesProps> = ({
         <CardHeader className="pb-2">
           <div className="flex flex-col space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <CardTitle>Invoices List</CardTitle>
-              {/* <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search invoices..."
-                  className="pl-8 w-full sm:w-64"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div> */}
+              <CardTitle>Payments List</CardTitle>
+              
             </div>
 
-            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
-              <div className="flex gap-2 flex-wrap">
-                <select
-                  className="px-3 py-2 rounded-md border text-myers-darkBlue"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="">All Statuses</option>
-                  <option value="pending">Pending</option>
-                  <option value="paid">Paid</option>
-                  <option value="overdue">Overdue</option>
-                </select>
-
+            <div className="flex flex-wrap justify-between items-center gap-2">
+              
+              <div>
                 <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={dateFilter}
@@ -389,11 +367,11 @@ const Invoices: React.FC<InvoicesProps> = ({
                   <option value="previous-month">Previous Month</option>
                 </select>
               </div>
-              <div className="relative sm:ml-auto w-full sm:w-64">
+              <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search invoices..."
-                  className="pl-8 w-full"
+                  placeholder="Search payments..."
+                  className="pl-8 w-full sm:w-64"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -406,14 +384,12 @@ const Invoices: React.FC<InvoicesProps> = ({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Invoice #</TableHead>
+                  <TableHead>Reference #</TableHead>
                   {!dispensaryId && <TableHead>Dispensary</TableHead>}
-                  <TableHead>Amount</TableHead>
-
-                  <TableHead>Invoice Date</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead>Paid Date</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Amount</TableHead>                  
+                  <TableHead>Payment Date</TableHead>
+                  <TableHead>Method</TableHead>
+                  <TableHead>Payment File</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -428,7 +404,7 @@ const Invoices: React.FC<InvoicesProps> = ({
                         <TableCell>{invoice.dispensaryName}</TableCell>
                       )}
                       <TableCell>${invoice.amount.toFixed(2)}</TableCell>
-
+                      
                       <TableCell>
                         <div className="flex items-center">
                           <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
@@ -436,35 +412,14 @@ const Invoices: React.FC<InvoicesProps> = ({
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center">
-                          <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                          {invoice.dueDate}
-                        </div>
+                        Card
                       </TableCell>
                       <TableCell>
-                        {invoice.paidDate ? (
-                          <div className="flex items-center">
-                            <Calendar className="h-3.5 w-3.5 mr-1.5 text-green-500" />
-                            {invoice.paidDate}
-                          </div>
-                        ) : (
-                          <span className="text-gray-500 dark:text-gray-400">
-                            —
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={getStatusColor(invoice.status)}
-                        >
-                          {invoice.status.charAt(0).toUpperCase() +
-                            invoice.status.slice(1)}
-                        </Badge>
+                        img file
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
+                        <Button
                             variant="ghost"
                             size="icon"
                             // onClick={() => handleEditEngineer(engineer)}
@@ -555,4 +510,4 @@ const Invoices: React.FC<InvoicesProps> = ({
   );
 };
 
-export default Invoices;
+export default Payments;

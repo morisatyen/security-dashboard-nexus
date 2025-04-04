@@ -131,7 +131,7 @@ const Dashboard: React.FC = () => {
       color: 'blue'
     },
     {
-      title: 'Dispensaries',
+      title: 'Cutomers',
       count: counts.dispensaries,
       active: counts.openDispensaries,
       icon: <Store className="h-12 w-12 text-green-600 dark:text-green-400" />,

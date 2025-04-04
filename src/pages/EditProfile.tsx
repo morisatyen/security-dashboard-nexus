@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,43 +13,47 @@ const EditProfile: React.FC = () => {
   const { user, updateUserProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   // Create a copy of the user data for editing
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
     role: user?.role || "",
-    bio: user?.bio || "Security specialist with over 5 years of experience in the cannabis industry.",
+    bio:
+      user?.bio ||
+      "Security specialist with over 5 years of experience in the cannabis industry.",
     phone: user?.phone || "+1 (555) 123-4567",
-    location: user?.location || "Denver, CO"
+    location: user?.location || "Denver, CO",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // In a real app, this would call an API to update the user profile
     // For now we'll just simulate success
     toast({
       title: "Profile updated",
       description: "Your profile information has been updated successfully.",
     });
-    
+
     // Update the user context
     if (updateUserProfile) {
       updateUserProfile({
         ...user,
-        ...formData
+        ...formData,
       });
     }
-    
+
     // Navigate back to dashboard
     navigate("/dashboard");
   };
@@ -58,7 +61,9 @@ const EditProfile: React.FC = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Profile</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Edit Profile
+        </h1>
       </div>
 
       <Card>
@@ -70,21 +75,24 @@ const EditProfile: React.FC = () => {
             <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6 mb-6">
               <div className="flex flex-col items-center">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src="/src/images/user-avatar.png" alt={formData.name} />
+                  <AvatarImage
+                    src="/src/images/Logo1.png"
+                    alt={formData.name}
+                  />
                   <AvatarFallback className="text-lg bg-myers-yellow text-myers-darkBlue">
                     {getInitials(formData.name)}
                   </AvatarFallback>
                 </Avatar>
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   size="sm"
                   className="mt-3"
                 >
                   Change Photo
                 </Button>
               </div>
-              
+
               <div className="flex-1 space-y-4 w-full">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -111,7 +119,7 @@ const EditProfile: React.FC = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -126,20 +134,24 @@ const EditProfile: React.FC = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Location
+                      Status
                     </label>
-                    <Input
-                      name="location"
-                      value={formData.location}
-                      onChange={handleChange}
-                      className="w-full"
-                    />
+                    <select
+                      id="status"
+                      name="status"
+                      className="w-full px-3 py-2 border rounded-md"
+                      // defaultValue={formData?.status}
+                      required
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
                   </div>
                 </div>
               </div>
             </div>
-            
-            <div>
+
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Bio
               </label>
@@ -150,17 +162,17 @@ const EditProfile: React.FC = () => {
                 rows={4}
                 className="w-full"
               />
-            </div>
-            
+            </div> */}
+
             <div className="flex justify-end space-x-2 pt-4">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => navigate(-1)}
               >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 type="submit"
                 className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
               >
