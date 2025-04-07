@@ -76,7 +76,7 @@ const App = () => {
                 <Route path="email-templates/edit/:id" element={<EmailTemplateEdit />} />
                 <Route path="edit-profile" element={<EditProfile />} />
                 <Route path="chat" element={<Chat />} />
-                <Route path="customer-chat/:id" element={<CustomerChat />} />
+                <Route path="chat/:id" element={<CustomerChat />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

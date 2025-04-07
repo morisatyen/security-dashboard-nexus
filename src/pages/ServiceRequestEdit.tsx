@@ -1,10 +1,15 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 
@@ -72,17 +77,21 @@ const ServiceRequestEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  const [serviceRequest, setServiceRequest] = useState<ServiceRequest | null>(null);
+
+  const [serviceRequest, setServiceRequest] = useState<ServiceRequest | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // In a real app, this would be an API call
     const fetchServiceRequest = () => {
       const storedRequests = localStorage.getItem("serviceRequests");
-      const requests = storedRequests ? JSON.parse(storedRequests) : mockServiceRequests;
+      const requests = storedRequests
+        ? JSON.parse(storedRequests)
+        : mockServiceRequests;
       const request = requests.find((r: ServiceRequest) => r.id === id);
-      
+
       if (request) {
         setServiceRequest(request);
       }
@@ -103,27 +112,31 @@ const ServiceRequestEdit: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!serviceRequest) return;
 
     // In a real app, this would be an API call
     const storedRequests = localStorage.getItem("serviceRequests");
-    const requests = storedRequests ? JSON.parse(storedRequests) : mockServiceRequests;
-    
-    const updatedRequests = requests.map((r: ServiceRequest) => 
-      r.id === serviceRequest.id ? {
-        ...serviceRequest,
-        lastUpdated: new Date().toISOString().split("T")[0],
-      } : r
+    const requests = storedRequests
+      ? JSON.parse(storedRequests)
+      : mockServiceRequests;
+
+    const updatedRequests = requests.map((r: ServiceRequest) =>
+      r.id === serviceRequest.id
+        ? {
+            ...serviceRequest,
+            lastUpdated: new Date().toISOString().split("T")[0],
+          }
+        : r
     );
-    
+
     localStorage.setItem("serviceRequests", JSON.stringify(updatedRequests));
-    
+
     toast({
       title: "Service Request Updated",
       description: `Request ${serviceRequest.requestId} has been updated successfully.`,
     });
-    
+
     navigate("/service-requests");
   };
 
@@ -143,9 +156,12 @@ const ServiceRequestEdit: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <h2 className="text-xl font-semibold mb-2">Service Request Not Found</h2>
+              <h2 className="text-xl font-semibold mb-2">
+                Service Request Not Found
+              </h2>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                The service request you are looking for does not exist or has been removed.
+                The service request you are looking for does not exist or has
+                been removed.
               </p>
               <Button asChild>
                 <Link to="/service-requests">Back to Service Requests</Link>
@@ -184,8 +200,8 @@ const ServiceRequestEdit: React.FC = () => {
                 <label htmlFor="dispensaryId" className="text-sm font-medium">
                   Dispensary
                 </label>
-                <Select 
-                  value={serviceRequest.dispensaryId} 
+                <Select
+                  value={serviceRequest.dispensaryId}
                   onValueChange={(value) => handleChange("dispensaryId", value)}
                 >
                   <SelectTrigger>
@@ -200,7 +216,7 @@ const ServiceRequestEdit: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <label htmlFor="description" className="text-sm font-medium">
                   Description
@@ -212,14 +228,66 @@ const ServiceRequestEdit: React.FC = () => {
                   required
                 />
               </div>
-              
+              <div className="space-y-2">
+                <label htmlFor="priority" className="text-sm font-medium">
+                  Types of Service Request
+                </label>
+                <Select
+                  // value={serviceRequest.priority}
+                  onValueChange={(value) =>
+                    handleChange(
+                      "type",
+                      value as
+                        | "technicalsupport"
+                        | "installation"
+                        | "testing"
+                        | "security"
+                        | "product"
+                        | "service"
+                        | "billing"
+                        | "genralsupport"
+                    )
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Types Of Service" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="technicalsupport">
+                      Technical Support
+                    </SelectItem>
+                    <SelectItem value="installation">
+                      Installation & Upgrade Requests
+                    </SelectItem>
+                    <SelectItem value="testing">
+                      Testing & Compliance
+                    </SelectItem>
+                    <SelectItem value="security">
+                      Security & Emergency
+                    </SelectItem>
+                    <SelectItem value="product">Product Inquiry</SelectItem>
+                    <SelectItem value="service">Service Inquiry</SelectItem>
+                    <SelectItem value="billing">
+                      Billing or Payment Issues
+                    </SelectItem>
+                    <SelectItem value="genralsupport">
+                      General Support
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <label htmlFor="priority" className="text-sm font-medium">
                   Priority
                 </label>
-                <Select 
-                  value={serviceRequest.priority} 
-                  onValueChange={(value) => handleChange("priority", value as "low" | "medium" | "high" | "critical")}
+                <Select
+                  value={serviceRequest.priority}
+                  onValueChange={(value) =>
+                    handleChange(
+                      "priority",
+                      value as "low" | "medium" | "high" | "critical"
+                    )
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Priority" />
@@ -232,14 +300,19 @@ const ServiceRequestEdit: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <label htmlFor="status" className="text-sm font-medium">
                   Status
                 </label>
-                <Select 
-                  value={serviceRequest.status} 
-                  onValueChange={(value) => handleChange("status", value as "pending" | "in-progress" | "resolved")}
+                <Select
+                  value={serviceRequest.status}
+                  onValueChange={(value) =>
+                    handleChange(
+                      "status",
+                      value as "pending" | "in-progress" | "resolved"
+                    )
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Status" />
@@ -251,14 +324,19 @@ const ServiceRequestEdit: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
-                <label htmlFor="assignedEngineer" className="text-sm font-medium">
+                <label
+                  htmlFor="assignedEngineer"
+                  className="text-sm font-medium"
+                >
                   Assigned Engineer
                 </label>
-                <Select 
-                  value={serviceRequest.assignedEngineer || ""} 
-                  onValueChange={(value) => handleChange("assignedEngineer", value || null)}
+                <Select
+                  value={serviceRequest.assignedEngineer || ""}
+                  onValueChange={(value) =>
+                    handleChange("assignedEngineer", value || null)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Engineer" />
@@ -273,7 +351,7 @@ const ServiceRequestEdit: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <label htmlFor="requestDate" className="text-sm font-medium">
                   Request Date
@@ -287,7 +365,7 @@ const ServiceRequestEdit: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div className="flex justify-end space-x-2 mt-4">
               <Button
                 variant="outline"

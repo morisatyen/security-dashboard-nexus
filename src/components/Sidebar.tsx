@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -12,6 +11,7 @@ import {
   BookOpen,
   Settings,
   Mail,
+  MessageSquare,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import logo from "../images/Onlylogo.png";
@@ -81,7 +81,11 @@ const NestedMenuItem: React.FC<NestedMenuItemProps> = ({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex items-center px-4 py-3 text-sm transition-colors
-          ${isActive ? "bg-gray-800 text-myers-yellow font-medium" : "text-gray-300 hover:bg-gray-800 hover:text-white"}
+          ${
+            isActive
+              ? "bg-gray-800 text-myers-yellow font-medium"
+              : "text-gray-300 hover:bg-gray-800 hover:text-white"
+          }
           ${!isSidebarExpanded ? "justify-center" : ""}
         `}
       >
@@ -165,8 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             />
           )}
 
-          {(hasPermission("users.read") ||
-            hasPermission("roles.read")) && (
+          {(hasPermission("users.read") || hasPermission("roles.read")) && (
             <NestedMenuItem
               to="/users"
               icon={<Users className="h-5 w-5" />}
@@ -229,6 +232,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
               isSidebarExpanded={isExpanded}
             />
           )}
+          <MenuItem
+            to="/chat"
+            icon={<MessageSquare className="h-5 w-5" />}
+            label="Live Chat"
+            isSidebarExpanded={isExpanded}
+          />
         </nav>
       </div>
     </aside>

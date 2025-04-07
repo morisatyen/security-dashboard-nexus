@@ -289,7 +289,7 @@ const Dispensaries: React.FC = () => {
   };
 
   const handleChatWithDispensary = (dispensary: Dispensary) => {
-    navigate(`/customer-chat/${dispensary.id}`);
+    navigate(`/chat/${dispensary.id}`);
   };
 
   const handleDeleteDispensary = (dispensary: Dispensary) => {

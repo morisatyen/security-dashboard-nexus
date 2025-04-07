@@ -103,7 +103,7 @@ const Chat: React.FC = () => {
                   <li key={customer.id}>
                     <button
                       className="w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-start justify-between"
-                      onClick={() => navigate(`/customer-chat/${customer.id}`)}
+                      onClick={() => navigate(`/chat/${customer.id}`)}
                     >
                       <div className="flex items-start space-x-3">
                         <div className="relative">
