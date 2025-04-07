@@ -470,6 +470,14 @@ const Dispensaries: React.FC = () => {
                       <TableCell>{dispensary.createdAt}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleChatWithDispensary(dispensary)}
+                          >
+                            <MessageCircle className="h-4 w-4" />
+                            <span className="sr-only">Chat</span>
+                          </Button>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -485,15 +493,7 @@ const Dispensaries: React.FC = () => {
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleChatWithDispensary(dispensary)}
-                          >
-                            <MessageCircle className="h-4 w-4" />
-                            <span className="sr-only">Chat</span>
-                          </Button>
+                          </Button>                          
                           <Button
                             variant="ghost"
                             size="icon"

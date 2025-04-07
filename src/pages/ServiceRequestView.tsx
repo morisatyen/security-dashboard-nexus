@@ -1,12 +1,28 @@
-
 import React, { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Send, Calendar, User, Clock, Download, PaperclipIcon, SmilePlus } from "lucide-react";
+import {
+  ArrowLeft,
+  Send,
+  Calendar,
+  User,
+  Clock,
+  Download,
+  PaperclipIcon,
+  SmilePlus,
+  Edit,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -51,15 +67,15 @@ const mockAttachments: Attachment[] = [
     name: "Error_Screenshot.png",
     size: "1.2 MB",
     type: "image/png",
-    url: "#"
+    url: "#",
   },
   {
     id: "att-2",
     name: "System_Logs.txt",
     size: "256 KB",
     type: "text/plain",
-    url: "#"
-  }
+    url: "#",
+  },
 ];
 
 // Mock messages for the conversation history
@@ -69,35 +85,39 @@ const generateMockMessages = (requestId: string): Message[] => [
     senderId: "customer-1",
     senderName: "Downtown Dispensary",
     senderRole: "customer",
-    content: "Hello, our security camera at the main entrance is not working properly. The feed keeps freezing every few minutes. We've tried restarting the system but the issue persists.",
+    content:
+      "Hello, our security camera at the main entrance is not working properly. The feed keeps freezing every few minutes. We've tried restarting the system but the issue persists.",
     timestamp: "2023-11-01T09:30:00",
-    attachments: [mockAttachments[0]]
+    attachments: [mockAttachments[0]],
   },
   {
     id: "msg-2",
     senderId: "admin-1",
     senderName: "Support Team",
     senderRole: "admin",
-    content: "Thank you for reporting this issue. We'll look into it right away. Could you please provide more details about when this problem started?",
-    timestamp: "2023-11-01T10:15:00"
+    content:
+      "Thank you for reporting this issue. We'll look into it right away. Could you please provide more details about when this problem started?",
+    timestamp: "2023-11-01T10:15:00",
   },
   {
     id: "msg-3",
     senderId: "customer-1",
     senderName: "Downtown Dispensary",
     senderRole: "customer",
-    content: "It started yesterday evening around 8 PM. We also noticed that the camera makes a clicking sound occasionally.",
-    timestamp: "2023-11-01T10:45:00"
+    content:
+      "It started yesterday evening around 8 PM. We also noticed that the camera makes a clicking sound occasionally.",
+    timestamp: "2023-11-01T10:45:00",
   },
   {
     id: "msg-4",
     senderId: "engineer-1",
     senderName: "Emma Roberts",
     senderRole: "engineer",
-    content: "I've reviewed the issue and it seems like there might be a problem with the camera's connection or power supply. I'll schedule a visit to your location to check the hardware. In the meantime, could you try connecting the camera to a different power outlet?",
+    content:
+      "I've reviewed the issue and it seems like there might be a problem with the camera's connection or power supply. I'll schedule a visit to your location to check the hardware. In the meantime, could you try connecting the camera to a different power outlet?",
     timestamp: "2023-11-01T11:30:00",
-    attachments: [mockAttachments[1]]
-  }
+    attachments: [mockAttachments[1]],
+  },
 ];
 
 const ServiceRequestView: React.FC = () => {
@@ -108,21 +128,21 @@ const ServiceRequestView: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [newMessage, setNewMessage] = useState("");
   const [messageHistory, setMessageHistory] = useState<Message[]>([]);
-  
+
   const { data: serviceRequest, isLoading } = useQuery({
     queryKey: ["serviceRequest", id],
     queryFn: () => {
       const storedData = localStorage.getItem("serviceRequests");
       const allRequests = storedData ? JSON.parse(storedData) : [];
       const request = allRequests.find((req: ServiceRequest) => req.id === id);
-      
+
       // If request exists but has no messages, add mock messages
       if (request && !request.messages) {
         request.messages = generateMockMessages(request.requestId);
       }
-      
+
       return request || null;
-    }
+    },
   });
 
   useEffect(() => {
@@ -131,13 +151,13 @@ const ServiceRequestView: React.FC = () => {
     }
   }, [serviceRequest]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messageHistory]);
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [messageHistory]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // };
 
   const handleBack = () => {
     navigate("/service-requests");
@@ -147,14 +167,14 @@ const ServiceRequestView: React.FC = () => {
     if (!newMessage.trim()) return;
 
     const currentDateTime = new Date().toISOString();
-    
+
     const newMsg: Message = {
       id: `msg-${Date.now()}`,
       senderId: "admin-1",
       senderName: "Support Team",
       senderRole: "admin",
       content: newMessage,
-      timestamp: currentDateTime
+      timestamp: currentDateTime,
     };
 
     setMessageHistory([...messageHistory, newMsg]);
@@ -169,8 +189,8 @@ const ServiceRequestView: React.FC = () => {
           return {
             ...req,
             messages: [...(req.messages || []), newMsg],
-            lastUpdated: currentDateTime.split('T')[0],
-            status: req.status === "pending" ? "in-progress" : req.status
+            lastUpdated: currentDateTime.split("T")[0],
+            status: req.status === "pending" ? "in-progress" : req.status,
           };
         }
         return req;
@@ -191,7 +211,7 @@ const ServiceRequestView: React.FC = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -199,7 +219,10 @@ const ServiceRequestView: React.FC = () => {
 
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
-    return `${date.toLocaleDateString()} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    return `${date.toLocaleDateString()} at ${date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
   };
 
   const getStatusColor = (status: string) => {
@@ -244,9 +267,12 @@ const ServiceRequestView: React.FC = () => {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <h2 className="text-xl font-semibold mb-2">Service Request Not Found</h2>
+              <h2 className="text-xl font-semibold mb-2">
+                Service Request Not Found
+              </h2>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                The service request you're looking for doesn't exist or has been removed.
+                The service request you're looking for doesn't exist or has been
+                removed.
               </p>
               <Button onClick={handleBack}>Go Back to Service Requests</Button>
             </div>
@@ -265,6 +291,13 @@ const ServiceRequestView: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Service Request: {serviceRequest.requestId}
         </h1>
+        <Badge
+          variant="outline"
+          className={cn("mt-1", getStatusColor(serviceRequest.status))}
+        >
+          {serviceRequest.status.charAt(0).toUpperCase() +
+            serviceRequest.status.slice(1).replace("-", " ")}
+        </Badge>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -272,37 +305,60 @@ const ServiceRequestView: React.FC = () => {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
+            <div className="flex items-center justify-between w-full">
               <CardTitle>Request Details</CardTitle>
+              <Link to={`/service-requests/edit/${serviceRequest.id}`} className="flex items-center gap-1 text-sm  hover:underline">
+                <Edit className="h-4 w-4" />
+                <span>Edit</span>
+              </Link>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Customer</h3>
-                <p className="mt-1 font-medium">{serviceRequest.dispensaryName}</p>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Customer
+                </h3>
+                <p className="mt-1 font-medium">
+                  {serviceRequest.dispensaryName}
+                </p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Issue Description</h3>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Issue Description
+                </h3>
                 <p className="mt-1">{serviceRequest.description}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</h3>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Status
+                </h3>
                 <Badge
                   variant="outline"
                   className={cn("mt-1", getStatusColor(serviceRequest.status))}
                 >
-                  {serviceRequest.status.charAt(0).toUpperCase() + serviceRequest.status.slice(1).replace("-", " ")}
+                  {serviceRequest.status.charAt(0).toUpperCase() +
+                    serviceRequest.status.slice(1).replace("-", " ")}
                 </Badge>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Priority</h3>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Priority
+                </h3>
                 <Badge
                   variant="outline"
-                  className={cn("mt-1", getPriorityColor(serviceRequest.priority))}
+                  className={cn(
+                    "mt-1",
+                    getPriorityColor(serviceRequest.priority)
+                  )}
                 >
-                  {serviceRequest.priority.charAt(0).toUpperCase() + serviceRequest.priority.slice(1)}
+                  {serviceRequest.priority.charAt(0).toUpperCase() +
+                    serviceRequest.priority.slice(1)}
                 </Badge>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Assigned Support Engineer</h3>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Assigned Support Engineer
+                </h3>
                 <p className="mt-1 flex items-center">
                   {serviceRequest.assignedEngineer ? (
                     <>
@@ -310,19 +366,25 @@ const ServiceRequestView: React.FC = () => {
                       {serviceRequest.assignedEngineer}
                     </>
                   ) : (
-                    <span className="text-gray-500 dark:text-gray-400">Unassigned</span>
+                    <span className="text-gray-500 dark:text-gray-400">
+                      Unassigned
+                    </span>
                   )}
                 </p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Request Date</h3>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Request Date
+                </h3>
                 <p className="mt-1 flex items-center">
                   <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
                   {serviceRequest.requestDate}
                 </p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Last Updated</h3>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Last Updated
+                </h3>
                 <p className="mt-1 flex items-center">
                   <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
                   {serviceRequest.lastUpdated || "Not updated yet"}
@@ -338,63 +400,96 @@ const ServiceRequestView: React.FC = () => {
             <CardHeader>
               <CardTitle>Communication History</CardTitle>
               <CardDescription>
-                View and respond to the conversation with {serviceRequest.dispensaryName}
+                View and respond to the conversation with{" "}
+                {serviceRequest.dispensaryName}
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-grow overflow-hidden">
               <div className="h-[500px] overflow-y-auto mb-4 pr-4 space-y-4">
                 {messageHistory.map((message) => (
                   <div key={message.id} className="mb-4 last:mb-0">
-                    <div className={cn(
-                      "flex flex-col",
-                      message.senderRole === "admin" || message.senderRole === "engineer" 
-                        ? "items-end" 
-                        : "items-start"
-                    )}>
+                    <div
+                      className={cn(
+                        "flex flex-col",
+                        message.senderRole === "admin" ||
+                          message.senderRole === "engineer"
+                          ? "items-end"
+                          : "items-start"
+                      )}
+                    >
                       <div className="flex items-start mb-1 gap-2">
-                        <Avatar className={cn(
-                          message.senderRole === "admin" || message.senderRole === "engineer" ? "order-last" : ""
-                        )}>
-                          <AvatarFallback className={cn(
-                            message.senderRole === "customer" 
-                              ? "bg-blue-100 text-blue-800" 
-                              : message.senderRole === "engineer"
+                        <Avatar
+                          className={cn(
+                            message.senderRole === "admin" ||
+                              message.senderRole === "engineer"
+                              ? "order-last"
+                              : ""
+                          )}
+                        >
+                          <AvatarFallback
+                            className={cn(
+                              message.senderRole === "customer"
+                                ? "bg-blue-100 text-blue-800"
+                                : message.senderRole === "engineer"
                                 ? "bg-purple-100 text-purple-800"
                                 : "bg-green-100 text-green-800"
-                          )}>
-                            {message.senderName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            )}
+                          >
+                            {message.senderName
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <div className={cn(
-                          "max-w-md rounded-lg px-4 py-2 shadow-sm",
-                          message.senderRole === "admin" 
-                            ? "bg-myers-yellow text-myers-darkBlue" 
-                            : message.senderRole === "engineer"
+                        <div
+                          className={cn(
+                            "max-w-md rounded-lg px-4 py-2 shadow-sm",
+                            message.senderRole === "admin"
+                              ? "bg-myers-yellow text-myers-darkBlue"
+                              : message.senderRole === "engineer"
                               ? "bg-purple-100 text-purple-900 dark:bg-purple-900 dark:text-purple-100"
                               : "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
-                        )}>
+                          )}
+                        >
                           <div className="mb-1 flex items-center">
-                            <span className="font-medium">{message.senderName}</span>
+                            <span className="font-medium">
+                              {message.senderName}
+                            </span>
                             <span className="ml-2 text-xs opacity-70">
                               {formatTimestamp(message.timestamp)}
                             </span>
                           </div>
-                          <div className="whitespace-pre-wrap">{message.content}</div>
-                          
-                          {message.attachments && message.attachments.length > 0 && (
-                            <div className="mt-2 space-y-2">
-                              {message.attachments.map(attachment => (
-                                <div key={attachment.id} className="flex items-center gap-2 p-2 rounded bg-white/20 dark:bg-black/20">
-                                  <PaperclipIcon className="h-4 w-4" />
-                                  <span className="text-sm flex-grow truncate">{attachment.name}</span>
-                                  <span className="text-xs">{attachment.size}</span>
-                                  <Button variant="ghost" size="icon" className="h-6 w-6 p-0">
-                                    <Download className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                          <div className="whitespace-pre-wrap">
+                            {message.content}
+                          </div>
+
+                          {message.attachments &&
+                            message.attachments.length > 0 && (
+                              <div className="mt-2 space-y-2">
+                                {message.attachments.map((attachment) => (
+                                  <div
+                                    key={attachment.id}
+                                    className="flex items-center gap-2 p-2 rounded bg-white/20 dark:bg-black/20"
+                                  >
+                                    <PaperclipIcon className="h-4 w-4" />
+                                    <span className="text-sm flex-grow truncate">
+                                      {attachment.name}
+                                    </span>
+                                    <span className="text-xs">
+                                      {attachment.size}
+                                    </span>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 p-0"
+                                    >
+                                      <Download className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                         </div>
                       </div>
                     </div>
@@ -422,8 +517,8 @@ const ServiceRequestView: React.FC = () => {
                       <SmilePlus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <Button 
-                    onClick={handleSendMessage} 
+                  <Button
+                    onClick={handleSendMessage}
                     disabled={!newMessage.trim()}
                     className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
                   >

@@ -38,6 +38,7 @@ import Chat from "./pages/Chat";
 
 // Initialize data
 import { getInitialData } from "./data/initialData";
+import Settings from "./pages/Settings";
 getInitialData();
 
 const queryClient = new QueryClient();
@@ -80,6 +81,7 @@ const App = () => {
                 <Route path="edit-profile" element={<EditProfile />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="chat/:id" element={<Chat />} />
+                <Route path="settings" element={<Settings />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
