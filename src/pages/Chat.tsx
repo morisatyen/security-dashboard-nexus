@@ -65,6 +65,33 @@ const mockChatCustomers: ChatCustomer[] = [
     avatar: "/placeholder.svg",
     isOnline: true,
   },
+  {
+    id: "6",
+    name: "Evergreen Dispensary",
+    lastMessage: "Our alarm went off this morning. False alarm?",
+    timestamp: "Oct 25",
+    unread: 0,
+    avatar: "/placeholder.svg",
+    isOnline: true,
+  },
+  {
+    id: "7",
+    name: "Evergreen Dispensary",
+    lastMessage: "Our alarm went off this morning. False alarm?",
+    timestamp: "Oct 25",
+    unread: 0,
+    avatar: "/placeholder.svg",
+    isOnline: true,
+  },
+  {
+    id: "8",
+    name: "Evergreen Dispensary",
+    lastMessage: "Our alarm went off this morning. False alarm?",
+    timestamp: "Oct 25",
+    unread: 0,
+    avatar: "/placeholder.svg",
+    isOnline: true,
+  },
 ];
 
 const Chat: React.FC = () => {
@@ -77,7 +104,7 @@ const Chat: React.FC = () => {
   );
 
   return (
-    <div className="p-6 h-[calc(100vh-180px)] flex flex-col">
+    <div className="h-[calc(100vh-140px)] flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Customer Chats</h1>
       </div>

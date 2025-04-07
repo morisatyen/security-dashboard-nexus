@@ -73,8 +73,8 @@ const App = () => {
                 <Route path="knowledge-base/add" element={<KnowledgeBaseAdd />} />
                 <Route path="knowledge-base/edit/:id" element={<KnowledgeBaseEdit />} />
                 <Route path="manage-cms" element={<ManageCMS />} />
-                <Route path="cms-page-add" element={<CMSPageAdd />} />
-                <Route path="cms-page-edit/:id" element={<CMSPageEdit />} />
+                <Route path="manage-cms/add" element={<CMSPageAdd />} />
+                <Route path="manage-cms/edit/:id" element={<CMSPageEdit />} />
                 <Route path="email-templates" element={<ManageEmailTemplates />} />
                 <Route path="email-templates/edit/:id" element={<EmailTemplateEdit />} />
                 <Route path="edit-profile" element={<EditProfile />} />

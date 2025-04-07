@@ -55,10 +55,10 @@ const Header: React.FC<HeaderProps> = ({
           )}
         </button>
         
-        <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative">
+        {/* <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative">
           <Bell className="h-5 w-5 text-gray-600 dark:text-gray-300" />
           <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white dark:border-myers-darkBlue"></span>
-        </button>
+        </button> */}
         
         <div className="relative">
           <button 

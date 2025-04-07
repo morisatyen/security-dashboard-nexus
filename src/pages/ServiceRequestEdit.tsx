@@ -174,7 +174,7 @@ const ServiceRequestEdit: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" asChild>
@@ -198,7 +198,7 @@ const ServiceRequestEdit: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="dispensaryId" className="text-sm font-medium">
-                  Dispensary
+                  Customer Name
                 </label>
                 <Select
                   value={serviceRequest.dispensaryId}

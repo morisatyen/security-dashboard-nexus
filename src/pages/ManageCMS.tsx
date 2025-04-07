@@ -59,13 +59,13 @@ const ManageCMS: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Manage CMS Pages
         </h1>
         <Button
-          onClick={() => navigate("/cms-page-add")}
+          onClick={() => navigate("/manage-cms/add")}
           className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -97,7 +97,7 @@ const ManageCMS: React.FC = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => navigate(`/cms-page-edit/${page.id}`)}
+                          onClick={() => navigate(`/manage-cms/edit/${page.id}`)}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
