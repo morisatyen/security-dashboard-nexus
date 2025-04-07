@@ -35,7 +35,6 @@ import ManageEmailTemplates from "./pages/ManageEmailTemplates";
 import EmailTemplateEdit from "./pages/EmailTemplateEdit";
 import EditProfile from "./pages/EditProfile";
 import Chat from "./pages/Chat";
-import Settings from "./pages/Settings";
 
 // Initialize data
 import { getInitialData } from "./data/initialData";
@@ -81,7 +80,6 @@ const App = () => {
                 <Route path="edit-profile" element={<EditProfile />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="chat/:id" element={<Chat />} />
-                <Route path="settings" element={<Settings />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

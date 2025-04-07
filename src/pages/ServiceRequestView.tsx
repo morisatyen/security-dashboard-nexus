@@ -12,9 +12,6 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
 
 interface ServiceRequest {
   id: string;
@@ -47,14 +44,6 @@ interface Attachment {
   type: string;
   url: string;
 }
-
-// Mock data for engineers
-const engineers = [
-  { id: "eng-1", name: "Emma Roberts" },
-  { id: "eng-2", name: "Michael Chen" },
-  { id: "eng-3", name: "Sarah Johnson" },
-  { id: "eng-4", name: "David Kim" }
-];
 
 const mockAttachments: Attachment[] = [
   {
@@ -119,14 +108,6 @@ const ServiceRequestView: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [newMessage, setNewMessage] = useState("");
   const [messageHistory, setMessageHistory] = useState<Message[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
-  
-  const form = useForm({
-    defaultValues: {
-      status: "",
-      assignedEngineer: ""
-    }
-  });
   
   const { data: serviceRequest, isLoading } = useQuery({
     queryKey: ["serviceRequest", id],
@@ -145,14 +126,10 @@ const ServiceRequestView: React.FC = () => {
   });
 
   useEffect(() => {
-    if (serviceRequest) {
-      setMessageHistory(serviceRequest.messages || []);
-      form.reset({
-        status: serviceRequest.status,
-        assignedEngineer: serviceRequest.assignedEngineer || ""
-      });
+    if (serviceRequest?.messages) {
+      setMessageHistory(serviceRequest.messages);
     }
-  }, [serviceRequest, form]);
+  }, [serviceRequest]);
 
   useEffect(() => {
     scrollToBottom();
@@ -211,33 +188,6 @@ const ServiceRequestView: React.FC = () => {
     if (messageInputRef.current) {
       messageInputRef.current.focus();
     }
-  };
-
-  const handleSaveChanges = (data: { status: string, assignedEngineer: string }) => {
-    if (!id) return;
-    
-    const storedData = localStorage.getItem("serviceRequests");
-    const allRequests = storedData ? JSON.parse(storedData) : [];
-    const updatedRequests = allRequests.map((req: ServiceRequest) => {
-      if (req.id === id) {
-        return {
-          ...req,
-          status: data.status,
-          assignedEngineer: data.assignedEngineer || null,
-          lastUpdated: new Date().toISOString().split('T')[0]
-        };
-      }
-      return req;
-    });
-
-    localStorage.setItem("serviceRequests", JSON.stringify(updatedRequests));
-    
-    toast({
-      title: "Changes Saved",
-      description: "The service request has been updated successfully.",
-    });
-    
-    setIsEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -308,223 +258,87 @@ const ServiceRequestView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" onClick={handleBack} className="p-2">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Service Request: {serviceRequest.requestId}
-          </h1>
-        </div>
-        <Badge
-          variant="outline"
-          className={cn("text-sm font-medium", getStatusColor(serviceRequest.status))}
-        >
-          {serviceRequest.status.charAt(0).toUpperCase() + serviceRequest.status.slice(1).replace("-", " ")}
-        </Badge>
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" onClick={handleBack} className="p-2">
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Service Request: {serviceRequest.requestId}
+        </h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Request details column */}
         <div className="lg:col-span-2">
-          <Card className="overflow-hidden">
-            <CardHeader className="bg-gray-50 dark:bg-gray-800 border-b px-6 py-4 flex flex-row items-center justify-between">
-              <CardTitle className="text-lg font-semibold">Request Details</CardTitle>
-              {!isEditing ? (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setIsEditing(true)}
-                  className="text-xs"
-                >
-                  Edit
-                </Button>
-              ) : (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setIsEditing(false)}
-                  className="text-xs"
-                >
-                  Cancel
-                </Button>
-              )}
+          <Card>
+            <CardHeader>
+              <CardTitle>Request Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6 p-6">
-              {isEditing ? (
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(handleSaveChanges)} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Customer</h3>
-                        <p className="font-medium">{serviceRequest.dispensaryName}</p>
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Issue Description</h3>
-                        <p>{serviceRequest.description}</p>
-                      </div>
-                      
-                      <FormField
-                        control={form.control}
-                        name="status"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</FormLabel>
-                            <Select 
-                              onValueChange={field.onChange} 
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select a status" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="pending">Pending</SelectItem>
-                                <SelectItem value="in-progress">In Progress</SelectItem>
-                                <SelectItem value="resolved">Resolved</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Priority</h3>
-                        <Badge
-                          variant="outline"
-                          className={cn(getPriorityColor(serviceRequest.priority))}
-                        >
-                          {serviceRequest.priority.charAt(0).toUpperCase() + serviceRequest.priority.slice(1)}
-                        </Badge>
-                      </div>
-                      
-                      <FormField
-                        control={form.control}
-                        name="assignedEngineer"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                              Assigned Support Engineer
-                            </FormLabel>
-                            <Select 
-                              onValueChange={field.onChange} 
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select an engineer" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="">Unassigned</SelectItem>
-                                {engineers.map(engineer => (
-                                  <SelectItem key={engineer.id} value={engineer.name}>
-                                    {engineer.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Request Date</h3>
-                        <p className="flex items-center">
-                          <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                          {serviceRequest.requestDate}
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Last Updated</h3>
-                        <p className="flex items-center">
-                          <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                          {serviceRequest.lastUpdated || "Not updated yet"}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-end">
-                      <Button 
-                        type="submit" 
-                        className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
-                      >
-                        Save Changes
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Customer</h3>
-                    <p className="font-medium">{serviceRequest.dispensaryName}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Issue Description</h3>
-                    <p>{serviceRequest.description}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Status</h3>
-                    <Badge
-                      variant="outline"
-                      className={cn(getStatusColor(serviceRequest.status))}
-                    >
-                      {serviceRequest.status.charAt(0).toUpperCase() + serviceRequest.status.slice(1).replace("-", " ")}
-                    </Badge>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Priority</h3>
-                    <Badge
-                      variant="outline"
-                      className={cn(getPriorityColor(serviceRequest.priority))}
-                    >
-                      {serviceRequest.priority.charAt(0).toUpperCase() + serviceRequest.priority.slice(1)}
-                    </Badge>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Assigned Support Engineer</h3>
-                    <p className="flex items-center">
-                      {serviceRequest.assignedEngineer ? (
-                        <>
-                          <User className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                          {serviceRequest.assignedEngineer}
-                        </>
-                      ) : (
-                        <span className="text-gray-500 dark:text-gray-400">Unassigned</span>
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Request Date</h3>
-                    <p className="flex items-center">
-                      <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                      {serviceRequest.requestDate}
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Last Updated</h3>
-                    <p className="flex items-center">
-                      <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                      {serviceRequest.lastUpdated || "Not updated yet"}
-                    </p>
-                  </div>
-                </div>
-              )}
+            <CardContent className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Customer</h3>
+                <p className="mt-1 font-medium">{serviceRequest.dispensaryName}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Issue Description</h3>
+                <p className="mt-1">{serviceRequest.description}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</h3>
+                <Badge
+                  variant="outline"
+                  className={cn("mt-1", getStatusColor(serviceRequest.status))}
+                >
+                  {serviceRequest.status.charAt(0).toUpperCase() + serviceRequest.status.slice(1).replace("-", " ")}
+                </Badge>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Priority</h3>
+                <Badge
+                  variant="outline"
+                  className={cn("mt-1", getPriorityColor(serviceRequest.priority))}
+                >
+                  {serviceRequest.priority.charAt(0).toUpperCase() + serviceRequest.priority.slice(1)}
+                </Badge>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Assigned Support Engineer</h3>
+                <p className="mt-1 flex items-center">
+                  {serviceRequest.assignedEngineer ? (
+                    <>
+                      <User className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
+                      {serviceRequest.assignedEngineer}
+                    </>
+                  ) : (
+                    <span className="text-gray-500 dark:text-gray-400">Unassigned</span>
+                  )}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Request Date</h3>
+                <p className="mt-1 flex items-center">
+                  <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
+                  {serviceRequest.requestDate}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Last Updated</h3>
+                <p className="mt-1 flex items-center">
+                  <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
+                  {serviceRequest.lastUpdated || "Not updated yet"}
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Chat column */}
         <div className="lg:col-span-1">
-          <Card className="flex flex-col h-full shadow-md">
-            <CardHeader className="bg-gray-50 dark:bg-gray-800 border-b">
-              <CardTitle className="text-lg font-semibold">Communication</CardTitle>
+          <Card className="flex flex-col h-full">
+            <CardHeader>
+              <CardTitle>Communication History</CardTitle>
               <CardDescription>
-                Respond to {serviceRequest.dispensaryName}
+                View and respond to the conversation with {serviceRequest.dispensaryName}
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-grow overflow-hidden">

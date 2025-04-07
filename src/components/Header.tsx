@@ -29,11 +29,6 @@ const Header: React.FC<HeaderProps> = ({
     setProfileOpen(false);
     navigate('/edit-profile');
   };
-  
-  const handleSettings = () => {
-    setProfileOpen(false);
-    navigate('/settings');
-  };
 
   return (
     <header className="h-16 px-4 flex items-center justify-between bg-white dark:bg-myers-darkBlue border-b border-gray-200 dark:border-gray-800 sticky top-0 z-30 transition-colors duration-300">
@@ -91,14 +86,6 @@ const Header: React.FC<HeaderProps> = ({
               >
                 <Settings className="w-4 h-4 mr-2" /> 
                 Update Profile
-              </button>
-              
-              <button 
-                onClick={handleSettings}
-                className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left"
-              >
-                <Settings className="w-4 h-4 mr-2" /> 
-                System Settings
               </button>
               
               <button 
