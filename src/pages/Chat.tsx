@@ -1,12 +1,13 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import CustomerChat from "./CustomerChat";
 
 interface ChatCustomer {
   id: string;
@@ -68,6 +69,7 @@ const mockChatCustomers: ChatCustomer[] = [
 
 const Chat: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [searchTerm, setSearchTerm] = useState("");
   
   const filteredCustomers = mockChatCustomers.filter(customer => 
@@ -75,16 +77,16 @@ const Chat: React.FC = () => {
   );
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-6 h-[calc(100vh-180px)] flex flex-col">
+      <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Customer Chats</h1>
       </div>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <CardTitle>All Conversations</CardTitle>
-            <div className="relative w-64">
+      <div className="flex h-full bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
+        {/* Left Sidebar - User List */}
+        <div className="w-full md:w-1/3 lg:w-1/4 border-r dark:border-gray-700 flex flex-col">
+          <div className="p-4 border-b dark:border-gray-700">
+            <div className="relative w-full">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search customers..."
@@ -94,15 +96,16 @@ const Chat: React.FC = () => {
               />
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-y-auto max-h-[600px]">
+          
+          <div className="overflow-y-auto flex-1">
             {filteredCustomers.length > 0 ? (
-              <ul className="space-y-1">
+              <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredCustomers.map((customer) => (
                   <li key={customer.id}>
                     <button
-                      className="w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-start justify-between"
+                      className={`w-full px-4 py-3 flex items-start justify-between hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                        id === customer.id ? "bg-gray-100 dark:bg-gray-800" : ""
+                      }`}
                       onClick={() => navigate(`/chat/${customer.id}`)}
                     >
                       <div className="flex items-start space-x-3">
@@ -126,14 +129,13 @@ const Chat: React.FC = () => {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-[280px]">
+                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-[180px]">
                             {customer.lastMessage}
                           </p>
                         </div>
                       </div>
                       <span className="text-xs text-gray-500">{customer.timestamp}</span>
                     </button>
-                    <Separator className="mt-1" />
                   </li>
                 ))}
               </ul>
@@ -143,8 +145,22 @@ const Chat: React.FC = () => {
               </div>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        
+        {/* Right Section - Chat Content */}
+        <div className="hidden md:flex md:w-2/3 lg:w-3/4 flex-col">
+          {id ? (
+            <CustomerChat customerId={id} />
+          ) : (
+            <div className="flex-1 flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-900">
+              <div className="text-center">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Select a conversation</h3>
+                <p className="text-gray-500 dark:text-gray-400">Choose a customer from the list to view your conversation.</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

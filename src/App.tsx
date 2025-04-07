@@ -29,11 +29,12 @@ import KnowledgeBase from "./pages/KnowledgeBase";
 import KnowledgeBaseAdd from "./pages/KnowledgeBaseAdd";
 import KnowledgeBaseEdit from "./pages/KnowledgeBaseEdit";
 import ManageCMS from "./pages/ManageCMS";
+import CMSPageAdd from "./pages/CMSPageAdd";
+import CMSPageEdit from "./pages/CMSPageEdit";
 import ManageEmailTemplates from "./pages/ManageEmailTemplates";
 import EmailTemplateEdit from "./pages/EmailTemplateEdit";
 import EditProfile from "./pages/EditProfile";
 import Chat from "./pages/Chat";
-import CustomerChat from "./pages/CustomerChat";
 
 // Initialize data
 import { getInitialData } from "./data/initialData";
@@ -72,11 +73,13 @@ const App = () => {
                 <Route path="knowledge-base/add" element={<KnowledgeBaseAdd />} />
                 <Route path="knowledge-base/edit/:id" element={<KnowledgeBaseEdit />} />
                 <Route path="manage-cms" element={<ManageCMS />} />
+                <Route path="cms-page-add" element={<CMSPageAdd />} />
+                <Route path="cms-page-edit/:id" element={<CMSPageEdit />} />
                 <Route path="email-templates" element={<ManageEmailTemplates />} />
                 <Route path="email-templates/edit/:id" element={<EmailTemplateEdit />} />
                 <Route path="edit-profile" element={<EditProfile />} />
                 <Route path="chat" element={<Chat />} />
-                <Route path="chat/:id" element={<CustomerChat />} />
+                <Route path="chat/:id" element={<Chat />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

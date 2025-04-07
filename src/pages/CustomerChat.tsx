@@ -1,11 +1,8 @@
-
 import React, { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, Send, Paperclip } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Send, Paperclip } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 
@@ -271,19 +268,21 @@ const mockCustomerChats: Record<string, CustomerChatData> = {
   },
 };
 
-const CustomerChat: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+interface CustomerChatProps {
+  customerId?: string;
+}
+
+const CustomerChat: React.FC<CustomerChatProps> = ({ customerId }) => {
   const [message, setMessage] = useState("");
   const [chatData, setChatData] = useState<CustomerChatData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (id && mockCustomerChats[id]) {
-      setChatData(mockCustomerChats[id]);
+    if (customerId && mockCustomerChats[customerId]) {
+      setChatData(mockCustomerChats[customerId]);
     }
-  }, [id]);
+  }, [customerId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -324,11 +323,7 @@ const CustomerChat: React.FC = () => {
   };
 
   if (!chatData) {
-    return (
-      <div className="p-6 flex justify-center items-center h-[calc(100vh-200px)]">
-        <p>Customer not found</p>
-      </div>
-    );
+    return null;
   }
 
   // Group messages by date for display
@@ -342,109 +337,99 @@ const CustomerChat: React.FC = () => {
   });
 
   return (
-    <div className="p-6 h-[calc(100vh-180px)] flex flex-col">
-      <div className="mb-4 flex items-center space-x-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/chat')}>
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div className="flex items-center space-x-3">
-          <div className="relative">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={chatData.avatar} alt={chatData.name} />
-              <AvatarFallback>{chatData.name[0]}</AvatarFallback>
-            </Avatar>
-            {chatData.isOnline && (
-              <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-gray-900"></span>
-            )}
-          </div>
-          <div>
-            <h2 className="text-lg font-medium">{chatData.name}</h2>
-            <p className="text-sm text-gray-500">
-              {chatData.isOnline ? "Online" : "Offline"}
-            </p>
-          </div>
+    <div className="flex flex-col h-full">
+      <div className="p-4 border-b dark:border-gray-700 flex items-center space-x-3">
+        <div className="relative">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={chatData.avatar} alt={chatData.name} />
+            <AvatarFallback>{chatData.name[0]}</AvatarFallback>
+          </Avatar>
+          {chatData.isOnline && (
+            <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white dark:ring-gray-900"></span>
+          )}
+        </div>
+        <div>
+          <h2 className="text-lg font-medium">{chatData.name}</h2>
+          <p className="text-sm text-gray-500">
+            {chatData.isOnline ? "Online" : "Offline"}
+          </p>
         </div>
       </div>
 
-      <Card className="flex-1 flex flex-col">
-        <CardHeader className="pb-2">
-          <CardTitle>Chat History</CardTitle>
-        </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto pb-2">
-          <div className="space-y-4">
-            {Object.entries(messagesByDate).map(([date, msgs]) => (
-              <div key={date}>
-                <div className="flex justify-center my-3">
-                  <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs">
-                    {date}
-                  </span>
-                </div>
-                {msgs.map((msg) => (
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900">
+        <div className="space-y-4">
+          {Object.entries(messagesByDate).map(([date, msgs]) => (
+            <div key={date}>
+              <div className="flex justify-center my-3">
+                <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs">
+                  {date}
+                </span>
+              </div>
+              {msgs.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex ${
+                    msg.sender === "admin" ? "justify-end" : "justify-start"
+                  } mb-2`}
+                >
+                  {msg.sender === "customer" && (
+                    <Avatar className="h-8 w-8 mr-2 flex-shrink-0 self-end">
+                      <AvatarImage src={chatData.avatar} alt={chatData.name} />
+                      <AvatarFallback>{chatData.name[0]}</AvatarFallback>
+                    </Avatar>
+                  )}
                   <div
-                    key={msg.id}
-                    className={`flex ${
-                      msg.sender === "admin" ? "justify-end" : "justify-start"
-                    } mb-2`}
+                    className={`max-w-[70%] px-4 py-2 rounded-lg ${
+                      msg.sender === "admin"
+                        ? "bg-myers-yellow text-myers-darkBlue"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
+                    }`}
                   >
-                    {msg.sender === "customer" && (
-                      <Avatar className="h-8 w-8 mr-2 flex-shrink-0 self-end">
-                        <AvatarImage src={chatData.avatar} alt={chatData.name} />
-                        <AvatarFallback>{chatData.name[0]}</AvatarFallback>
-                      </Avatar>
-                    )}
-                    <div
-                      className={`max-w-[70%] px-4 py-2 rounded-lg ${
+                    <p className="whitespace-pre-wrap break-words">{msg.text}</p>
+                    <p
+                      className={`text-xs mt-1 ${
                         msg.sender === "admin"
-                          ? "bg-myers-yellow text-myers-darkBlue"
-                          : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
+                          ? "text-myers-darkBlue/70"
+                          : "text-gray-500"
                       }`}
                     >
-                      <p className="whitespace-pre-wrap break-words">{msg.text}</p>
-                      <p
-                        className={`text-xs mt-1 ${
-                          msg.sender === "admin"
-                            ? "text-myers-darkBlue/70"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {formatTime(msg.timestamp)}
-                      </p>
-                    </div>
+                      {formatTime(msg.timestamp)}
+                    </p>
                   </div>
-                ))}
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-        </CardContent>
-        
-        <div className="p-4 border-t dark:border-gray-800">
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon">
-              <Paperclip className="h-5 w-5" />
-            </Button>
-            <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-            />
-            <Button 
-              className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
-              onClick={handleSendMessage}
-              disabled={!message.trim()}
-            >
-              <Send className="h-5 w-5" />
-            </Button>
-          </div>
+                </div>
+              ))}
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
         </div>
-      </Card>
+      </div>
+      
+      <div className="p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex items-center space-x-2">
+          <Button variant="ghost" size="icon">
+            <Paperclip className="h-5 w-5" />
+          </Button>
+          <Input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+          />
+          <Button 
+            className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
+            onClick={handleSendMessage}
+            disabled={!message.trim()}
+          >
+            <Send className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
