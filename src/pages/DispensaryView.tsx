@@ -1,7 +1,8 @@
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +31,10 @@ const DispensaryView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("details");
+  const [isEditingInvoice, setIsEditingInvoice] = useState(false);
+  const [isEditingPayment, setIsEditingPayment] = useState(false);
+  const [isEditingAgreement, setIsEditingAgreement] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   // Fetch dispensary data from localStorage
   const { data: dispensary } = useQuery({
@@ -58,12 +63,42 @@ const DispensaryView: React.FC = () => {
     }
   };
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setIsEditingInvoice(false);
+    setIsEditingPayment(false);
+    setIsEditingAgreement(false);
+    setSelectedItemId(null);
+  };
+
+  const handleEditInvoice = (invoiceId: string) => {
+    setIsEditingInvoice(true);
+    setSelectedItemId(invoiceId);
+  };
+
+  const handleEditPayment = (paymentId: string) => {
+    setIsEditingPayment(true);
+    setSelectedItemId(paymentId);
+  };
+
+  const handleEditAgreement = (agreementId: string) => {
+    setIsEditingAgreement(true);
+    setSelectedItemId(agreementId);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingInvoice(false);
+    setIsEditingPayment(false);
+    setIsEditingAgreement(false);
+    setSelectedItemId(null);
+  };
+
   if (!dispensary) {
     return (
       <div className="p-6">
         <Card>
           <CardContent className="pt-6">
-            <p>Loading customers details...</p>
+            <p>Loading customer details...</p>
           </CardContent>
         </Card>
       </div>
@@ -96,7 +131,7 @@ const DispensaryView: React.FC = () => {
       <Tabs
         defaultValue="details"
         value={activeTab}
-        onValueChange={setActiveTab}
+        onValueChange={handleTabChange}
         className="w-full"
       >
         <TabsList className="w-full flex justify-start border-b bg-transparent p-0">
@@ -166,10 +201,6 @@ const DispensaryView: React.FC = () => {
                     </h3>
                     <p className="mt-1">{dispensary.location}</p>
                   </div>
-                  {/* <div>
-                    <h3 className="text-sm font-medium text-gray-500">Category</h3>
-                    <p className="mt-1">{dispensary.category}</p>
-                  </div> */}
                 </div>
 
                 <div className="flex flex-col gap-4">
@@ -206,15 +237,132 @@ const DispensaryView: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="invoices">
-          <Invoices dispensaryId={id} viewMode={true} />
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Invoices</h2>
+            <div className="flex gap-2">
+              {isEditingInvoice ? (
+                <Button 
+                  variant="outline" 
+                  onClick={handleCancelEdit}
+                >
+                  Cancel
+                </Button>
+              ) : (
+                <Button 
+                  onClick={() => handleEditInvoice("new")}
+                  className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400 flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Invoice
+                </Button>
+              )}
+            </div>
+          </div>
+          
+          {isEditingInvoice ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{selectedItemId === "new" ? "Add New Invoice" : "Edit Invoice"}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-center py-8 text-gray-500">Invoice edit form would go here</p>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={handleCancelEdit}>Cancel</Button>
+                  <Button className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400">
+                    Save Invoice
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Invoices dispensaryId={id} viewMode={true} onEdit={handleEditInvoice} />
+          )}
         </TabsContent>
 
         <TabsContent value="payments">
-          <Payments dispensaryId={id} viewMode={true} />
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Payments</h2>
+            <div className="flex gap-2">
+              {isEditingPayment ? (
+                <Button 
+                  variant="outline" 
+                  onClick={handleCancelEdit}
+                >
+                  Cancel
+                </Button>
+              ) : (
+                <Button 
+                  onClick={() => handleEditPayment("new")}
+                  className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400 flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Payment
+                </Button>
+              )}
+            </div>
+          </div>
+          
+          {isEditingPayment ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{selectedItemId === "new" ? "Add New Payment" : "Edit Payment"}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-center py-8 text-gray-500">Payment edit form would go here</p>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={handleCancelEdit}>Cancel</Button>
+                  <Button className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400">
+                    Save Payment
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Payments dispensaryId={id} viewMode={true} onEdit={handleEditPayment} />
+          )}
         </TabsContent>
 
         <TabsContent value="agreements">
-          <Agreements dispensaryId={id} viewMode={true}/>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Service Agreements</h2>
+            <div className="flex gap-2">
+              {isEditingAgreement ? (
+                <Button 
+                  variant="outline" 
+                  onClick={handleCancelEdit}
+                >
+                  Cancel
+                </Button>
+              ) : (
+                <Button 
+                  onClick={() => handleEditAgreement("new")}
+                  className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400 flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Agreement
+                </Button>
+              )}
+            </div>
+          </div>
+          
+          {isEditingAgreement ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{selectedItemId === "new" ? "Add New Agreement" : "Edit Agreement"}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-center py-8 text-gray-500">Agreement edit form would go here</p>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={handleCancelEdit}>Cancel</Button>
+                  <Button className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400">
+                    Save Agreement
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Agreements dispensaryId={id} viewMode={true} onEdit={handleEditAgreement} />
+          )}
         </TabsContent>
       </Tabs>
     </div>
