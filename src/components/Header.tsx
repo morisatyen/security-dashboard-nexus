@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Menu,
   Bell,
@@ -28,6 +28,7 @@ const Header: React.FC<HeaderProps> = ({
   const [profileOpen, setProfileOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const navigate = useNavigate();
+  const profileRef = useRef<HTMLDivElement | null>(null);
 
   const toggleProfile = () => {
     setProfileOpen(!profileOpen);
@@ -42,7 +43,21 @@ const Header: React.FC<HeaderProps> = ({
     setProfileOpen(false);
     navigate("/settings");
   };
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
 
+    if (profileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [profileOpen]);
   return (
     <header className="h-16 px-4 flex items-center justify-between bg-white dark:bg-myers-darkBlue border-b border-gray-200 dark:border-gray-800 sticky top-0 z-30 transition-colors duration-300">
       {/* Left Side */}
@@ -73,7 +88,7 @@ const Header: React.FC<HeaderProps> = ({
           <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white dark:border-myers-darkBlue"></span>
         </button> */}
 
-        <div className="relative">
+        <div className="relative" ref={profileRef}>
           <button
             onClick={toggleProfile}
             className="flex items-center space-x-2 p-1 rounded-full transition-colors focus:outline-none"
