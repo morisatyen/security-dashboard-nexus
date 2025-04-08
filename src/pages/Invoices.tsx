@@ -207,7 +207,7 @@ const Invoices: React.FC<InvoicesProps> = ({
       title: "Invoice Downloaded",
       description: `Invoice ${invoice.invoiceNumber} has been downloaded successfully.`,
     });
-    // In a real application, you would generate a PDF and trigger a download
+    
   };
 
   const getStatusColor = (status: string) => {
@@ -229,6 +229,32 @@ const Invoices: React.FC<InvoicesProps> = ({
   const totalItems = filteredInvoices.length;
   const resultsText = `Showing ${startItem} to ${endItem} of ${totalItems} results`;
 
+  //edit logic
+  const handleEditInvoice = (invoice: Invoice) => {
+    setEditingInvoice(invoice);
+    setShowAddForm(true);    
+  };
+  const handleFormSubmit = () => {
+      if (editingInvoice) {
+        // Update logic
+        toast({
+          title: "Invoice Updated",
+          description: `Invoice ${editingInvoice.invoiceNumber} has been updated.`,
+        });
+      } else {
+        // Add logic
+        toast({
+          title: "Invoice Generated",
+          description: "Invoice has been generated successfully.",
+        });
+      }
+  
+      setShowAddForm(false);
+      setEditingInvoice(null);
+      // setFormValues({ title: "", file: null });
+      // setImagePreview(null);
+    };
+    //in edit (with backend) time call useEffect and edit data default se on state same as Payments Tab
   return (
     <div className={viewMode ? "" : "p-6 space-y-6"}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -334,15 +360,9 @@ const Invoices: React.FC<InvoicesProps> = ({
                 </Button>
                 <Button
                   className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
-                  onClick={() => {
-                    toast({
-                      title: "Invoice Generated",
-                      description: "Invoice has been generated successfully.",
-                    });
-                    setShowAddForm(false);
-                  }}
+                  onClick={handleFormSubmit}
                 >
-                  Add Invoice
+                  {editingInvoice ? "Update Invoice" : "Add Invoice"}
                 </Button>
               </div>
             </form>
@@ -467,7 +487,7 @@ const Invoices: React.FC<InvoicesProps> = ({
                           <Button
                             variant="ghost"
                             size="icon"
-                            // onClick={() => handleEditEngineer(engineer)}
+                            onClick={() => handleEditInvoice(invoice)}
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>

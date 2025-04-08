@@ -238,7 +238,7 @@ const AdminUserEdit: React.FC = () => {
                     <select 
                       id="status" 
                       name="status" 
-                      className="w-full px-3 py-2 border rounded-md"
+                      className="w-full px-3 py-2 border rounded-md text-myers-darkBlue"
                       defaultValue={engineer.status}
                       required
                     >

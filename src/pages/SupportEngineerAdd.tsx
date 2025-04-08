@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SupportEngineer {
   id: string;
@@ -181,16 +188,15 @@ const SupportEngineerAdd: React.FC = () => {
               
               <div className="space-y-2">
                 <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
-                <select 
-                  id="status" 
-                  name="status" 
-                  className="w-full px-3 py-2 border rounded-md"
-                  required
-                >
-                  <option value="available">Available</option>
-                  <option value="assigned">Assigned</option>
-                  <option value="on-leave">On Leave</option>
-                </select>
+                <Select required>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             

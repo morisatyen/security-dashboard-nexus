@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Plus,
@@ -112,15 +112,6 @@ const mockInvoices: Invoice[] = [
     description: "Quarterly security review",
   },
 ];
-
-const dispensaries = [
-  { id: "1", name: "Downtown Dispensary" },
-  { id: "2", name: "Green Leaf Dispensary" },
-  { id: "3", name: "Herbal Solutions" },
-  { id: "4", name: "Healing Center" },
-  { id: "5", name: "Evergreen Dispensary" },
-];
-
 const Agreements: React.FC<InvoicesProps> = ({
   dispensaryId,
   viewMode = false,
@@ -133,7 +124,10 @@ const Agreements: React.FC<InvoicesProps> = ({
   const [dateFilter, setDateFilter] = useState<string>("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
-
+  const [formValues, setFormValues] = useState({
+    title: "",
+    file: null as File | null,
+  });
   // In a real app, this would fetch from an API
   const { data: invoices = mockInvoices } = useQuery({
     queryKey: ["invoices", dispensaryId],
@@ -241,6 +235,46 @@ const Agreements: React.FC<InvoicesProps> = ({
   const totalItems = filteredInvoices.length;
   const resultsText = `Showing ${startItem} to ${endItem} of ${totalItems} results`;
 
+  //edit logic
+  const handleEditInvoice = (invoice: Invoice) => {
+    setEditingInvoice(invoice);
+    setShowAddForm(true);
+    if (invoice.description) {
+      setImagePreview(null); // or set existing image preview if applicable
+    }
+  };
+
+  const handleFormSubmit = () => {
+    if (editingInvoice) {
+      // Update logic
+      toast({
+        title: "Agreement Updated",
+        description: `Agreement ${editingInvoice.invoiceNumber} has been updated.`,
+      });
+    } else {
+      // Add logic
+      toast({
+        title: "Agreement Generated",
+        description: "Agreement has been generated successfully.",
+      });
+    }
+
+    setShowAddForm(false);
+    setEditingInvoice(null);
+    setFormValues({ title: "", file: null });
+    setImagePreview(null);
+  };
+
+  useEffect(() => {
+    if (editingInvoice) {
+      setFormValues({
+        title: editingInvoice.description || "",
+        file: null,
+      });
+      // If image data is saved and accessible, set preview here
+      setImagePreview(null);
+    }
+  }, [editingInvoice]);
   return (
     <div className={viewMode ? "" : "p-6 space-y-6"}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -273,9 +307,16 @@ const Agreements: React.FC<InvoicesProps> = ({
                     Title <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    id="location"
-                    name="location"
-                    placeholder="Enter address"
+                    id="title"
+                    name="title"
+                    placeholder="Enter Title"
+                    value={formValues.title}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
                     required
                   />
                 </div>
@@ -291,7 +332,11 @@ const Agreements: React.FC<InvoicesProps> = ({
                     name="profilePicture"
                     type="file"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setFormValues((prev) => ({ ...prev, file }));
+                      handleImageChange(e);
+                    }}
                   />
                   {imagePreview && (
                     <img
@@ -308,15 +353,9 @@ const Agreements: React.FC<InvoicesProps> = ({
                 </Button>
                 <Button
                   className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
-                  onClick={() => {
-                    toast({
-                      title: "Agreement Generated",
-                      description: "Agreement has been generated successfully.",
-                    });
-                    setShowAddForm(false);
-                  }}
+                  onClick={handleFormSubmit}
                 >
-                  Add Agreement
+                  {editingInvoice ? "Update Agreement" : "Add Agreement"}
                 </Button>
               </div>
             </form>
@@ -328,7 +367,7 @@ const Agreements: React.FC<InvoicesProps> = ({
         <CardHeader className="pb-2">
           <div className="flex flex-col space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <CardTitle>Agreements List</CardTitle>              
+              <CardTitle>Agreements List</CardTitle>
             </div>
 
             <div className="flex flex-wrap justify-between items-center gap-2">
@@ -377,7 +416,7 @@ const Agreements: React.FC<InvoicesProps> = ({
                         <TableCell>{invoice.dispensaryName}</TableCell>
                       )}
 
-                      <TableCell>Title</TableCell>
+                      <TableCell>{invoice?.description}</TableCell>
                       <TableCell>Agreement file</TableCell>
                       <TableCell>
                         {invoice.paidDate ? (
@@ -396,7 +435,7 @@ const Agreements: React.FC<InvoicesProps> = ({
                           <Button
                             variant="ghost"
                             size="icon"
-                            // onClick={() => handleEditEngineer(engineer)}
+                            onClick={() => handleEditInvoice(invoice)}
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>

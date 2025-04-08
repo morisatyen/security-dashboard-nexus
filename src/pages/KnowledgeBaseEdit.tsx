@@ -23,6 +23,7 @@ const KnowledgeBaseEdit: React.FC = () => {
   const [item, setItem] = useState<KnowledgeBaseItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null); 
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -95,7 +96,16 @@ const KnowledgeBaseEdit: React.FC = () => {
   const handleCancel = () => {
     navigate('/knowledge-base');
   };
-  
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImagePreview(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
   if (isLoading) {
     return (
       <div className="p-6 flex justify-center">
@@ -144,7 +154,7 @@ const KnowledgeBaseEdit: React.FC = () => {
                 <select 
                   id="category" 
                   name="category" 
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md text-myers-darkBlue"
                   defaultValue={item.category}
                   required
                 >
@@ -189,13 +199,21 @@ const KnowledgeBaseEdit: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="fileUrl" className="text-sm font-medium">File URL</label>
+                <label htmlFor="fileUrl" className="text-sm font-medium">Upload File</label>
                 <Input 
                   id="fileUrl" 
                   name="fileUrl" 
-                  placeholder="https://example.com/file.pdf"
-                  defaultValue={item.fileUrl || ''}
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={handleImageChange}                  
                 />
+                {imagePreview && (
+                  <img
+                    src={imagePreview}
+                    alt="Profile Preview"
+                    className="w-24 h-24 rounded-md mt-2 border"
+                  />
+                )}
               </div>
               
               <div className="space-y-2">
@@ -203,7 +221,7 @@ const KnowledgeBaseEdit: React.FC = () => {
                 <select 
                   id="status" 
                   name="status" 
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md text-myers-darkBlue"
                   defaultValue={item.status}
                   required
                 >

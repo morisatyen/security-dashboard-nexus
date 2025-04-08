@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Plus,
@@ -28,7 +28,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
@@ -133,7 +132,10 @@ const Payments: React.FC<InvoicesProps> = ({
   const [dateFilter, setDateFilter] = useState<string>("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
-
+  const [formValues, setFormValues] = useState({
+    title: "",
+    file: null as File | null,
+  });
   // In a real app, this would fetch from an API
   const { data: invoices = mockInvoices } = useQuery({
     queryKey: ["invoices", dispensaryId],
@@ -211,18 +213,6 @@ const Payments: React.FC<InvoicesProps> = ({
     // In a real application, you would generate a PDF and trigger a download
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-      case "paid":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "overdue":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
-      default:
-        return "";
-    }
-  };
   //Privew of image
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -241,6 +231,46 @@ const Payments: React.FC<InvoicesProps> = ({
   const totalItems = filteredInvoices.length;
   const resultsText = `Showing ${startItem} to ${endItem} of ${totalItems} results`;
 
+  //edit logic
+  const handleEditInvoice = (invoice: Invoice) => {
+    setEditingInvoice(invoice);
+    setShowAddForm(true);
+    if (invoice.description) {
+      setImagePreview(null); // or set existing image preview if applicable
+    }
+  };
+
+  const handleFormSubmit = () => {
+    if (editingInvoice) {
+      // Update logic
+      toast({
+        title: "Payment Updated",
+        description: `Payment ${editingInvoice.invoiceNumber} has been updated.`,
+      });
+    } else {
+      // Add logic
+      toast({
+        title: "Payment Generated",
+        description: "Payment has been generated successfully.",
+      });
+    }
+
+    setShowAddForm(false);
+    setEditingInvoice(null);
+    setFormValues({ title: "", file: null });
+    setImagePreview(null);
+  };
+
+  useEffect(() => {
+    if (editingInvoice) {
+      setFormValues({
+        title:editingInvoice.description || "",
+        file: null,
+      });
+      // If image data is saved and accessible, set preview here
+      setImagePreview(null);
+    }
+  }, [editingInvoice]);
   return (
     <div className={viewMode ? "" : "p-6 space-y-6"}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -273,10 +303,17 @@ const Payments: React.FC<InvoicesProps> = ({
                     Method <span className="text-red-500">*</span>
                   </label>
                   <Input
-                    id="location"
-                    name="location"
-                    placeholder="Enter address"
+                    id="method"
+                    name="method"
+                    placeholder="Enter method"
                     required
+                    value={formValues.title}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -330,15 +367,9 @@ const Payments: React.FC<InvoicesProps> = ({
                 </Button>
                 <Button
                   className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
-                  onClick={() => {
-                    toast({
-                      title: "Payment Generated",
-                      description: "Payment has been generated successfully.",
-                    });
-                    setShowAddForm(false);
-                  }}
+                  onClick={handleFormSubmit}
                 >
-                  Add Payment
+                  {editingInvoice ? "Update Payment" : "Add Payment"}
                 </Button>
               </div>
             </form>
@@ -351,11 +382,9 @@ const Payments: React.FC<InvoicesProps> = ({
           <div className="flex flex-col space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <CardTitle>Payments List</CardTitle>
-              
             </div>
 
             <div className="flex flex-wrap justify-between items-center gap-2">
-              
               <div>
                 <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"
@@ -386,7 +415,7 @@ const Payments: React.FC<InvoicesProps> = ({
                 <TableRow>
                   <TableHead>Reference #</TableHead>
                   {!dispensaryId && <TableHead>Dispensary</TableHead>}
-                  <TableHead>Amount</TableHead>                  
+                  <TableHead>Amount</TableHead>
                   <TableHead>Payment Date</TableHead>
                   <TableHead>Method</TableHead>
                   <TableHead>Payment File</TableHead>
@@ -404,25 +433,21 @@ const Payments: React.FC<InvoicesProps> = ({
                         <TableCell>{invoice.dispensaryName}</TableCell>
                       )}
                       <TableCell>${invoice.amount.toFixed(2)}</TableCell>
-                      
+
                       <TableCell>
                         <div className="flex items-center">
                           <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
                           {invoice.issuedDate}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        Card
-                      </TableCell>
-                      <TableCell>
-                        img file
-                      </TableCell>
+                      <TableCell>Card</TableCell>
+                      <TableCell>img file</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                        <Button
+                          <Button
                             variant="ghost"
                             size="icon"
-                            // onClick={() => handleEditEngineer(engineer)}
+                            onClick={() => handleEditInvoice(invoice)}
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>

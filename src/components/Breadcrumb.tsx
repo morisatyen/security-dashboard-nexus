@@ -20,6 +20,7 @@ const Breadcrumb: React.FC = () => {
     'manage-cms':'Manage CMS',
     'email-templates':'Email Templates',
     'invoices': 'Invoices',
+    'chat':'Chat',
     'add': 'Add',
     'edit': 'Edit',
     'view': 'View',

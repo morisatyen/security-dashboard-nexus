@@ -193,7 +193,7 @@ const ManageEmailTemplates: React.FC = () => {
                       <div className="flex items-center space-x-2">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button 
+                            {/* <Button 
                               variant="outline" 
                               size="sm" 
                               onClick={(e) => {
@@ -203,7 +203,7 @@ const ManageEmailTemplates: React.FC = () => {
                               className="px-2"
                             >
                               <Eye className="h-4 w-4" />
-                            </Button>
+                            </Button> */}
                           </DialogTrigger>
                           <DialogContent className="sm:max-w-[625px]">
                             <DialogHeader>
@@ -222,12 +222,12 @@ const ManageEmailTemplates: React.FC = () => {
                               </div>
                             </div>
                             <DialogFooter>
-                              <Button
+                              {/* <Button
                                 variant="outline"
                                 onClick={() => setIsPreviewOpen(false)}
                               >
                                 Close
-                              </Button>
+                              </Button> */}
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
