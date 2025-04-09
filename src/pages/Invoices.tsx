@@ -131,6 +131,9 @@ const Invoices: React.FC<InvoicesProps> = ({
   const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<string>("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [payimgPrev, setPayimgPrev] = useState<string | null>(null);
+
   const { toast } = useToast();
 
   // In a real app, this would fetch from an API
@@ -207,7 +210,6 @@ const Invoices: React.FC<InvoicesProps> = ({
       title: "Invoice Downloaded",
       description: `Invoice ${invoice.invoiceNumber} has been downloaded successfully.`,
     });
-    
   };
 
   const getStatusColor = (status: string) => {
@@ -232,29 +234,48 @@ const Invoices: React.FC<InvoicesProps> = ({
   //edit logic
   const handleEditInvoice = (invoice: Invoice) => {
     setEditingInvoice(invoice);
-    setShowAddForm(true);    
+    setShowAddForm(true);
   };
   const handleFormSubmit = () => {
-      if (editingInvoice) {
-        // Update logic
-        toast({
-          title: "Invoice Updated",
-          description: `Invoice ${editingInvoice.invoiceNumber} has been updated.`,
-        });
-      } else {
-        // Add logic
-        toast({
-          title: "Invoice Generated",
-          description: "Invoice has been generated successfully.",
-        });
-      }
-  
-      setShowAddForm(false);
-      setEditingInvoice(null);
-      // setFormValues({ title: "", file: null });
-      // setImagePreview(null);
-    };
-    //in edit (with backend) time call useEffect and edit data default se on state same as Payments Tab
+    if (editingInvoice) {
+      // Update logic
+      toast({
+        title: "Invoice Updated",
+        description: `Invoice ${editingInvoice.invoiceNumber} has been updated.`,
+      });
+    } else {
+      // Add logic
+      toast({
+        title: "Invoice Generated",
+        description: "Invoice has been generated successfully.",
+      });
+    }
+
+    setShowAddForm(false);
+    setEditingInvoice(null);
+    // setFormValues({ title: "", file: null });
+    // setImagePreview(null);
+  };
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handlePayImgChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPayimgPrev(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   return (
     <div className={viewMode ? "" : "p-6 space-y-6"}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -282,7 +303,7 @@ const Invoices: React.FC<InvoicesProps> = ({
           <CardContent>
             <form className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label htmlFor="dispensary" className="text-sm font-medium">
                     Title
                   </label>
@@ -299,7 +320,7 @@ const Invoices: React.FC<InvoicesProps> = ({
                       </option>
                     ))}
                   </select>
-                </div>
+                </div> */}
                 <div className="space-y-2">
                   <label htmlFor="amount" className="text-sm font-medium">
                     Amount ($)
@@ -328,17 +349,8 @@ const Invoices: React.FC<InvoicesProps> = ({
                   </label>
                   <Input id="dueDate" type="date" />
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="invoiceFile" className="text-sm font-medium">
-                    Invoice File (Image or Document)
-                  </label>
-                  <input
-                    id="invoiceFile"
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                </div>
+                
+
                 <div className="space-y-2">
                   <label htmlFor="status" className="text-sm font-medium">
                     Status
@@ -352,6 +364,66 @@ const Invoices: React.FC<InvoicesProps> = ({
                     <option value="paid">Paid</option>
                     <option value="overdue">Overdue</option>
                   </select>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="location" className="text-sm font-medium">
+                    Payment Method <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id="method"
+                    name="method"
+                    placeholder="Enter payment method"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="issuedDate" className="text-sm font-medium">
+                    Payment Date
+                  </label>
+                  <Input
+                    id="issuedDate"
+                    type="date"
+                    defaultValue={new Date().toISOString().split("T")[0]}
+                  />
+                </div>               
+                <div className="space-y-2">
+                  <label htmlFor="invoiceFile" className="text-sm font-medium">
+                    Invoice File (Image or Document)
+                  </label>
+                  <Input                    
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={handlePayImgChange}
+                  />
+                  {payimgPrev && (
+                    <img
+                      src={payimgPrev}
+                      alt="Profile Preview"
+                      className="w-24 h-24 rounded-md mt-2 border"
+                    />
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="profilePicture"
+                    className="text-sm font-medium"
+                  >
+                    Payment File
+                  </label>
+                  <Input
+                    id="profilePicture"
+                    name="profilePicture"
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={handleImageChange}
+                  />
+                  {imagePreview && (
+                    <img
+                      src={imagePreview}
+                      alt="Profile Preview"
+                      className="w-24 h-24 rounded-md mt-2 border"
+                    />
+                  )}
                 </div>
               </div>
               <div className="flex justify-end space-x-2 mt-4">
@@ -434,7 +506,8 @@ const Invoices: React.FC<InvoicesProps> = ({
                   <TableHead>Due Date</TableHead>
                   <TableHead>Paid Date</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Method</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -482,6 +555,7 @@ const Invoices: React.FC<InvoicesProps> = ({
                             invoice.status.slice(1)}
                         </Badge>
                       </TableCell>
+                      <TableCell>Debit Card</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button

@@ -122,9 +122,9 @@ const KnowledgeBaseEdit: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Button 
-          variant="ghost" 
+          variant="outline" 
           onClick={handleCancel}
-          className="p-0 h-auto"
+          size="icon"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>

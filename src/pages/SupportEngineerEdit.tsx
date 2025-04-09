@@ -179,7 +179,7 @@ const SupportEngineerEdit: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Button variant="ghost" onClick={handleCancel} className="p-0 h-auto">
+        <Button variant="outline" onClick={handleCancel} size="icon">
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">

@@ -1,13 +1,14 @@
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import CustomerChat from "./CustomerChat";
+import logo from "../images/Onlylogo.png";
+import { Button } from "@/components/ui/button";
 
 interface ChatCustomer {
   id: string;
@@ -98,20 +99,48 @@ const Chat: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [searchTerm, setSearchTerm] = useState("");
-  
-  const filteredCustomers = mockChatCustomers.filter(customer => 
+  const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
+
+  const filteredCustomers = mockChatCustomers.filter((customer) =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  useEffect(() => {
+    if (id) {
+      setIsMobileChatOpen(true);
+    } else {
+      setIsMobileChatOpen(false);
+    }
+  }, [id]);
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Customer Chats</h1>
+        <div className="flex items-center gap-4">
+          {id && (
+            <Button
+              className="md:hidden bg-white dark:bg-gray-800 border px-3 py-1 rounded"
+              onClick={() => {
+                navigate(`/chat`);
+                setIsMobileChatOpen(false);
+              }}
+              size="icon"
+              variant="outline"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          )}
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Customer Chats
+          </h1>
+        </div>
       </div>
 
       <div className="flex h-full bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
         {/* Left Sidebar - User List */}
-        <div className="w-full md:w-1/3 lg:w-1/4 border-r dark:border-gray-700 flex flex-col">
+        <div
+          className={`flex-col border-r dark:border-gray-700 md:flex w-full md:w-1/3 lg:w-1/4 ${
+            isMobileChatOpen ? "hidden md:flex" : "flex"
+          }`}
+        >
           <div className="p-4 border-b dark:border-gray-700">
             <div className="relative w-full">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -123,7 +152,7 @@ const Chat: React.FC = () => {
               />
             </div>
           </div>
-          
+
           <div className="overflow-y-auto flex-1">
             {filteredCustomers.length > 0 ? (
               <ul className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -133,12 +162,18 @@ const Chat: React.FC = () => {
                       className={`w-full px-4 py-3 flex items-start justify-between hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
                         id === customer.id ? "bg-gray-100 dark:bg-gray-800" : ""
                       }`}
-                      onClick={() => navigate(`/chat/${customer.id}`)}
+                      onClick={() => {
+                        navigate(`/chat/${customer.id}`);
+                        setIsMobileChatOpen(true);
+                      }}
                     >
                       <div className="flex items-start space-x-3">
                         <div className="relative">
                           <Avatar className="h-10 w-10">
-                            <AvatarImage src={customer.avatar} alt={customer.name} />
+                            <AvatarImage
+                              src={customer.avatar}
+                              alt={customer.name}
+                            />
                             <AvatarFallback>{customer.name[0]}</AvatarFallback>
                           </Avatar>
                           {customer.isOnline && (
@@ -161,7 +196,9 @@ const Chat: React.FC = () => {
                           </p>
                         </div>
                       </div>
-                      <span className="text-xs text-gray-500">{customer.timestamp}</span>
+                      <span className="text-xs text-gray-500">
+                        {customer.timestamp}
+                      </span>
                     </button>
                   </li>
                 ))}
@@ -173,16 +210,25 @@ const Chat: React.FC = () => {
             )}
           </div>
         </div>
-        
+
         {/* Right Section - Chat Content */}
-        <div className="hidden md:flex md:w-2/3 lg:w-3/4 flex-col">
+        <div
+          className={`flex-col w-full md:w-2/3 lg:w-3/4 ${
+            isMobileChatOpen ? "flex" : "hidden md:flex"
+          }`}
+        >
           {id ? (
             <CustomerChat customerId={id} />
           ) : (
             <div className="flex-1 flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-900">
-              <div className="text-center">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Select a conversation</h3>
-                <p className="text-gray-500 dark:text-gray-400">Choose a customer from the list to view your conversation.</p>
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <img src={logo} alt="logo" className="w-40" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  Select a conversation
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400">
+                  Choose a customer from the list to view your conversation.
+                </p>
               </div>
             </div>
           )}

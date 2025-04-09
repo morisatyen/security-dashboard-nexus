@@ -11,28 +11,44 @@ import "react-quill/dist/quill.snow.css";
 
 // Quill editor modules and formats
 const quillModules = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
+  toolbar: [    
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
     ["bold", "italic", "underline", "strike"],
+    [{ color: [] }, { background: [] }],
+    [{ script: "sub" }, { script: "super" }],
     [{ list: "ordered" }, { list: "bullet" }],
     [{ indent: "-1" }, { indent: "+1" }],
-    ["link", "image"],
-    ["clean"],
+    [{ direction: "rtl" }],
+    [{ align: [] }],
+    ["link", "image", "video", "formula"],
+    ["blockquote", "code-block"],
+    ["clean"]
   ],
 };
 
 const quillFormats = [
-  "header",
+  "header",  
+  "size",
   "bold",
   "italic",
   "underline",
   "strike",
+  "color",
+  "background",
+  "script",
   "list",
   "bullet",
   "indent",
+  "direction",
+  "align",
   "link",
   "image",
-];
+  "video",
+  "formula",
+  "code-block",
+  "blockquote",
+  "clean"
+]
 
 const CMSPageAdd: React.FC = () => {
   const [title, setTitle] = useState("");

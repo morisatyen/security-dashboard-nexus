@@ -10,7 +10,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
@@ -25,11 +33,55 @@ interface EmailTemplate {
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug format"),
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug format"),
   subject: z.string().min(1, "Subject is required"),
   content: z.string().min(10, "Content must be at least 10 characters"),
-  variables: z.string()
+  variables: z.string(),
 });
+
+const quillModules = {
+  toolbar: [
+   
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ color: [] }, { background: [] }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    [{ direction: "rtl" }],
+    [{ align: [] }],
+    ["link", "image", "video", "formula"],
+    ["blockquote", "code-block"],
+    ["clean"],
+  ],
+};
+
+const quillFormats = [
+  "header", 
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "color",
+  "background",
+  "script",
+  "list",
+  "bullet",
+  "indent",
+  "direction",
+  "align",
+  "link",
+  "image",
+  "video",
+  "formula",
+  "code-block",
+  "blockquote",
+  "clean",
+];
 
 const EmailTemplateEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,8 +96,8 @@ const EmailTemplateEdit: React.FC = () => {
       slug: "",
       subject: "",
       content: "",
-      variables: ""
-    }
+      variables: "",
+    },
   });
 
   useEffect(() => {
@@ -63,7 +115,7 @@ const EmailTemplateEdit: React.FC = () => {
           slug: template.slug,
           subject: template.subject,
           content: template.content,
-          variables: template.variables.join(", ")
+          variables: template.variables.join(", "),
         });
       }
       setIsLoading(false);
@@ -79,12 +131,15 @@ const EmailTemplateEdit: React.FC = () => {
       slug: values.slug,
       subject: values.subject,
       content: values.content,
-      variables: values.variables.split(",").map(v => v.trim()).filter(v => v !== "")
+      variables: values.variables
+        .split(",")
+        .map((v) => v.trim())
+        .filter((v) => v !== ""),
     };
 
     const storedData = localStorage.getItem("emailTemplates");
     const templates = storedData ? JSON.parse(storedData) : [];
-    const updatedTemplates = templates.map((template: EmailTemplate) => 
+    const updatedTemplates = templates.map((template: EmailTemplate) =>
       template.id === id ? updatedTemplate : template
     );
 
@@ -113,7 +168,7 @@ const EmailTemplateEdit: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Button variant="ghost" onClick={handleBack} className="p-2">
+        <Button variant="outline" onClick={handleBack} size="icon">
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -152,7 +207,8 @@ const EmailTemplateEdit: React.FC = () => {
                       <Input placeholder="enter-slug-here" {...field} />
                     </FormControl>
                     <FormDescription>
-                      URL-friendly version of the name (lowercase, hyphenated, no special characters)
+                      URL-friendly version of the name (lowercase, hyphenated,
+                      no special characters)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -186,6 +242,8 @@ const EmailTemplateEdit: React.FC = () => {
                           value={field.value}
                           onChange={field.onChange}
                           className="h-[200px] mb-12"
+                          modules={quillModules}
+                          formats={quillFormats}
                         />
                       </div>
                     </FormControl>
@@ -196,8 +254,6 @@ const EmailTemplateEdit: React.FC = () => {
                   </FormItem>
                 )}
               />
-
-              
 
               <div className="flex justify-end">
                 <Button

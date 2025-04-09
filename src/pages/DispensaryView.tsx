@@ -112,12 +112,12 @@ const DispensaryView: React.FC = () => {
           >
             Invoices
           </TabsTrigger>
-          <TabsTrigger
+          {/* <TabsTrigger
             value="payments"
             className="data-[state=active]:border-b-2 data-[state=active]:border-myers-yellow rounded-none border-transparent px-4 py-2"
           >
             Payments
-          </TabsTrigger>
+          </TabsTrigger> */}
           <TabsTrigger
             value="agreements"
             className="data-[state=active]:border-b-2 data-[state=active]:border-myers-yellow rounded-none border-transparent px-4 py-2"
@@ -209,9 +209,9 @@ const DispensaryView: React.FC = () => {
           <Invoices dispensaryId={id} viewMode={true} />
         </TabsContent>
 
-        <TabsContent value="payments">
+        {/* <TabsContent value="payments">
           <Payments dispensaryId={id} viewMode={true} />
-        </TabsContent>
+        </TabsContent> */}
 
         <TabsContent value="agreements">
           <Agreements dispensaryId={id} viewMode={true}/>

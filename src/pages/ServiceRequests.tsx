@@ -613,7 +613,7 @@ const ServiceRequests: React.FC = () => {
                   <TableHead>Assigned Engineer</TableHead>
                   <TableHead>Request Date</TableHead>
                   <TableHead>Last Updated</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
