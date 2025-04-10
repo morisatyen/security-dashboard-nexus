@@ -39,6 +39,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ServiceRequest {
   id: string;
@@ -675,34 +686,51 @@ const ServiceRequests: React.FC = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            asChild
-                          >
+                          <Button variant="ghost" size="icon" asChild>
                             <Link to={`/service-requests/view/${request.id}`}>
                               <Eye className="h-4 w-4" />
                               <span className="sr-only">View</span>
                             </Link>
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            asChild
-                          >
+                          <Button variant="ghost" size="icon" asChild>
                             <Link to={`/service-requests/edit/${request.id}`}>
                               <Edit className="h-4 w-4" />
                               <span className="sr-only">Edit</span>
                             </Link>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteRequest(request)}
-                          >
-                            <Trash className="h-4 w-4" />
-                            <span className="sr-only">Delete</span>
-                          </Button>
+                          </Button>                          
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-red-500 hover:text-red-700 px-2"
+                              >
+                                <Trash className="h-4 w-4 mr-1" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete the "
+                                  {request.dispensaryName}" request. This action cannot be
+                                  undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteRequest(request)}
+                                  className="bg-red-500 hover:bg-red-600 text-white"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </TableCell>
                     </TableRow>

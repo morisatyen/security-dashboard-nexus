@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -132,7 +132,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
   const { hasPermission } = useAuth();
-
+  const navigate = useNavigate();
   return (
     <aside
       className={`
@@ -143,7 +143,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
         flex flex-col
       `}
     >
-      <div className="h-16 flex items-center px-4 border-b border-gray-800">
+      <div className="h-16 flex items-center px-4 border-b border-gray-800 cursor-pointer" onClick={() => navigate("/dashboard")}>
         {isExpanded ? (
           <div className="flex items-center gap-x-2">
             <img src={logo} alt="Logo" className="w-12" />

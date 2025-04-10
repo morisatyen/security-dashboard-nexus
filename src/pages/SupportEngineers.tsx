@@ -38,6 +38,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface SupportEngineer {
   id: string;
@@ -391,14 +402,7 @@ const SupportEngineers: React.FC = () => {
     setViewingEngineer(engineer);
   };
 
-  const handleDeleteEngineer = (engineer: SupportEngineer) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${
-        engineer.name || `${engineer.firstName} ${engineer.lastName}`
-      }?`
-    );
-
-    if (confirmed) {
+  const handleDeleteEngineer = (engineer: SupportEngineer) => {   
       const updatedEngineers = engineers.filter((e) => e.id !== engineer.id);
       localStorage.setItem(
         "supportEngineers",
@@ -407,12 +411,11 @@ const SupportEngineers: React.FC = () => {
       refetch();
 
       toast({
-        title: "Engineer Deleted",
+        title: "Support Engineer Deleted",
         description: `${
           engineer.name || `${engineer.firstName} ${engineer.lastName}`
         } has been deleted successfully.`,
-      });
-    }
+      });    
   };
 
   const handleSort = (field: SortField) => {
@@ -448,54 +451,54 @@ const SupportEngineers: React.FC = () => {
   // };
 
   // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxDisplayedPages = 5;
+  // const getPageNumbers = () => {
+  //   const pageNumbers = [];
+  //   const maxDisplayedPages = 5;
 
-    if (totalPages <= maxDisplayedPages) {
-      // If we have fewer pages than the max, show all pages
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      // Always show first page
-      pageNumbers.push(1);
+  //   if (totalPages <= maxDisplayedPages) {
+  //     // If we have fewer pages than the max, show all pages
+  //     for (let i = 1; i <= totalPages; i++) {
+  //       pageNumbers.push(i);
+  //     }
+  //   } else {
+  //     // Always show first page
+  //     pageNumbers.push(1);
 
-      // Calculate start and end of displayed page range
-      let startPage = Math.max(2, currentPage - 1);
-      let endPage = Math.min(totalPages - 1, currentPage + 1);
+  //     // Calculate start and end of displayed page range
+  //     let startPage = Math.max(2, currentPage - 1);
+  //     let endPage = Math.min(totalPages - 1, currentPage + 1);
 
-      // Adjust if at the beginning
-      if (currentPage <= 2) {
-        endPage = 3;
-      }
+  //     // Adjust if at the beginning
+  //     if (currentPage <= 2) {
+  //       endPage = 3;
+  //     }
 
-      // Adjust if at the end
-      if (currentPage >= totalPages - 1) {
-        startPage = totalPages - 2;
-      }
+  //     // Adjust if at the end
+  //     if (currentPage >= totalPages - 1) {
+  //       startPage = totalPages - 2;
+  //     }
 
-      // Add ellipsis after first page if needed
-      if (startPage > 2) {
-        pageNumbers.push("ellipsis-start");
-      }
+  //     // Add ellipsis after first page if needed
+  //     if (startPage > 2) {
+  //       pageNumbers.push("ellipsis-start");
+  //     }
 
-      // Add middle pages
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
+  //     // Add middle pages
+  //     for (let i = startPage; i <= endPage; i++) {
+  //       pageNumbers.push(i);
+  //     }
 
-      // Add ellipsis before last page if needed
-      if (endPage < totalPages - 1) {
-        pageNumbers.push("ellipsis-end");
-      }
+  //     // Add ellipsis before last page if needed
+  //     if (endPage < totalPages - 1) {
+  //       pageNumbers.push("ellipsis-end");
+  //     }
 
-      // Always show last page
-      pageNumbers.push(totalPages);
-    }
+  //     // Always show last page
+  //     pageNumbers.push(totalPages);
+  //   }
 
-    return pageNumbers;
-  };
+  //   return pageNumbers;
+  // };
 
   return (
     <div className="space-y-6">
@@ -649,14 +652,39 @@ const SupportEngineers: React.FC = () => {
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteEngineer(engineer)}
-                          >
-                            <Trash className="h-4 w-4" />
-                            <span className="sr-only">Delete</span>
-                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-red-500 hover:text-red-700 px-2"
+                              >
+                                <Trash className="h-4 w-4 mr-1" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete the "
+                                  {engineer.name}" user. This action cannot be
+                                  undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteEngineer(engineer)}
+                                  className="bg-red-500 hover:bg-red-600 text-white"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </TableCell>
                     </TableRow>

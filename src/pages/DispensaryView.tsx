@@ -74,7 +74,7 @@ const DispensaryView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-2">
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
             onClick={() => navigate("/dispensaries")}
           >

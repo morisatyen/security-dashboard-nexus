@@ -233,7 +233,8 @@ const CMSPageEdit: React.FC = () => {
                   onChange={setContent}
                   modules={quillModules}
                   formats={quillFormats}
-                  className="bg-white dark:bg-gray-800 h-[250px] mb-12 rounded-md"
+                  // className="bg-white dark:bg-gray-800 h-[250px] mb-12 rounded-md"
+                  className="h-[250px]"
                 />
               </div>
               {errors.content && (

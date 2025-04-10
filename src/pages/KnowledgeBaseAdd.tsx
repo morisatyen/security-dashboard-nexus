@@ -12,10 +12,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ color: [] }, { background: [] }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    [{ direction: "rtl" }],
+    [{ align: [] }],
+    ["link", "image", "video", "formula"],
+    ["blockquote", "code-block"],
+    ["clean"],
+  ],
+};
+
+const quillFormats = [
+  "header",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "color",
+  "background",
+  "script",
+  "list",
+  "bullet",
+  "indent",
+  "direction",
+  "align",
+  "link",
+  "image",
+  "video",
+  "formula",
+  "code-block",
+  "blockquote",
+  "clean",
+];
 const KnowledgeBaseAdd: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [frimgPreview, setFrImgPreview] = useState<string | null>(null);
+
+  const [description, setDescription] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -80,11 +124,20 @@ const KnowledgeBaseAdd: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
-
+  const handlefrontedImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFrImgPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Button variant="ghost" onClick={handleCancel} className="p-0 h-auto">
+        <Button variant="outline" onClick={handleCancel} size="icon">
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -131,14 +184,22 @@ const KnowledgeBaseAdd: React.FC = () => {
                 <label htmlFor="description" className="text-sm font-medium">
                   Description <span className="text-red-500">*</span>
                 </label>
-                <textarea
+                {/* <textarea
                   id="description"
                   name="description"
                   placeholder="Enter description"
                   rows={4}
                   className="w-full px-3 py-2 border rounded-md"
                   required
-                />
+                /> */}
+                <div className="min-h-[200px]">
+                  <ReactQuill
+                    value={description}
+                    onChange={setDescription}
+                    placeholder="Enter description"
+                    className="h-[150px]"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -162,7 +223,7 @@ const KnowledgeBaseAdd: React.FC = () => {
                   placeholder="https://myerssecurity.com/blog/example"
                 />
               </div>
-
+              
               <div className="space-y-2">
                 <label htmlFor="fileUrl" className="text-sm font-medium">
                   Upload File
@@ -182,13 +243,31 @@ const KnowledgeBaseAdd: React.FC = () => {
                   />
                 )}
               </div>
-
               <div className="space-y-2">
+                <label htmlFor="fileUrl" className="text-sm font-medium">
+                  Frontend File
+                </label>
+                <Input
+                  id="fileUrl"
+                  name="fileUrl"
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={handlefrontedImageChange}
+                />
+                {frimgPreview && (
+                  <img
+                    src={frimgPreview}
+                    alt="Profile Preview"
+                    className="w-24 h-24 rounded-md mt-2 border"
+                  />
+                )}
+              </div>
+              <div className="space-y-2 relative">
                 <label htmlFor="status" className="text-sm font-medium">
                   Status <span className="text-red-500">*</span>
                 </label>
                 <Select required>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger id="status" name="status" className="w-full">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>

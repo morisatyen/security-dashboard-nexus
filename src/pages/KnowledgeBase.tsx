@@ -30,6 +30,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 
 interface KnowledgeBaseItem {
   id: string;
@@ -210,10 +222,8 @@ const KnowledgeBase: React.FC = () => {
   };
 
   const handleDeleteItem = (item: KnowledgeBaseItem) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${item.title}"?`
-    );
-    if (confirmed) {
+    
+   
       const updatedItems = knowledgeBase.filter((i) => i.id !== item.id);
       localStorage.setItem("knowledgeBase", JSON.stringify(updatedItems));
       refetch();
@@ -222,7 +232,7 @@ const KnowledgeBase: React.FC = () => {
         title: "Item Deleted",
         description: `"${item.title}" has been deleted successfully.`,
       });
-    }
+    
   };
 
   // Generate page numbers for pagination
@@ -454,14 +464,47 @@ const KnowledgeBase: React.FC = () => {
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>
                           </Button>
-                          <Button
+                          {/* <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => handleDeleteItem(item)}
                           >
                             <Trash className="h-4 w-4" />
                             <span className="sr-only">Delete</span>
-                          </Button>
+                          </Button> */}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-red-500 hover:text-red-700 px-2"
+                              >
+                                <Trash className="h-4 w-4 mr-1" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete the "
+                                  {item?.title}" Item. This action cannot be
+                                  undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteItem(item)}
+                                  className="bg-red-500 hover:bg-red-600 text-white"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </TableCell>
                     </TableRow>

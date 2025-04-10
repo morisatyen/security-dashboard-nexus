@@ -161,7 +161,7 @@ const AdminUserAdd: React.FC = () => {
                   required
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <label htmlFor="status" className="text-sm font-medium">
                   Status <span className="text-red-500">*</span>
                 </label>

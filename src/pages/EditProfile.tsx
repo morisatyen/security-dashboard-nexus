@@ -127,7 +127,7 @@ const EditProfile: React.FC = () => {
                   <div className="flex flex-col items-center">
                     <Avatar className="h-24 w-24">
                       <AvatarImage
-                        src="/src/images/Logo1.png"
+                        src="/src/images/Onlylogo.png"
                         alt={formData.name}
                       />
                       <AvatarFallback className="text-lg bg-myers-yellow text-myers-darkBlue">

@@ -169,13 +169,15 @@ const CMSPageAdd: React.FC = () => {
             
             <div className="space-y-2">
               <Label htmlFor="content">Page Content <span className="text-red-500">*</span></Label>
-              <div className="min-h-[300px]">
+              <div className="min-h-[200px]">
                 <ReactQuill
                   value={content}
                   onChange={setContent}
                   modules={quillModules}
                   formats={quillFormats}
-                  className="bg-white dark:bg-gray-800 h-[250px] mb-12 rounded-md"
+                  // className="bg-white dark:bg-gray-800 h-[150px] mb-12 rounded-md"
+                  className="h-[150px]"
+
                 />
               </div>
               {errors.content && (

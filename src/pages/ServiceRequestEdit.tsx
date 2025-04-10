@@ -276,7 +276,7 @@ const ServiceRequestEdit: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <label htmlFor="priority" className="text-sm font-medium">
                   Priority
                 </label>
@@ -301,7 +301,7 @@ const ServiceRequestEdit: React.FC = () => {
                 </Select>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <label htmlFor="status" className="text-sm font-medium">
                   Status
                 </label>
@@ -325,7 +325,7 @@ const ServiceRequestEdit: React.FC = () => {
                 </Select>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <label
                   htmlFor="assignedEngineer"
                   className="text-sm font-medium"

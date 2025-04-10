@@ -1,21 +1,62 @@
-
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from "lucide-react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ color: [] }, { background: [] }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    [{ direction: "rtl" }],
+    [{ align: [] }],
+    ["link", "image", "video", "formula"],
+    ["blockquote", "code-block"],
+    ["clean"],
+  ],
+};
+
+const quillFormats = [
+  "header",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "color",
+  "background",
+  "script",
+  "list",
+  "bullet",
+  "indent",
+  "direction",
+  "align",
+  "link",
+  "image",
+  "video",
+  "formula",
+  "code-block",
+  "blockquote",
+  "clean",
+];
 
 interface KnowledgeBaseItem {
   id: string;
   title: string;
-  category: 'Services' | 'Case Studies' | 'Testimonials';
+  category: "Services" | "Case Studies" | "Testimonials";
   description: string;
   videoUrl: string | null;
   blogUrl: string | null;
   fileUrl: string | null;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   createdAt: string;
 }
 
@@ -23,44 +64,49 @@ const KnowledgeBaseEdit: React.FC = () => {
   const [item, setItem] = useState<KnowledgeBaseItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null); 
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [frimgPreview, setFrImgPreview] = useState<string | null>(null);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [description, setDescription] = useState("");
   const { toast } = useToast();
-  
+
   useEffect(() => {
     // Fetch the item from localStorage
-    const storedData = localStorage.getItem('knowledgeBase');
+    const storedData = localStorage.getItem("knowledgeBase");
     if (storedData) {
       const items: KnowledgeBaseItem[] = JSON.parse(storedData);
-      const foundItem = items.find(i => i.id === id);
+      const foundItem = items.find((i) => i.id === id);
       if (foundItem) {
         setItem(foundItem);
       } else {
         toast({
           title: "Item Not Found",
           description: "The requested knowledge base item could not be found.",
-          variant: "destructive"
+          variant: "destructive",
         });
-        navigate('/knowledge-base');
+        navigate("/knowledge-base");
       }
     }
     setIsLoading(false);
   }, [id, navigate, toast]);
-  
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
-    
+
     const formData = new FormData(event.currentTarget);
-    const title = formData.get('title') as string;
-    const category = formData.get('category') as 'Services' | 'Case Studies' | 'Testimonials';
-    const description = formData.get('description') as string;
-    const videoUrl = formData.get('videoUrl') as string;
-    const blogUrl = formData.get('blogUrl') as string;
-    const fileUrl = formData.get('fileUrl') as string;
-    const status = formData.get('status') as 'active' | 'inactive';
-    
+    const title = formData.get("title") as string;
+    const category = formData.get("category") as
+      | "Services"
+      | "Case Studies"
+      | "Testimonials";
+    const description = formData.get("description") as string;
+    const videoUrl = formData.get("videoUrl") as string;
+    const blogUrl = formData.get("blogUrl") as string;
+    const fileUrl = formData.get("fileUrl") as string;
+    const status = formData.get("status") as "active" | "inactive";
+
     const updatedItem: KnowledgeBaseItem = {
       id: item!.id,
       title,
@@ -70,42 +116,52 @@ const KnowledgeBaseEdit: React.FC = () => {
       blogUrl: blogUrl || null,
       fileUrl: fileUrl || null,
       status,
-      createdAt: item!.createdAt
+      createdAt: item!.createdAt,
     };
-    
+
     // Update localStorage
-    const storedData = localStorage.getItem('knowledgeBase');
+    const storedData = localStorage.getItem("knowledgeBase");
     if (storedData) {
       const items: KnowledgeBaseItem[] = JSON.parse(storedData);
-      const updatedItems = items.map(i => i.id === id ? updatedItem : i);
-      localStorage.setItem('knowledgeBase', JSON.stringify(updatedItems));
-      
+      const updatedItems = items.map((i) => (i.id === id ? updatedItem : i));
+      localStorage.setItem("knowledgeBase", JSON.stringify(updatedItems));
+
       // Show success message
       toast({
         title: "Knowledge Base Item Updated",
-        description: "Your knowledge base item has been updated successfully."
+        description: "Your knowledge base item has been updated successfully.",
       });
-      
+
       // Redirect back to the list page
       setTimeout(() => {
-        navigate('/knowledge-base');
+        navigate("/knowledge-base");
       }, 1000);
     }
   };
-  
+
   const handleCancel = () => {
-    navigate('/knowledge-base');
+    navigate("/knowledge-base");
   };
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setImagePreview(reader.result as string);
-          };
-          reader.readAsDataURL(file);
-        }
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
       };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handlefrontedImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFrImgPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
   if (isLoading) {
     return (
       <div className="p-6 flex justify-center">
@@ -113,24 +169,22 @@ const KnowledgeBaseEdit: React.FC = () => {
       </div>
     );
   }
-  
+
   if (!item) {
     return null;
   }
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Button 
-          variant="outline" 
-          onClick={handleCancel}
-          size="icon"
-        >
+        <Button variant="outline" onClick={handleCancel} size="icon">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Knowledge Base Item</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Edit Knowledge Base Item
+        </h1>
       </div>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>Edit knowledge base item</CardTitle>
@@ -139,21 +193,25 @@ const KnowledgeBaseEdit: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">Title <span className="text-red-500">*</span></label>
-                <Input 
-                  id="title" 
-                  name="title" 
+                <label htmlFor="title" className="text-sm font-medium">
+                  Title <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  id="title"
+                  name="title"
                   placeholder="Enter title"
                   defaultValue={item.title}
-                  required 
+                  required
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <label htmlFor="category" className="text-sm font-medium">Category <span className="text-red-500">*</span></label>
-                <select 
-                  id="category" 
-                  name="category" 
+                <label htmlFor="category" className="text-sm font-medium">
+                  Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  id="category"
+                  name="category"
                   className="w-full px-3 py-2 border rounded-md text-myers-darkBlue"
                   defaultValue={item.category}
                   required
@@ -164,48 +222,56 @@ const KnowledgeBaseEdit: React.FC = () => {
                   <option value="Testimonials">Testimonials</option>
                 </select>
               </div>
-              
+
               <div className="space-y-2 md:col-span-2">
-                <label htmlFor="description" className="text-sm font-medium">Description <span className="text-red-500">*</span></label>
-                <textarea 
-                  id="description" 
-                  name="description" 
-                  placeholder="Enter description"
-                  rows={4}
-                  className="w-full px-3 py-2 border rounded-md"
-                  defaultValue={item.description}
-                  required 
-                />
+                <label htmlFor="description" className="text-sm font-medium">
+                  Description <span className="text-red-500">*</span>
+                </label>
+                <div className="min-h-[200px]">
+                  <ReactQuill
+                    value={description}
+                    onChange={setDescription}
+                    modules={quillModules}
+                    formats={quillFormats}
+                    className="h-[150px]"
+                  />
+                </div>
               </div>
-              
+
               <div className="space-y-2">
-                <label htmlFor="videoUrl" className="text-sm font-medium">Video URL</label>
-                <Input 
-                  id="videoUrl" 
-                  name="videoUrl" 
+                <label htmlFor="videoUrl" className="text-sm font-medium">
+                  Video URL
+                </label>
+                <Input
+                  id="videoUrl"
+                  name="videoUrl"
                   placeholder="https://www.youtube.com/watch?v=example"
-                  defaultValue={item.videoUrl || ''}
+                  defaultValue={item.videoUrl || ""}
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <label htmlFor="blogUrl" className="text-sm font-medium">Blog URL</label>
-                <Input 
-                  id="blogUrl" 
-                  name="blogUrl" 
+                <label htmlFor="blogUrl" className="text-sm font-medium">
+                  Blog URL
+                </label>
+                <Input
+                  id="blogUrl"
+                  name="blogUrl"
                   placeholder="https://myerssecurity.com/blog/example"
-                  defaultValue={item.blogUrl || ''}
+                  defaultValue={item.blogUrl || ""}
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <label htmlFor="fileUrl" className="text-sm font-medium">Upload File</label>
-                <Input 
-                  id="fileUrl" 
-                  name="fileUrl" 
+                <label htmlFor="fileUrl" className="text-sm font-medium">
+                  Upload File
+                </label>
+                <Input
+                  id="fileUrl"
+                  name="fileUrl"
                   type="file"
                   accept="image/*,application/pdf"
-                  onChange={handleImageChange}                  
+                  onChange={handleImageChange}
                 />
                 {imagePreview && (
                   <img
@@ -215,12 +281,32 @@ const KnowledgeBaseEdit: React.FC = () => {
                   />
                 )}
               </div>
-              
+                <div className="space-y-2">
+                                <label htmlFor="fileUrl" className="text-sm font-medium">
+                                  Frontend File
+                                </label>
+                                <Input
+                                  id="fileUrl"
+                                  name="fileUrl"
+                                  type="file"
+                                  accept="image/*,application/pdf"
+                                  onChange={handlefrontedImageChange}
+                                />
+                                {frimgPreview && (
+                                  <img
+                                    src={frimgPreview}
+                                    alt="Profile Preview"
+                                    className="w-24 h-24 rounded-md mt-2 border"
+                                  />
+                                )}
+                              </div>
               <div className="space-y-2">
-                <label htmlFor="status" className="text-sm font-medium">Status <span className="text-red-500">*</span></label>
-                <select 
-                  id="status" 
-                  name="status" 
+                <label htmlFor="status" className="text-sm font-medium">
+                  Status <span className="text-red-500">*</span>
+                </label>
+                <select
+                  id="status"
+                  name="status"
                   className="w-full px-3 py-2 border rounded-md text-myers-darkBlue"
                   defaultValue={item.status}
                   required
@@ -230,21 +316,17 @@ const KnowledgeBaseEdit: React.FC = () => {
                 </select>
               </div>
             </div>
-            
+
             <div className="flex justify-end space-x-2">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={handleCancel}
-              >
+              <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isSubmitting}
                 className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
               >
-                {isSubmitting ? 'Updating...' : 'Update Item'}
+                {isSubmitting ? "Updating..." : "Update Item"}
               </Button>
             </div>
           </form>
