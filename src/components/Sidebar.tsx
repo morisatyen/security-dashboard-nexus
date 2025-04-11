@@ -9,9 +9,9 @@ import {
   ChevronDown,
   ChevronRight,
   BookOpen,
-  Settings,
   Mail,
   MessageSquare,
+  MailQuestion,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import logo from "../images/Onlylogo.png";
@@ -143,7 +143,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
         flex flex-col
       `}
     >
-      <div className="h-16 flex items-center px-4 border-b border-gray-800 cursor-pointer" onClick={() => navigate("/dashboard")}>
+      <div
+        className="h-16 flex items-center px-4 border-b border-gray-800 cursor-pointer"
+        onClick={() => navigate("/dashboard")}
+      >
         {isExpanded ? (
           <div className="flex items-center gap-x-2">
             <img src={logo} alt="Logo" className="w-12" />

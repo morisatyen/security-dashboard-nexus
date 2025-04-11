@@ -176,11 +176,8 @@ const EmailTemplateEdit: React.FC = () => {
         </h1>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Template Details</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <Card>       
+        <CardContent className="mt-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -241,16 +238,12 @@ const EmailTemplateEdit: React.FC = () => {
                           theme="snow"
                           value={field.value}
                           onChange={field.onChange}
-                          className="h-[200px] mb-12"
+                          className="h-[200px] mb-20"
                           modules={quillModules}
                           formats={quillFormats}
                         />
                       </div>
-                    </FormControl>
-                    <FormDescription>
-                      Use variables like {"{{customer_name}}"} in your content
-                    </FormDescription>
-                    <FormMessage />
+                    </FormControl>                   
                   </FormItem>
                 )}
               />

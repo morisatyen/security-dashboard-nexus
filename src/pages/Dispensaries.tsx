@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -344,7 +343,9 @@ const Dispensaries: React.FC = () => {
     filteredDispensaries.length
   );
   const totalItems = filteredDispensaries.length;
-  const resultsText = `Showing ${startItem ?? 0} to ${endItem ?? 0} of ${totalItems ?? 0} results`;
+  const resultsText = `Showing ${startItem ?? 0} to ${endItem ?? 0} of ${
+    totalItems ?? 0
+  } results`;
 
   return (
     <div className="space-y-6">
@@ -364,20 +365,9 @@ const Dispensaries: React.FC = () => {
       <Card>
         <CardHeader className="pb-2">
           <div className="flex flex-col space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <CardTitle>Customers List</CardTitle>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search customers..."
-                  className="pl-8 w-full sm:w-64"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
+            {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"></div> */}
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"
@@ -388,6 +378,15 @@ const Dispensaries: React.FC = () => {
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
+              </div>
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search customers..."
+                  className="pl-8 w-full sm:w-64"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
             </div>
           </div>
@@ -481,7 +480,7 @@ const Dispensaries: React.FC = () => {
                       <TableCell>{dispensary.createdAt}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                        <Button
+                          <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => handleChatWithDispensary(dispensary)}
@@ -504,7 +503,7 @@ const Dispensaries: React.FC = () => {
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>
-                          </Button>                          
+                          </Button>
                           {/* <Button
                             variant="ghost"
                             size="icon"
@@ -531,14 +530,16 @@ const Dispensaries: React.FC = () => {
                                 </AlertDialogTitle>
                                 <AlertDialogDescription>
                                   This will permanently delete the "
-                                  {dispensary.name}" Dispensary. This action cannot be
-                                  undone.
+                                  {dispensary.name}" Dispensary. This action
+                                  cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
-                                  onClick={() => handleDeleteDispensary(dispensary)}
+                                  onClick={() =>
+                                    handleDeleteDispensary(dispensary)
+                                  }
                                   className="bg-red-500 hover:bg-red-600 text-white"
                                 >
                                   Delete
@@ -570,7 +571,7 @@ const Dispensaries: React.FC = () => {
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div>
-              <span className="text-sm text-muted-foreground mr-2">
+                <span className="text-sm text-muted-foreground mr-2">
                   Items per page:
                 </span>
                 <select

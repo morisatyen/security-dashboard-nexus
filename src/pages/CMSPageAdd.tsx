@@ -133,10 +133,10 @@ const CMSPageAdd: React.FC = () => {
       </div>
 
       <Card>
-        <CardHeader>
+        {/* <CardHeader>
           <CardTitle>Page Details</CardTitle>
-        </CardHeader>
-        <CardContent>
+        </CardHeader> */}
+        <CardContent className="mt-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="title">Page Title <span className="text-red-500">*</span></Label>

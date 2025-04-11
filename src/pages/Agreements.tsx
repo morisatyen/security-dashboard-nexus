@@ -296,10 +296,10 @@ const Agreements: React.FC<InvoicesProps> = ({
 
       {showAddForm && (
         <Card className="mb-6">
-          <CardHeader>
+          {/* <CardHeader>
             <CardTitle>Add New Agreement</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </CardHeader> */}
+          <CardContent className="mt-6">
             <form className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">

@@ -74,9 +74,12 @@ const ManageCMS: React.FC = () => {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>CMS Pages</CardTitle>
-        </CardHeader>
+        {/* <CardHeader>
+          
+        </CardHeader> */}
+        <div className="mb-5">
+
+        </div>
         <CardContent>
           {cmsPages.length > 0 ? (
             <Table>

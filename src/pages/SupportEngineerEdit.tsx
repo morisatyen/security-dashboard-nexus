@@ -188,10 +188,10 @@ const SupportEngineerEdit: React.FC = () => {
       </div>
 
       <Card>
-        <CardHeader>
+        {/* <CardHeader>
           <CardTitle>Edit support engineer</CardTitle>
-        </CardHeader>
-        <CardContent>
+        </CardHeader> */}
+        <CardContent className="mt-6">
           <Tabs
             defaultValue="details"
             value={activeTab}

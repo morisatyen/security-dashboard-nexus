@@ -175,10 +175,10 @@ const AdminUserEdit: React.FC = () => {
       </div>
       
       <Card>
-        <CardHeader>
+        {/* <CardHeader>
           <CardTitle>Edit Admin User</CardTitle>
-        </CardHeader>
-        <CardContent>
+        </CardHeader> */}
+        <CardContent className='mt-6'>
           <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6">
               <TabsTrigger value="details">User Details</TabsTrigger>

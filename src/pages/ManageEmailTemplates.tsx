@@ -168,10 +168,8 @@ const ManageEmailTemplates: React.FC = () => {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Email Templates</CardTitle>
-        </CardHeader>
+      <Card>        
+        <div className="mt-5"></div>
         <CardContent>
           <div className="grid grid-cols-1 gap-6">
             <div className="space-y-4">
@@ -276,30 +274,7 @@ const ManageEmailTemplates: React.FC = () => {
                           </AlertDialogContent>
                         </AlertDialog>
                       </div>
-                    </div>
-                    {/* <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                      Subject: {template.subject}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Slug: {template.slug}
-                    </p> */}
-                    {/* {selectedTemplate === template.id && (
-                      <div className="mt-3 space-y-2">
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">
-                          Available Variables:
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {template.variables.map((variable) => (
-                            <div 
-                              key={variable} 
-                              className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md text-xs"
-                            >
-                              {`{{${variable}}}`}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )} */}
+                    </div>                    
                   </div>
                 ))
               ) : (

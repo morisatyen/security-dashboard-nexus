@@ -42,7 +42,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-
 interface KnowledgeBaseItem {
   id: string;
   title: string;
@@ -222,17 +221,14 @@ const KnowledgeBase: React.FC = () => {
   };
 
   const handleDeleteItem = (item: KnowledgeBaseItem) => {
-    
-   
-      const updatedItems = knowledgeBase.filter((i) => i.id !== item.id);
-      localStorage.setItem("knowledgeBase", JSON.stringify(updatedItems));
-      refetch();
+    const updatedItems = knowledgeBase.filter((i) => i.id !== item.id);
+    localStorage.setItem("knowledgeBase", JSON.stringify(updatedItems));
+    refetch();
 
-      toast({
-        title: "Item Deleted",
-        description: `"${item.title}" has been deleted successfully.`,
-      });
-    
+    toast({
+      title: "Item Deleted",
+      description: `"${item.title}" has been deleted successfully.`,
+    });
   };
 
   // Generate page numbers for pagination
@@ -305,21 +301,12 @@ const KnowledgeBase: React.FC = () => {
       <Card>
         <CardHeader className="pb-2">
           <div className="flex flex-col space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <CardTitle>Knowledge Base Items</CardTitle>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search items..."
-                  className="pl-8 w-full sm:w-64"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
+            </div> */}
 
-            <div className="flex flex-wrap gap-2">
-              <div>
+            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+              <div className="flex flex-wrap gap-2">
                 <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={categoryFilter}
@@ -330,9 +317,6 @@ const KnowledgeBase: React.FC = () => {
                   <option value="Case Studies">Case Studies</option>
                   <option value="Testimonials">Testimonials</option>
                 </select>
-              </div>
-
-              <div>
                 <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={statusFilter}
@@ -342,6 +326,15 @@ const KnowledgeBase: React.FC = () => {
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
+              </div>
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search items..."
+                  className="pl-8 w-full sm:w-64"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
             </div>
           </div>

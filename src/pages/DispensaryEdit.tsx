@@ -183,10 +183,10 @@ const DispensaryEdit: React.FC = () => {
       </div>
 
       <Card>
-        <CardHeader>
+        {/* <CardHeader>
           <CardTitle>Edit customer</CardTitle>
-        </CardHeader>
-        <CardContent>
+        </CardHeader> */}
+        <CardContent className="mt-6">
           <Tabs
             defaultValue="details"
             value={activeTab}

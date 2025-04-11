@@ -11,6 +11,8 @@ import {
   PaperclipIcon,
   SmilePlus,
   Edit,
+  Pencil,
+  Save,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -128,7 +130,8 @@ const ServiceRequestView: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [newMessage, setNewMessage] = useState("");
   const [messageHistory, setMessageHistory] = useState<Message[]>([]);
-
+  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingEngineer, setIsEditingEngineer] = useState(false);
   const { data: serviceRequest, isLoading } = useQuery({
     queryKey: ["serviceRequest", id],
     queryFn: () => {
@@ -144,6 +147,14 @@ const ServiceRequestView: React.FC = () => {
       return request || null;
     },
   });
+  const [selectedStatus, setSelectedStatus] = useState(
+    serviceRequest?.status || "pending"
+  );
+  const [selectedEngineer, setSelectedEngineer] = useState(
+    serviceRequest?.assignedEngineer || ""
+  );
+  const statusOptions = ["pending", "in-progress", "resolved"];
+  const engineers = ["Ravi", "Sneha", "Arjun", "Priya"];
 
   useEffect(() => {
     if (serviceRequest?.messages) {
@@ -253,6 +264,13 @@ const ServiceRequestView: React.FC = () => {
     }
   };
 
+  const handleStatusUpdate = () => {
+    //update status api
+  };
+  const handleEngineerUpdate = () => {
+    //api
+    setIsEditingEngineer(false);
+  };
   if (isLoading) {
     return (
       <div className="p-6 flex items-center justify-center min-h-[400px]">
@@ -285,11 +303,11 @@ const ServiceRequestView: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Button variant="ghost" onClick={handleBack} className="p-2">
+        <Button variant="outline" onClick={handleBack} size="icon">
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Service Request: {serviceRequest.requestId}
+          Request: {serviceRequest.requestId}
         </h1>
         <Badge
           variant="outline"
@@ -305,18 +323,21 @@ const ServiceRequestView: React.FC = () => {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-            <div className="flex items-center justify-between w-full">
-              <CardTitle>Request Details</CardTitle>
-              <Link to={`/service-requests/edit/${serviceRequest.id}`} className="flex items-center gap-1 text-sm  hover:underline">
-                <Edit className="h-4 w-4" />
-                <span>Edit</span>
-              </Link>
+              <div className="flex items-center justify-between w-full">
+                <CardTitle>Request Details</CardTitle>
+                <Link
+                  to={`/service-requests/edit/${serviceRequest.id}`}
+                  className="flex items-center gap-1 text-sm  hover:underline"
+                >
+                  <Edit className="h-4 w-4" />
+                  <span>Edit</span>
+                </Link>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Customer
+                  Customer Name
                 </h3>
                 <p className="mt-1 font-medium">
                   {serviceRequest.dispensaryName}
@@ -332,13 +353,51 @@ const ServiceRequestView: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Status
                 </h3>
-                <Badge
-                  variant="outline"
-                  className={cn("mt-1", getStatusColor(serviceRequest.status))}
+
+                {isEditing ? (
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    className="mt-1 border border-gray-300 rounded px-2 py-1 text-myers-darkBlue"
+                  >
+                    {statusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {status.charAt(0).toUpperCase() +
+                          status.slice(1).replace("-", " ")}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "mt-1",
+                      getStatusColor(serviceRequest.status)
+                    )}
+                  >
+                    {serviceRequest.status.charAt(0).toUpperCase() +
+                      serviceRequest.status.slice(1).replace("-", " ")}
+                  </Badge>
+                )}
+                <button
+                  onClick={() => {
+                    if (isEditing) {
+                      handleStatusUpdate();
+                    }
+                    setIsEditing(!isEditing);
+                  }}
+                  className="ml-5 text-blue-700 text-sm underline"
                 >
-                  {serviceRequest.status.charAt(0).toUpperCase() +
-                    serviceRequest.status.slice(1).replace("-", " ")}
-                </Badge>
+                  {isEditing ? (
+                    <>
+                      <Save className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      <Edit className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -359,19 +418,48 @@ const ServiceRequestView: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Assigned Support Engineer
                 </h3>
-                <p className="mt-1 flex items-center">
-                  {serviceRequest.assignedEngineer ? (
+
+                <div className="mt-1 flex items-center gap-2">
+                  {isEditingEngineer ? (
                     <>
-                      <User className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                      {serviceRequest.assignedEngineer}
+                      <select
+                        value={selectedEngineer}
+                        onChange={(e) => setSelectedEngineer(e.target.value)}
+                        className="text-sm border rounded px-2 py-1 text-myers-darkBlue"
+                      >
+                        <option value="">Select Engineer</option>
+                        {engineers.map((eng) => (
+                          <option key={eng} value={eng}>
+                            {eng}
+                          </option>
+                        ))}
+                      </select>
+
+                      <button onClick={handleEngineerUpdate} className="ml-5">
+                        <Save className="w-4 h-4 text-blue-500" />
+                      </button>
                     </>
                   ) : (
-                    <span className="text-gray-500 dark:text-gray-400">
-                      Unassigned
-                    </span>
+                    <>
+                      {serviceRequest.assignedEngineer ? (
+                        <p className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                          <User className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
+                          {serviceRequest.assignedEngineer}
+                        </p>
+                      ) : (
+                        <span className="text-gray-500 dark:text-gray-400 text-sm">
+                          Unassigned
+                        </span>
+                      )}
+
+                      <button onClick={() => setIsEditingEngineer(true)} className="ml-5">
+                        <Edit className="w-4 h-4 text-blue-700" />
+                      </button>
+                    </>
                   )}
-                </p>
+                </div>
               </div>
+
               <div>
                 <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                   Request Date

@@ -430,20 +430,11 @@ const AdminUsers: React.FC = () => {
       <Card ref={tableCardRef} className="scroll-margin-top">
         <CardHeader className="pb-2">
           <div className="flex flex-col space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <CardTitle>Admin Users List</CardTitle>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search engineers..."
-                  className="pl-8 w-full sm:w-64"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
+            </div> */}
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"
@@ -455,20 +446,16 @@ const AdminUsers: React.FC = () => {
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
-
-              {/* <div>
-                <select
-                  className="px-3 py-2 rounded-md border text-sm"
-                  value={regionFilter}
-                  onChange={(e) => setRegionFilter(e.target.value)}
-                >
-                  <option value="">All Regions</option>
-                  <option value="North">North</option>
-                  <option value="South">South</option>
-                  <option value="East">East</option>
-                  <option value="West">West</option>
-                </select>
-              </div> */}
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search engineers..."
+                    className="pl-8 w-full sm:w-64"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              
             </div>
           </div>
         </CardHeader>

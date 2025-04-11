@@ -402,20 +402,17 @@ const SupportEngineers: React.FC = () => {
     setViewingEngineer(engineer);
   };
 
-  const handleDeleteEngineer = (engineer: SupportEngineer) => {   
-      const updatedEngineers = engineers.filter((e) => e.id !== engineer.id);
-      localStorage.setItem(
-        "supportEngineers",
-        JSON.stringify(updatedEngineers)
-      );
-      refetch();
+  const handleDeleteEngineer = (engineer: SupportEngineer) => {
+    const updatedEngineers = engineers.filter((e) => e.id !== engineer.id);
+    localStorage.setItem("supportEngineers", JSON.stringify(updatedEngineers));
+    refetch();
 
-      toast({
-        title: "Support Engineer Deleted",
-        description: `${
-          engineer.name || `${engineer.firstName} ${engineer.lastName}`
-        } has been deleted successfully.`,
-      });    
+    toast({
+      title: "Support Engineer Deleted",
+      description: `${
+        engineer.name || `${engineer.firstName} ${engineer.lastName}`
+      } has been deleted successfully.`,
+    });
   };
 
   const handleSort = (field: SortField) => {
@@ -518,21 +515,12 @@ const SupportEngineers: React.FC = () => {
       <Card ref={tableCardRef} className="scroll-margin-top">
         <CardHeader className="pb-2">
           <div className="flex flex-col space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <CardTitle>Support Engineers List</CardTitle>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search engineers..."
-                  className="pl-8 w-full sm:w-64"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
+            </div> */}
 
-            <div className="flex flex-wrap gap-2">
-              <div>
+            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+              <div className="flex flex-wrap gap-2">
                 <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={statusFilter}
@@ -542,9 +530,6 @@ const SupportEngineers: React.FC = () => {
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
-              </div>
-
-              <div>
                 <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={regionFilter}
@@ -556,6 +541,15 @@ const SupportEngineers: React.FC = () => {
                   <option value="East">East</option>
                   <option value="West">West</option>
                 </select>
+              </div>
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search engineers..."
+                  className="pl-8 w-full sm:w-64"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
             </div>
           </div>

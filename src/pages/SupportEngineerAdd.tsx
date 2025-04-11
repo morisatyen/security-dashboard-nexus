@@ -87,9 +87,9 @@ const SupportEngineerAdd: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Button 
-          variant="ghost" 
+          variant="outline" 
           onClick={handleCancel}
-          className="p-0 h-auto"
+          size="icon"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
@@ -97,10 +97,10 @@ const SupportEngineerAdd: React.FC = () => {
       </div>
       
       <Card>
-        <CardHeader>
+        {/* <CardHeader>
           <CardTitle>Create a new support engineer</CardTitle>
-        </CardHeader>
-        <CardContent>
+        </CardHeader> */}
+        <CardContent className='mt-6'>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
