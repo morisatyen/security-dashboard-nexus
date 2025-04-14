@@ -108,7 +108,7 @@ const DispensaryAdd: React.FC = () => {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Add Customers
+          Add Customer
         </h1>
       </div>
 

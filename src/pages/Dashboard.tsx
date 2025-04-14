@@ -139,7 +139,7 @@ const Dashboard: React.FC = () => {
       color: 'green'
     },
     {
-      title: 'Service Requests',
+      title: 'Support Tickets',
       count: counts.serviceRequests,
       active: counts.pendingRequests,
       icon: <TicketCheck className="h-12 w-12 text-yellow-600 dark:text-yellow-400" />,
@@ -176,10 +176,10 @@ const Dashboard: React.FC = () => {
                 <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{card.count}</p>
                 <div className="flex items-center mt-3">
                   <div className={`text-xs font-medium px-2 py-1 rounded-full flex items-center 
-                    ${card.title === 'Service Requests' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300' : 
+                    ${card.title === 'Support Tickets' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300' : 
                     `bg-${card.color}-100 text-${card.color}-800 dark:bg-${card.color}-900/30 dark:text-${card.color}-300`}`}
                   >
-                    {card.title === 'Service Requests' ? (
+                    {card.title === 'Support Tickets' ? (
                       <AlertCircle className="w-3 h-3 mr-1" />
                     ) : (
                       <TrendingUp className="w-3 h-3 mr-1" />
@@ -200,13 +200,13 @@ const Dashboard: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Revenue Overview</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Tickets Overview</h2>
             <div className="text-sm text-gray-500 dark:text-gray-400">Past 6 months</div>
           </div>
           
           <div className="flex items-center mb-6">
             <div className="mr-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Revenue</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Resolved Tickets</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{formatCurrency(counts.totalRevenue)}</p>
             </div>
             <div className="px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 text-xs font-medium flex items-center">
@@ -259,7 +259,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Service Requests by Status */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-all duration-300 hover:shadow-lg">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Service Requests by Status</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Support Tickets by Status</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>

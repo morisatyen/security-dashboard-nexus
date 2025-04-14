@@ -211,9 +211,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
 
           {hasPermission("serviceRequests.read") && (
             <MenuItem
-              to="/service-requests"
+              to="/support-ticket"
               icon={<TicketCheck className="h-5 w-5" />}
-              label="Service Requests"
+              label="Support Tickets"
               isSidebarExpanded={isExpanded}
             />
           )}

@@ -67,9 +67,9 @@ const App = () => {
                 <Route path="dispensaries/add" element={<DispensaryAdd />} />
                 <Route path="dispensaries/edit/:id" element={<DispensaryEdit />} />
                 <Route path="dispensaries/view/:id" element={<DispensaryView />} />                
-                <Route path="service-requests" element={<ServiceRequests />} />
-                <Route path="service-requests/edit/:id" element={<ServiceRequestEdit />} />
-                <Route path="service-requests/view/:id" element={<ServiceRequestView />} />                
+                <Route path="support-ticket" element={<ServiceRequests />} />
+                <Route path="support-ticket/edit/:id" element={<ServiceRequestEdit />} />
+                <Route path="support-ticket/view/:id" element={<ServiceRequestView />} />                
                 <Route path="knowledge-base" element={<KnowledgeBase />} />
                 <Route path="knowledge-base/add" element={<KnowledgeBaseAdd />} />
                 <Route path="knowledge-base/edit/:id" element={<KnowledgeBaseEdit />} />

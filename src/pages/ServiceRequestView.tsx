@@ -171,7 +171,7 @@ const ServiceRequestView: React.FC = () => {
   // };
 
   const handleBack = () => {
-    navigate("/service-requests");
+    navigate("/support-ticket");
   };
 
   const handleSendMessage = () => {
@@ -307,7 +307,7 @@ const ServiceRequestView: React.FC = () => {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Request: {serviceRequest.requestId}
+          Ticket: {serviceRequest.requestId}
         </h1>
         <Badge
           variant="outline"
@@ -324,9 +324,9 @@ const ServiceRequestView: React.FC = () => {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between w-full">
-                <CardTitle>Request Details</CardTitle>
+                <CardTitle>Ticket Details</CardTitle>
                 <Link
-                  to={`/service-requests/edit/${serviceRequest.id}`}
+                  to={`/support-ticket/edit/${serviceRequest.id}`}
                   className="flex items-center gap-1 text-sm  hover:underline"
                 >
                   <Edit className="h-4 w-4" />
