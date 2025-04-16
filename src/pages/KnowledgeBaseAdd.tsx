@@ -172,8 +172,7 @@ const KnowledgeBaseAdd: React.FC = () => {
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="services">Services</SelectItem>
+                  <SelectContent>                    
                     <SelectItem value="casestudies">Case Studies</SelectItem>
                     <SelectItem value="testimonials">Testimonials</SelectItem>
                   </SelectContent>

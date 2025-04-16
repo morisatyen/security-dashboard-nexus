@@ -31,14 +31,21 @@ import KnowledgeBaseEdit from "./pages/KnowledgeBaseEdit";
 import ManageCMS from "./pages/ManageCMS";
 import CMSPageAdd from "./pages/CMSPageAdd";
 import CMSPageEdit from "./pages/CMSPageEdit";
-import ManageEmailTemplates from "./pages/ManageEmailTemplates";
-import EmailTemplateEdit from "./pages/EmailTemplateEdit";
 import EditProfile from "./pages/EditProfile";
 import Chat from "./pages/Chat";
 
 // Initialize data
 import { getInitialData } from "./data/initialData";
 import Settings from "./pages/Settings";
+import ManageServices from "./pages/ManageServices";
+import ManageServicesAdd from "./pages/ManageServicesAdd";
+import ManageServicesEdit from "./pages/ManageServicesEdit";
+import ManageEmailTemplatesAdd from "./pages/ManageEmailTemplatesAdd";
+import ManageEmailTemplatesEdit from "./pages/ManageEmailTemplatesEdit";
+import ManageEmailTemplates from "./pages/ManageEmailTemplates";
+import ManageBanner from "./pages/ManageBanner";
+import ManageBannerAdd from "./pages/ManageBannerAdd";
+import ManageBannerEdit from "./pages/ManageBannerEdit";
 getInitialData();
 
 const queryClient = new QueryClient();
@@ -73,15 +80,22 @@ const App = () => {
                 <Route path="knowledge-base" element={<KnowledgeBase />} />
                 <Route path="knowledge-base/add" element={<KnowledgeBaseAdd />} />
                 <Route path="knowledge-base/edit/:id" element={<KnowledgeBaseEdit />} />
+                <Route path="services" element={<ManageServices />} />
+                <Route path="services/add" element={<ManageServicesAdd />} />
+                <Route path="services/edit/:id" element={<ManageServicesEdit />} />
                 <Route path="manage-cms" element={<ManageCMS />} />
                 <Route path="manage-cms/add" element={<CMSPageAdd />} />
                 <Route path="manage-cms/edit/:id" element={<CMSPageEdit />} />
                 <Route path="email-templates" element={<ManageEmailTemplates />} />
-                <Route path="email-templates/edit/:id" element={<EmailTemplateEdit />} />
+                <Route path="email-templates/add" element={<ManageEmailTemplatesAdd />} />
+                <Route path="email-templates/edit/:id" element={<ManageEmailTemplatesEdit />} />                
                 <Route path="edit-profile" element={<EditProfile />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="chat/:id" element={<Chat />} />
                 <Route path="settings" element={<Settings />} />
+                <Route path="banners" element={<ManageBanner />} />
+                <Route path="banners/add" element={<ManageBannerAdd />} />
+                <Route path="banners/edit/:id" element={<ManageBannerEdit />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>

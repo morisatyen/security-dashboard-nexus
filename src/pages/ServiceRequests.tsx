@@ -60,7 +60,7 @@ interface ServiceRequest {
   status: "pending" | "in-progress" | "resolved";
   priority: "low" | "medium" | "high" | "critical";
   assignedEngineer: string | null;
-  requestDate: string;
+  createdAt: string;
   lastUpdated: string | null;
 }
 
@@ -74,7 +74,7 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "pending",
     priority: "high",
     assignedEngineer: null,
-    requestDate: "2023-11-01",
+    createdAt: "2025-04-01",
     lastUpdated: null,
   },
   {
@@ -86,7 +86,7 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "in-progress",
     priority: "medium",
     assignedEngineer: "Emma Roberts",
-    requestDate: "2023-11-02",
+    createdAt: "2025-04-06",
     lastUpdated: "2023-11-03",
   },
   {
@@ -98,7 +98,7 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "resolved",
     priority: "high",
     assignedEngineer: "James Wilson",
-    requestDate: "2023-10-25",
+    createdAt: "2025-03-25",
     lastUpdated: "2023-10-28",
   },
   {
@@ -110,7 +110,7 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "in-progress",
     priority: "low",
     assignedEngineer: "Lisa Chen",
-    requestDate: "2023-11-05",
+    createdAt: "2025-03-05",
     lastUpdated: "2023-11-05",
   },
   {
@@ -122,7 +122,7 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "pending",
     priority: "critical",
     assignedEngineer: null,
-    requestDate: "2023-11-06",
+    createdAt: "2025-03-06",
     lastUpdated: null,
   },
   {
@@ -134,7 +134,7 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "pending",
     priority: "medium",
     assignedEngineer: null,
-    requestDate: "2023-11-07",
+    createdAt: "2023-11-07",
     lastUpdated: null,
   },
   {
@@ -146,7 +146,7 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "in-progress",
     priority: "low",
     assignedEngineer: "David Lee",
-    requestDate: "2023-11-08",
+    createdAt: "2023-11-08",
     lastUpdated: "2023-11-09",
   },
   {
@@ -158,8 +158,128 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "pending",
     priority: "medium",
     assignedEngineer: null,
-    requestDate: "2023-11-10",
+    createdAt: "2023-11-10",
     lastUpdated: null,
+  },
+  {
+    id: "9",
+    requestId: "SR-2023-005",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2025-01-25",
+    lastUpdated: "2023-10-28",
+  },
+  {
+    id: "10",
+    requestId: "SR-2023-103",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2025-02-25",
+    lastUpdated: "2023-10-28",
+  },
+  {
+    id: "11",
+    requestId: "SR-2023-104",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2025-03-25",
+    lastUpdated: "2023-10-28",
+  },
+  {
+    id: "12",
+    requestId: "SR-2023-105",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2025-02-25",
+    lastUpdated: "2023-10-28",
+  },
+  {
+    id: "13",
+    requestId: "SR-2023-106",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2025-02-25",
+    lastUpdated: "2023-10-28",
+  },
+  {
+    id: "14",
+    requestId: "SR-2023-107",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2025-01-25",
+    lastUpdated: "2023-10-28",
+  },
+  {
+    id: "15",
+    requestId: "SR-2023-108",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2025-03-25",
+    lastUpdated: "2023-10-28",
+  },
+  {
+    id: "16",
+    requestId: "SR-2023-109",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2025-02-25",
+    lastUpdated: "2024-12-28",
+  },
+  {
+    id: "17",
+    requestId: "SR-2023-110",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2025-09-25",
+    lastUpdated: "2024-11-28",
+  },
+  {
+    id: "18",
+    requestId: "SR-2023-111",
+    dispensaryName: "Herbal Solutions",
+    dispensaryId: "3",
+    description: "Door access control system not functioning",
+    status: "resolved",
+    priority: "high",
+    assignedEngineer: "James Wilson",
+    createdAt: "2024-12-25",
+    lastUpdated: "2023-10-28",
   },
 ];
 
@@ -280,7 +400,7 @@ const ServiceRequests: React.FC = () => {
       | "in-progress"
       | "resolved";
     const assignedEngineer = formData.get("assignedEngineer") as string;
-    const requestDate = formData.get("requestDate") as string;
+    const createdAt = formData.get("createdAt") as string;
 
     const dispensary = dispensaries.find((d) => d.id === dispensaryId);
     const dispensaryName = dispensary ? dispensary.name : "Unknown Dispensary";
@@ -296,7 +416,7 @@ const ServiceRequests: React.FC = () => {
               priority,
               status,
               assignedEngineer: assignedEngineer || null,
-              requestDate,
+              createdAt,
               lastUpdated: new Date().toISOString().split("T")[0],
             }
           : r
@@ -321,7 +441,7 @@ const ServiceRequests: React.FC = () => {
         priority,
         status,
         assignedEngineer: assignedEngineer || null,
-        requestDate,
+        createdAt,
         lastUpdated: null,
       };
       const updatedRequests = [...serviceRequests, newRequest];
@@ -530,15 +650,15 @@ const ServiceRequests: React.FC = () => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="requestDate" className="text-sm font-medium">
+                  <label htmlFor="createdAt" className="text-sm font-medium">
                     Request Date
                   </label>
                   <Input
-                    id="requestDate"
-                    name="requestDate"
+                    id="createdAt"
+                    name="createdAt"
                     type="date"
                     defaultValue={
-                      editingRequest?.requestDate ||
+                      editingRequest?.createdAt ||
                       new Date().toISOString().split("T")[0]
                     }
                     required
@@ -667,7 +787,7 @@ const ServiceRequests: React.FC = () => {
                       <TableCell>
                         <div className="flex items-center">
                           <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                          {request.requestDate}
+                          {request.createdAt}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -880,7 +1000,7 @@ const ServiceRequests: React.FC = () => {
                   <h3 className="text-sm font-medium text-gray-500">
                     Request Date
                   </h3>
-                  <p className="mt-1">{viewingRequest.requestDate}</p>
+                  <p className="mt-1">{viewingRequest.createdAt}</p>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">

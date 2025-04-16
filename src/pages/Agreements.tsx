@@ -466,7 +466,7 @@ const Agreements: React.FC<InvoicesProps> = ({
                       colSpan={dispensaryId ? 7 : 8}
                       className="text-center py-6 text-muted-foreground"
                     >
-                      No invoices found
+                      No agreements found
                     </TableCell>
                   </TableRow>
                 )}

@@ -40,7 +40,7 @@ interface ServiceRequest {
   status: "pending" | "in-progress" | "resolved";
   priority: "low" | "medium" | "high" | "critical";
   assignedEngineer: string | null;
-  requestDate: string;
+  createdAt: string;
   lastUpdated: string | null;
   messages?: Message[];
 }
@@ -466,7 +466,7 @@ const ServiceRequestView: React.FC = () => {
                 </h3>
                 <p className="mt-1 flex items-center">
                   <Calendar className="h-3.5 w-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
-                  {serviceRequest.requestDate}
+                  {serviceRequest.createdAt}
                 </p>
               </div>
               <div>

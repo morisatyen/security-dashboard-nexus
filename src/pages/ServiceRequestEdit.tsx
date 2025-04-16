@@ -22,7 +22,7 @@ interface ServiceRequest {
   status: "pending" | "in-progress" | "resolved";
   priority: "low" | "medium" | "high" | "critical";
   assignedEngineer: string | null;
-  requestDate: string;
+  createdAt: string;
   lastUpdated: string | null;
 }
 
@@ -37,7 +37,7 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "pending",
     priority: "high",
     assignedEngineer: null,
-    requestDate: "2023-11-01",
+    createdAt: "2023-11-01",
     lastUpdated: null,
   },
   {
@@ -49,7 +49,7 @@ const mockServiceRequests: ServiceRequest[] = [
     status: "in-progress",
     priority: "medium",
     assignedEngineer: "Emma Roberts",
-    requestDate: "2023-11-02",
+    createdAt: "2023-11-02",
     lastUpdated: "2023-11-03",
   },
   // Additional mock data would be here
@@ -353,14 +353,14 @@ const ServiceRequestEdit: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="requestDate" className="text-sm font-medium">
+                <label htmlFor="createdAt" className="text-sm font-medium">
                   Request Date
                 </label>
                 <Input
-                  id="requestDate"
+                  id="createdAt"
                   type="date"
-                  value={serviceRequest.requestDate}
-                  onChange={(e) => handleChange("requestDate", e.target.value)}
+                  value={serviceRequest.createdAt}
+                  onChange={(e) => handleChange("createdAt", e.target.value)}
                   required
                 />
               </div>

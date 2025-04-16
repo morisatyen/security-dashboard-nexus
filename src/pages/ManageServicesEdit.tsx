@@ -60,7 +60,7 @@ interface KnowledgeBaseItem {
   createdAt: string;
 }
 
-const KnowledgeBaseEdit: React.FC = () => {
+const ManageServicesEdit: React.FC = () => {
   const [item, setItem] = useState<KnowledgeBaseItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,7 +73,7 @@ const KnowledgeBaseEdit: React.FC = () => {
 
   useEffect(() => {
     // Fetch the item from localStorage
-    const storedData = localStorage.getItem("knowledgeBase");
+    const storedData = localStorage.getItem("manageServices");
     if (storedData) {
       const items: KnowledgeBaseItem[] = JSON.parse(storedData);
       const foundItem = items.find((i) => i.id === id);
@@ -85,7 +85,7 @@ const KnowledgeBaseEdit: React.FC = () => {
           description: "The requested knowledge base item could not be found.",
           variant: "destructive",
         });
-        navigate("/knowledge-base");
+        navigate("/services");
       }
     }
     setIsLoading(false);
@@ -120,27 +120,27 @@ const KnowledgeBaseEdit: React.FC = () => {
     };
 
     // Update localStorage
-    const storedData = localStorage.getItem("knowledgeBase");
+    const storedData = localStorage.getItem("manageServices");
     if (storedData) {
       const items: KnowledgeBaseItem[] = JSON.parse(storedData);
       const updatedItems = items.map((i) => (i.id === id ? updatedItem : i));
-      localStorage.setItem("knowledgeBase", JSON.stringify(updatedItems));
+      localStorage.setItem("manageServices", JSON.stringify(updatedItems));
 
       // Show success message
       toast({
-        title: "Knowledge Base Item Updated",
-        description: "Your knowledge base item has been updated successfully.",
+        title: "Service Item Updated",
+        description: "Your Service item has been updated successfully.",
       });
 
       // Redirect back to the list page
       setTimeout(() => {
-        navigate("/knowledge-base");
+        navigate("/services");
       }, 1000);
     }
   };
 
   const handleCancel = () => {
-    navigate("/knowledge-base");
+    navigate("/services");
   };
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -181,7 +181,7 @@ const KnowledgeBaseEdit: React.FC = () => {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Edit Knowledge Base Item
+          Edit Service
         </h1>
       </div>
 
@@ -207,7 +207,7 @@ const KnowledgeBaseEdit: React.FC = () => {
 
               <div className="space-y-2">
                 <label htmlFor="category" className="text-sm font-medium">
-                  Category <span className="text-red-500">*</span>
+                  Type <span className="text-red-500">*</span>
                 </label>
                 <select
                   id="category"
@@ -216,7 +216,8 @@ const KnowledgeBaseEdit: React.FC = () => {
                   defaultValue={item.category}
                   required
                 >
-                  <option value="">Select Category</option>                  
+                  <option value="">Select Types of services</option>
+                  <option value="Services">Services</option>
                   <option value="Case Studies">Case Studies</option>
                   <option value="Testimonials">Testimonials</option>
                 </select>
@@ -335,4 +336,4 @@ const KnowledgeBaseEdit: React.FC = () => {
   );
 };
 
-export default KnowledgeBaseEdit;
+export default ManageServicesEdit;

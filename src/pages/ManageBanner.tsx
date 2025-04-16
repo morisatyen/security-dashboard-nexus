@@ -5,13 +5,10 @@ import {
   Plus,
   Search,
   Edit,
-  Trash,
-  Calendar,
-  User,
+  Trash,  
   Eye,
   ArrowUp,
   ArrowDown,
-  MessageCircle,
 } from "lucide-react";
 import {
   Table,
@@ -202,7 +199,7 @@ initializeLocalStorage();
 type SortField = "name" | "contactPerson" | "createdAt";
 type SortDirection = "asc" | "desc";
 
-const Dispensaries: React.FC = () => {
+const ManageBanner: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -287,20 +284,16 @@ const Dispensaries: React.FC = () => {
   );
 
   const handleAddDispensary = () => {
-    navigate("/dispensaries/add");
+    navigate("/banners/add");
   };
 
   const handleEditDispensary = (dispensary: Dispensary) => {
-    navigate(`/dispensaries/edit/${dispensary.id}`);
+    navigate(`/banners/edit/${dispensary.id}`);
   };
 
   const handleViewDispensary = (dispensary: Dispensary) => {
-    navigate(`/dispensaries/view/${dispensary.id}`);
-  };
-
-  const handleChatWithDispensary = (dispensary: Dispensary) => {
-    navigate(`/chat/${dispensary.id}`);
-  };
+    navigate(`/banners/view/${dispensary.id}`);
+  }; 
 
   const handleDeleteDispensary = (dispensary: Dispensary) => {
     const updatedDispensaries = dispensaries.filter(
@@ -310,7 +303,7 @@ const Dispensaries: React.FC = () => {
     refetch();
 
     toast({
-      title: "Dispensary Deleted",
+      title: "Benner Deleted",
       description: `${dispensary.name} has been deleted successfully.`,
     });
   };
@@ -351,14 +344,14 @@ const Dispensaries: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Customers
+          Manage Banners
         </h1>
         <Button
           onClick={handleAddDispensary}
           className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add Customer
+          Add Banner
         </Button>
       </div>
 
@@ -382,7 +375,7 @@ const Dispensaries: React.FC = () => {
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search customers..."
+                  placeholder="Search banners..."
                   className="pl-8 w-full sm:w-64"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -401,7 +394,7 @@ const Dispensaries: React.FC = () => {
                     onClick={() => handleSort("name")}
                   >
                     <div className="flex items-center">
-                      Dispensaries Name
+                      Banner Title
                       {sortField === "name" &&
                         (sortDirection === "asc" ? (
                           <ArrowUp className="ml-1 h-4 w-4" />
@@ -410,22 +403,9 @@ const Dispensaries: React.FC = () => {
                         ))}
                     </div>
                   </TableHead>
-                  <TableHead
-                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                    onClick={() => handleSort("contactPerson")}
-                  >
-                    <div className="flex items-center">
-                      Customers Name
-                      {sortField === "contactPerson" &&
-                        (sortDirection === "asc" ? (
-                          <ArrowUp className="ml-1 h-4 w-4" />
-                        ) : (
-                          <ArrowDown className="ml-1 h-4 w-4" />
-                        ))}
-                    </div>
-                  </TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Address</TableHead>
+
+                  <TableHead>URL Link</TableHead>
+
                   <TableHead>Status</TableHead>
                   <TableHead
                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
@@ -466,9 +446,9 @@ const Dispensaries: React.FC = () => {
                           {dispensary.name}
                         </div>
                       </TableCell>
-                      <TableCell>{dispensary.contactPerson}</TableCell>
+
                       <TableCell>{dispensary.email}</TableCell>
-                      <TableCell>{dispensary.location}</TableCell>
+
                       <TableCell>
                         <Badge
                           variant="outline"
@@ -480,14 +460,7 @@ const Dispensaries: React.FC = () => {
                       <TableCell>{dispensary.createdAt}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleChatWithDispensary(dispensary)}
-                          >
-                            <MessageCircle className="h-4 w-4" />
-                            <span className="sr-only">Chat</span>
-                          </Button>
+                          
                           <Button
                             variant="ghost"
                             size="icon"
@@ -503,15 +476,7 @@ const Dispensaries: React.FC = () => {
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>
-                          </Button>
-                          {/* <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteDispensary(dispensary)}
-                          >
-                            <Trash className="h-4 w-4" />
-                            <span className="sr-only">Delete</span>
-                          </Button> */}
+                          </Button>                          
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
@@ -557,7 +522,7 @@ const Dispensaries: React.FC = () => {
                       colSpan={5}
                       className="text-center py-6 text-muted-foreground"
                     >
-                      No customers found
+                      No banners found
                     </TableCell>
                   </TableRow>
                 )}
@@ -725,4 +690,4 @@ const Dispensaries: React.FC = () => {
   );
 };
 
-export default Dispensaries;
+export default ManageBanner;

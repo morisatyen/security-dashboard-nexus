@@ -1,166 +1,90 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash, Plus, Eye } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Plus, Edit, Trash } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-// Initial dummy data for email templates
-const initialTemplates = [
+// Dummy data for CMS pages
+interface CMSPage {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+}
+
+const initialCMSPages: CMSPage[] = [
   {
-    id: "welcome",
-    name: "Welcome Email",
+    id: "1",
+    title: "Welcome Email",
     slug: "welcome-email",
-    subject: "Welcome to Myers Security",
     content: `
-Dear {{customer_name}},
+Myers Security is a leading provider of security solutions for cannabis dispensaries across the United States. Founded in 2010, we specialize in tailored security systems designed specifically for the unique challenges faced by the cannabis industry.
 
-Welcome to Myers Security! We're thrilled to have you as our new customer.
+Our team of expert engineers and security specialists work closely with dispensary owners and operators to develop comprehensive security solutions that ensure compliance with state and local regulations while providing peace of mind.
 
-Your account has been successfully created and you can now access our customer portal using the credentials we've sent to your email.
+At Myers Security, we believe in building long-term relationships with our clients, providing ongoing support, maintenance, and updates to keep security systems operating at peak performance. Our mission is to protect your business, your employees, and your customers with state-of-the-art security technology and exceptional service.
 
-If you have any questions or need assistance, please don't hesitate to contact our support team at support@myers-security.com or call us at (555) 123-4567.
-
-Best regards,
-The Myers Security Team
+With over a decade of experience in the cannabis security sector, Myers Security has become the trusted partner for dispensaries looking to enhance their security infrastructure and protect their valuable assets.
     `,
-    variables: ["customer_name"]
   },
   {
-    id: "service-request",
-    name: "Service Request Confirmation",
-    slug: "service-request-confirmation",
-    subject: "Your Service Request Has Been Received",
-    content: `
-Dear {{customer_name}},
-
-Thank you for submitting a service request with Myers Security. Your request (ID: {{request_id}}) has been received and will be processed shortly.
-
-Request Details:
-- Date: {{request_date}}
-- Description: {{request_description}}
-- Priority: {{request_priority}}
-
-We will assign a support engineer to your case and they will contact you within {{response_time}} hours.
-
-For urgent matters, please call our emergency support line at (555) 987-6543.
-
-Best regards,
-Customer Support
-Myers Security
-    `,
-    variables: ["customer_name", "request_id", "request_date", "request_description", "request_priority", "response_time"]
+    id: "2",
+    title: "Services Email",
+    slug: "services-email",
+    content:
+      "Our services include comprehensive security solutions for cannabis dispensaries...",
   },
   {
-    id: "invoice",
-    name: "Invoice Notification",
-    slug: "invoice-notification",
-    subject: "New Invoice from Myers Security",
-    content: `
-Dear {{customer_name}},
-
-We have issued a new invoice for your recent services with Myers Security.
-
-Invoice Details:
-- Invoice Number: {{invoice_number}}
-- Date: {{invoice_date}}
-- Amount Due: {{invoice_amount}}
-- Due Date: {{due_date}}
-
-To view and pay your invoice, please log in to your customer portal at portal.myers-security.com or click the link below:
-
-{{invoice_link}}
-
-If you have any questions about this invoice, please contact our billing department at billing@myers-security.com.
-
-Thank you for your business!
-
-Sincerely,
-Myers Security Financial Team
-    `,
-    variables: ["customer_name", "invoice_number", "invoice_date", "invoice_amount", "due_date", "invoice_link"]
-  }
+    id: "3",
+    title: "Contact Email",
+    slug: "contact-email",
+    content:
+      "Get in touch with our security experts to discuss your dispensary's security needs...",
+  },
 ];
 
 const ManageEmailTemplates: React.FC = () => {
-  const [templates, setTemplates] = useState(initialTemplates);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewTemplate, setPreviewTemplate] = useState<any>(null);
+  const [cmsPages, setCMSPages] = useState(initialCMSPages);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check if there are templates in localStorage
-    const storedTemplates = localStorage.getItem("emailTemplates");
-    if (!storedTemplates) {
-      // Initialize with default templates
-      localStorage.setItem("emailTemplates", JSON.stringify(initialTemplates));
-    } else {
-      // Load templates from localStorage
-      setTemplates(JSON.parse(storedTemplates));
-    }
-  }, []);
-
-  const handleSelectTemplate = (templateId: string) => {
-    setSelectedTemplate(templateId);
-  };
-
-  const handleEditTemplate = (templateId: string) => {
-    navigate(`/email-templates/edit/${templateId}`);
-  };
-
-  const handleAddTemplate = () => {
-    // Generate a new ID (would be handled by backend in a real app)
-    const newId = `template-${Date.now()}`;
-    
-    // Create a new template
-    const newTemplate = {
-      id: newId,
-      name: "New Template",
-      slug: "new-template",
-      subject: "New Email Template",
-      content: "Enter your email content here.",
-      variables: []
-    };
-    
-    // Add to localStorage
-    const updatedTemplates = [...templates, newTemplate];
-    localStorage.setItem("emailTemplates", JSON.stringify(updatedTemplates));
-    setTemplates(updatedTemplates);
-    
-    // Navigate to edit page
-    navigate(`/email-templates/edit/${newId}`);
-  };
-
-  const handleDeleteTemplate = (templateId: string) => {
-    const updatedTemplates = templates.filter(template => template.id !== templateId);
-    setTemplates(updatedTemplates);
-    localStorage.setItem("emailTemplates", JSON.stringify(updatedTemplates));
-    
+  const handleDelete = (id: string) => {
+    // In a real application, this would call an API to delete the page
+    setCMSPages(cmsPages.filter((page) => page.id !== id));
     toast({
-      title: "Template Deleted",
-      description: "The email template has been deleted successfully.",
+      title: "Template deleted",
+      description: "The template has been deleted successfully.",
     });
-    
-    if (selectedTemplate === templateId) {
-      setSelectedTemplate(null);
-    }
-  };
-
-  const handlePreviewTemplate = (template: any) => {
-    setPreviewTemplate(template);
-    setIsPreviewOpen(true);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Email Templates</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Email Templates
+        </h1>
         <Button
-          onClick={handleAddTemplate}
+          onClick={() => navigate("/email-templates/add")}
           className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -168,104 +92,68 @@ const ManageEmailTemplates: React.FC = () => {
         </Button>
       </div>
 
-      <Card>        
-        <div className="mt-5"></div>
+      <Card>
+        {/* <CardHeader>
+          
+        </CardHeader> */}
+        <div className="mb-5"></div>
         <CardContent>
-          <div className="grid grid-cols-1 gap-6">
-            <div className="space-y-4">
-              {templates.length > 0 ? (
-                templates.map(template => (
-                  <div 
-                    key={template.id} 
-                    className={`
-                      p-4 rounded-md border transition-all duration-200
-                      ${selectedTemplate === template.id 
-                        ? 'border-myers-yellow bg-gray-50 dark:bg-gray-800' 
-                        : 'border-gray-200 dark:border-gray-700 hover:border-myers-yellow'
-                      }
-                    `}
-                    onClick={() => handleSelectTemplate(template.id)}
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-medium">{template.name}</h3>
-                      <div className="flex items-center space-x-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            {/* <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handlePreviewTemplate(template);
-                              }}
-                              className="px-2"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button> */}
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[625px]">
-                            <DialogHeader>
-                              <DialogTitle>Preview: {previewTemplate?.name}</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4 py-4">
-                              <div className="border-b pb-2">
-                                <div className="font-semibold">Subject:</div>
-                                <div>{previewTemplate?.subject}</div>
-                              </div>
-                              <div>
-                                <div className="font-semibold mb-2">Content:</div>
-                                <div className="whitespace-pre-wrap p-4 border rounded bg-gray-50 dark:bg-gray-800">
-                                  {previewTemplate?.content}
-                                </div>
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              {/* <Button
-                                variant="outline"
-                                onClick={() => setIsPreviewOpen(false)}
-                              >
-                                Close
-                              </Button> */}
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                        
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditTemplate(template.id);
-                          }}
-                          className="px-2"
+          {cmsPages.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Template Name</TableHead>
+                  <TableHead>Slug Name</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {cmsPages.map((page) => (
+                  <TableRow key={page.id}>
+                    <TableCell className="font-medium">{page.title}</TableCell>
+                    <TableCell>{page.slug}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            navigate(`/email-templates/edit/${page.id}`)
+                          }
                         >
-                          <Edit className="h-4 w-4 mr-1" />
-                          
+                          <Edit className="h-4 w-4" />
                         </Button>
-                        
+                        {/* <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(page.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button> */}
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
+                            <Button
+                              variant="outline"
+                              size="sm"
                               onClick={(e) => e.stopPropagation()}
                               className="text-red-500 hover:text-red-700 px-2"
                             >
-                              <Trash className="h-4 w-4 mr-1" />
-                              
+                              <Trash className="h-4 w-4" />
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                               <AlertDialogDescription>
-                                This will permanently delete the "{template.name}" email template. This action cannot be undone.
+                                This will permanently delete the "{page?.title}"
+                                Item. This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleDeleteTemplate(template.id)}
+                                onClick={() => handleDelete(page.id)}
                                 className="bg-red-500 hover:bg-red-600 text-white"
                               >
                                 Delete
@@ -274,16 +162,16 @@ const ManageEmailTemplates: React.FC = () => {
                           </AlertDialogContent>
                         </AlertDialog>
                       </div>
-                    </div>                    
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-6 text-gray-500">
-                  No email templates found. Click "Add Template" to create a new template.
-                </div>
-              )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="text-center py-6 text-gray-500">
+              No CMS pages found. Click "Add Page" to create a new page.
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

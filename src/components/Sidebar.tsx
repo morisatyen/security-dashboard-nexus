@@ -4,14 +4,14 @@ import {
   LayoutDashboard,
   Users,
   Store,
-  TicketCheck,
   FileText,
   ChevronDown,
   ChevronRight,
   BookOpen,
   Mail,
   MessageSquare,
-  MailQuestion,
+  Wrench,
+  Image,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import logo from "../images/Onlylogo.png";
@@ -202,21 +202,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
           )}
           {hasPermission("dispensaries.read") && (
             <MenuItem
+              to="/services"
+              icon={<Wrench className="h-5 w-5" />}
+              label="Manage Services"
+              isSidebarExpanded={isExpanded}
+            />
+          )}
+          {hasPermission("dispensaries.read") && (
+            <MenuItem
               to="/dispensaries"
               icon={<Store className="h-5 w-5" />}
               label="Customers"
               isSidebarExpanded={isExpanded}
             />
           )}
-
-          {hasPermission("serviceRequests.read") && (
+          {/* {hasPermission("serviceRequests.read") && (
             <MenuItem
               to="/support-ticket"
               icon={<TicketCheck className="h-5 w-5" />}
               label="Support Tickets"
               isSidebarExpanded={isExpanded}
             />
-          )}
+          )} */}
 
           {hasPermission("dispensaries.read") && (
             <MenuItem
@@ -241,6 +248,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded }) => {
             label="Live Chat"
             isSidebarExpanded={isExpanded}
           />
+          {hasPermission("dispensaries.read") && (
+            <MenuItem
+              to="/banners"
+              icon={<Image className="h-5 w-5" />}
+              label="Manage Banners"
+              isSidebarExpanded={isExpanded}
+            />
+          )}
         </nav>
       </div>
     </aside>

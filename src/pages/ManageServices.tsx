@@ -70,7 +70,7 @@ const mockKnowledgeBaseItems: KnowledgeBaseItem[] = [
   {
     id: "2",
     title: "Downtown Dispensary Success Story",
-    category: "Case Studies",
+    category: "Services",
     description: "How Downtown Dispensary improved security with our systems",
     videoUrl: null,
     blogUrl: "https://myerssecurity.com/blog/downtown-case-study",
@@ -81,7 +81,7 @@ const mockKnowledgeBaseItems: KnowledgeBaseItem[] = [
   {
     id: "3",
     title: "Client Testimonial - Green Leaf",
-    category: "Testimonials",
+    category: "Services",
     description: "Testimonial from Green Leaf Dispensary about our services",
     videoUrl: "https://www.youtube.com/watch?v=example3",
     blogUrl: null,
@@ -103,7 +103,7 @@ const mockKnowledgeBaseItems: KnowledgeBaseItem[] = [
   {
     id: "5",
     title: "Herbal Solutions Implementation",
-    category: "Case Studies",
+    category: "Services",
     description: "Case study on Herbal Solutions security implementation",
     videoUrl: "https://www.youtube.com/watch?v=example5",
     blogUrl: "https://myerssecurity.com/blog/herbal-case-study",
@@ -115,15 +115,15 @@ const mockKnowledgeBaseItems: KnowledgeBaseItem[] = [
 
 // Initialize localStorage if not already set
 const initializeLocalStorage = () => {
-  if (!localStorage.getItem("knowledgeBase")) {
+  if (!localStorage.getItem("manageServices")) {
     localStorage.setItem(
-      "knowledgeBase",
+      "manageServices",
       JSON.stringify(mockKnowledgeBaseItems)
     );
   }
 };
 
-const KnowledgeBase: React.FC = () => {
+const ManageServices: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -143,10 +143,10 @@ const KnowledgeBase: React.FC = () => {
   }, []);
 
   // CRUD Operations with localStorage
-  const { data: knowledgeBase = [], refetch } = useQuery({
-    queryKey: ["knowledgeBase"],
+  const { data: manageServices = [], refetch } = useQuery({
+    queryKey: ["manageServices"],
     queryFn: () => {
-      const storedData = localStorage.getItem("knowledgeBase");
+      const storedData = localStorage.getItem("manageServices");
       return Promise.resolve(
         storedData ? JSON.parse(storedData) : mockKnowledgeBaseItems
       );
@@ -154,7 +154,7 @@ const KnowledgeBase: React.FC = () => {
   });
 
   // Filtering logic
-  const filteredItems = knowledgeBase.filter((item) => {
+  const filteredItems = manageServices.filter((item) => {
     const matchesSearch =
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -209,11 +209,11 @@ const KnowledgeBase: React.FC = () => {
   };
 
   const handleAddItem = () => {
-    navigate("/knowledge-base/add");
+    navigate("/services/add");
   };
 
   const handleEditItem = (item: KnowledgeBaseItem) => {
-    navigate(`/knowledge-base/edit/${item.id}`);
+    navigate(`/services/edit/${item.id}`);
   };
 
   const handleViewItem = (item: KnowledgeBaseItem) => {
@@ -221,8 +221,8 @@ const KnowledgeBase: React.FC = () => {
   };
 
   const handleDeleteItem = (item: KnowledgeBaseItem) => {
-    const updatedItems = knowledgeBase.filter((i) => i.id !== item.id);
-    localStorage.setItem("knowledgeBase", JSON.stringify(updatedItems));
+    const updatedItems = manageServices.filter((i) => i.id !== item.id);
+    localStorage.setItem("manageServices", JSON.stringify(updatedItems));
     refetch();
 
     toast({
@@ -231,70 +231,18 @@ const KnowledgeBase: React.FC = () => {
     });
   };
 
-  // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxDisplayedPages = 5;
-
-    if (totalPages <= maxDisplayedPages) {
-      // If we have fewer pages than the max, show all pages
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      // Always show first page
-      pageNumbers.push(1);
-
-      // Calculate start and end of displayed page range
-      let startPage = Math.max(2, currentPage - 1);
-      let endPage = Math.min(totalPages - 1, currentPage + 1);
-
-      // Adjust if at the beginning
-      if (currentPage <= 2) {
-        endPage = 3;
-      }
-
-      // Adjust if at the end
-      if (currentPage >= totalPages - 1) {
-        startPage = totalPages - 2;
-      }
-
-      // Add ellipsis after first page if needed
-      if (startPage > 2) {
-        pageNumbers.push("ellipsis-start");
-      }
-
-      // Add middle pages
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      // Add ellipsis before last page if needed
-      if (endPage < totalPages - 1) {
-        pageNumbers.push("ellipsis-end");
-      }
-
-      // Always show last page
-      if (totalPages > 1) {
-        pageNumbers.push(totalPages);
-      }
-    }
-
-    return pageNumbers;
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Knowledge Base
+          Services
         </h1>
         <Button
           onClick={handleAddItem}
           className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add Knowledge Base Item
+          Add Service
         </Button>
       </div>
 
@@ -312,7 +260,8 @@ const KnowledgeBase: React.FC = () => {
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
                 >
-                  <option value="">All Categories</option>                  
+                  <option value="">All Types of Services</option>
+                  <option value="Services">Services</option>
                   <option value="Case Studies">Case Studies</option>
                   <option value="Testimonials">Testimonials</option>
                 </select>
@@ -363,7 +312,7 @@ const KnowledgeBase: React.FC = () => {
                     className="cursor-pointer"
                   >
                     <div className="flex items-center">
-                      Category
+                      Type
                       {sortField === "category" && (
                         <ArrowUpDown
                           className={`ml-1 h-4 w-4 ${
@@ -507,7 +456,7 @@ const KnowledgeBase: React.FC = () => {
                       colSpan={6}
                       className="text-center py-6 text-muted-foreground"
                     >
-                      No knowledge base items found
+                      No services found
                     </TableCell>
                   </TableRow>
                 )}
@@ -709,4 +658,4 @@ const KnowledgeBase: React.FC = () => {
   );
 };
 
-export default KnowledgeBase;
+export default ManageServices;

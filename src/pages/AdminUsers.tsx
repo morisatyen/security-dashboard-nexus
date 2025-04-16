@@ -593,7 +593,7 @@ const AdminUsers: React.FC = () => {
                       colSpan={8}
                       className="text-center py-6 text-muted-foreground"
                     >
-                      No support engineers found
+                      No admin users found
                     </TableCell>
                   </TableRow>
                 )}
