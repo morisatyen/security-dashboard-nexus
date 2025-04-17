@@ -530,7 +530,7 @@ const SupportEngineers: React.FC = () => {
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
-                <select
+                {/* <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"
                   value={regionFilter}
                   onChange={(e) => setRegionFilter(e.target.value)}
@@ -540,7 +540,7 @@ const SupportEngineers: React.FC = () => {
                   <option value="South">South</option>
                   <option value="East">East</option>
                   <option value="West">West</option>
-                </select>
+                </select> */}
               </div>
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -800,7 +800,7 @@ const SupportEngineers: React.FC = () => {
                     <p className="mt-1">{viewingEngineer.phone}</p>
                   </div>
                 )}
-                <div>
+                {/* <div>
                   <h3 className="text-sm font-medium text-gray-500">
                     Specialization
                   </h3>
@@ -809,7 +809,7 @@ const SupportEngineers: React.FC = () => {
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Region</h3>
                   <p className="mt-1">{viewingEngineer.region}</p>
-                </div>
+                </div> */}
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Status</h3>
                   <Badge

@@ -5,7 +5,7 @@ import {
   Plus,
   Search,
   Edit,
-  Trash,  
+  Trash,
   Eye,
   ArrowUp,
   ArrowDown,
@@ -51,152 +51,49 @@ import {
 
 interface Dispensary {
   id: string;
-  name: string;
-  location: string;
-  category: string;
+  title: string;
+  bannerlink?: string;
   status: "active" | "inactive";
-  assignedEngineer: string | null;
-  lastServiceDate: string | null;
   createdAt: string;
-  contactPerson?: string;
-  phone?: string;
-  email?: string;
-  password?: string;
   profilePicture?: string;
 }
 
-const mockDispensaries: Dispensary[] = [
+const mockBanners: Dispensary[] = [
   {
     id: "1",
-    name: "Downtown Dispensary",
-    location: "123 Main St, Seattle, WA",
-    category: "Recreational",
+    title: "John Dave",
+    bannerlink: "john@downtown.com",
     status: "active",
-    assignedEngineer: "Emma Roberts",
-    lastServiceDate: "2023-10-15",
-    createdAt: "2023-01-05",
-    contactPerson: "John Smith",
-    phone: "206-555-1234",
-    email: "john@downtown.com",
-    password: "password123",
     profilePicture: "/placeholder.svg",
+    createdAt: "2025-02-05",
   },
   {
     id: "2",
-    name: "Green Leaf Dispensary",
-    location: "456 Oak Ave, Portland, OR",
-    category: "Medical",
+    title: "IceGreen Leaf",
     status: "inactive",
-    assignedEngineer: "James Wilson",
-    lastServiceDate: "2023-11-02",
-    createdAt: "2023-02-12",
-    contactPerson: "Sarah Johnson",
-    phone: "503-555-6789",
-    email: "sarah@greenleaf.com",
-    password: "password123",
-    profilePicture: "/placeholder.svg",
+    createdAt: "2025-03-12",
+    bannerlink: "sarah@greenleaf.com",
+    profilePicture: "",
   },
   {
     id: "3",
-    name: "Herbal Solutions",
-    location: "789 Pine St, Denver, CO",
-    category: "Recreational",
+    title: "Stuart Bily",
     status: "active",
-    assignedEngineer: null,
-    lastServiceDate: "2023-09-20",
-    createdAt: "2023-03-18",
-    contactPerson: "Mike Davis",
-    phone: "303-555-4321",
-    email: "mike@herbalsolutions.com",
-    password: "password123",
-    profilePicture: "/placeholder.svg",
-  },
-  {
-    id: "4",
-    name: "Healing Center",
-    location: "101 Maple Rd, San Francisco, CA",
-    category: "Medical",
-    status: "inactive",
-    assignedEngineer: "Lisa Chen",
-    lastServiceDate: "2023-10-25",
-    createdAt: "2023-04-22",
-    contactPerson: "Emma Williams",
-    phone: "415-555-8765",
-    email: "emma@healingcenter.com",
-    password: "password123",
-    profilePicture: "/placeholder.svg",
-  },
-  {
-    id: "5",
-    name: "Evergreen Dispensary",
-    location: "202 Cedar Blvd, Las Vegas, NV",
-    category: "Recreational",
-    status: "active",
-    assignedEngineer: "David Lee",
-    lastServiceDate: "2023-11-05",
-    createdAt: "2023-05-01",
-    contactPerson: "Alex Turner",
-    phone: "702-555-9876",
-    email: "alex@evergreen.com",
-    password: "password123",
-    profilePicture: "/placeholder.svg",
-  },
-  {
-    id: "6",
-    name: "Wellness Dispensary",
-    location: "303 Pine Ave, Chicago, IL",
-    category: "Medical",
-    status: "active",
-    assignedEngineer: "Emma Roberts",
-    lastServiceDate: "2023-11-10",
-    createdAt: "2023-06-15",
-    contactPerson: "Chris Garcia",
-    phone: "312-555-1122",
-    email: "chris@wellness.com",
-    password: "password123",
-    profilePicture: "/placeholder.svg",
-  },
-  {
-    id: "7",
-    name: "Green Zone",
-    location: "404 Elm St, Boston, MA",
-    category: "Recreational",
-    status: "active",
-    assignedEngineer: "James Wilson",
-    lastServiceDate: "2023-11-08",
-    createdAt: "2023-07-22",
-    contactPerson: "Taylor Reed",
-    phone: "617-555-3344",
-    email: "taylor@greenzone.com",
-    password: "password123",
-    profilePicture: "/placeholder.svg",
-  },
-  {
-    id: "8",
-    name: "Nature's Remedy",
-    location: "505 Oak Blvd, Austin, TX",
-    category: "Medical",
-    status: "active",
-    assignedEngineer: null,
-    lastServiceDate: "2023-10-30",
-    createdAt: "2023-08-05",
-    contactPerson: "Jordan Patel",
-    phone: "512-555-5566",
-    email: "jordan@naturesremedy.com",
-    password: "password123",
-    profilePicture: "/placeholder.svg",
+    createdAt: "2025-04-12",
+    bannerlink: "sarah@greenleaf.com",
+    profilePicture: "",
   },
 ];
 
 const initializeLocalStorage = () => {
-  if (!localStorage.getItem("dispensaries")) {
-    localStorage.setItem("dispensaries", JSON.stringify(mockDispensaries));
+  if (!localStorage.getItem("BannersData")) {
+    localStorage.setItem("BannersData", JSON.stringify(mockBanners));
   }
 };
 
 initializeLocalStorage();
 
-type SortField = "name" | "contactPerson" | "createdAt";
+type SortField = "title" | "createdAt";
 type SortDirection = "asc" | "desc";
 
 const ManageBanner: React.FC = () => {
@@ -208,18 +105,16 @@ const ManageBanner: React.FC = () => {
   );
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [categoryFilter, setCategoryFilter] = useState<string>("");
-  const [sortField, setSortField] = useState<SortField>("name");
+  const [sortField, setSortField] = useState<SortField>("title");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const { data: dispensaries = [], refetch } = useQuery({
-    queryKey: ["dispensaries"],
+    queryKey: ["BannersData"],
     queryFn: () => {
-      const storedData = localStorage.getItem("dispensaries");
-      return Promise.resolve(
-        storedData ? JSON.parse(storedData) : mockDispensaries
-      );
+      const storedData = localStorage.getItem("BannersData");
+      return Promise.resolve(storedData ? JSON.parse(storedData) : mockBanners);
     },
   });
 
@@ -234,39 +129,27 @@ const ManageBanner: React.FC = () => {
 
   const filteredDispensaries = useMemo(() => {
     const filtered = dispensaries.filter((dispensary) => {
-      const matchesSearch =
-        dispensary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dispensary.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dispensary.assignedEngineer
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        false;
+      const matchesSearch = dispensary.title
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
       const matchesStatus = statusFilter
         ? dispensary.status === statusFilter
         : true;
-      const matchesCategory = categoryFilter
-        ? dispensary.category === categoryFilter
-        : true;
 
-      return matchesSearch && matchesStatus && matchesCategory;
+      return matchesSearch && matchesStatus;
     });
 
     return [...filtered].sort((a, b) => {
-      if (sortField === "name") {
+      if (sortField === "title") {
         return sortDirection === "asc"
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name);
-      } else if (sortField === "createdAt") {
+          ? a.title.localeCompare(b.title)
+          : b.title.localeCompare(a.title);
+      } else {
         return sortDirection === "asc"
           ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      } else if (sortField === "contactPerson") {
-        return sortDirection === "asc"
-          ? a.contactPerson.localeCompare(b.contactPerson)
-          : b.contactPerson.localeCompare(a.contactPerson);
       }
-      return 0;
     });
   }, [
     dispensaries,
@@ -293,7 +176,7 @@ const ManageBanner: React.FC = () => {
 
   const handleViewDispensary = (dispensary: Dispensary) => {
     navigate(`/banners/view/${dispensary.id}`);
-  }; 
+  };
 
   const handleDeleteDispensary = (dispensary: Dispensary) => {
     const updatedDispensaries = dispensaries.filter(
@@ -304,7 +187,7 @@ const ManageBanner: React.FC = () => {
 
     toast({
       title: "Benner Deleted",
-      description: `${dispensary.name} has been deleted successfully.`,
+      description: `${dispensary.title} has been deleted successfully.`,
     });
   };
 
@@ -391,11 +274,11 @@ const ManageBanner: React.FC = () => {
                 <TableRow>
                   <TableHead
                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                    onClick={() => handleSort("name")}
+                    onClick={() => handleSort("title")}
                   >
                     <div className="flex items-center">
                       Banner Title
-                      {sortField === "name" &&
+                      {sortField === "title" &&
                         (sortDirection === "asc" ? (
                           <ArrowUp className="ml-1 h-4 w-4" />
                         ) : (
@@ -404,7 +287,7 @@ const ManageBanner: React.FC = () => {
                     </div>
                   </TableHead>
 
-                  <TableHead>URL Link</TableHead>
+                  <TableHead>Banner Link</TableHead>
 
                   <TableHead>Status</TableHead>
                   <TableHead
@@ -421,7 +304,7 @@ const ManageBanner: React.FC = () => {
                         ))}
                     </div>
                   </TableHead>
-                  <TableHead className="text-center">Actions</TableHead>
+                  <TableHead className="text-end">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -433,21 +316,21 @@ const ManageBanner: React.FC = () => {
                           {dispensary.profilePicture ? (
                             <img
                               src={dispensary.profilePicture}
-                              alt={`${dispensary.name} profile`}
-                              className="h-10 w-10 rounded-full object-cover"
+                              alt={`${dispensary.title} profile`}
+                              className="h-20 w-20 rounded-full border border-gray-200  object-cover"
                             />
                           ) : (
-                            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                            <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
                               <span className="text-gray-500">
-                                {dispensary.name.charAt(0)}
+                                {dispensary.title.charAt(0)}
                               </span>
                             </div>
                           )}
-                          {dispensary.name}
+                          {dispensary.title}
                         </div>
                       </TableCell>
 
-                      <TableCell>{dispensary.email}</TableCell>
+                      <TableCell>{dispensary.bannerlink}</TableCell>
 
                       <TableCell>
                         <Badge
@@ -460,15 +343,14 @@ const ManageBanner: React.FC = () => {
                       <TableCell>{dispensary.createdAt}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          
-                          <Button
+                          {/* <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => handleViewDispensary(dispensary)}
                           >
                             <Eye className="h-4 w-4" />
                             <span className="sr-only">View</span>
-                          </Button>
+                          </Button> */}
                           <Button
                             variant="ghost"
                             size="icon"
@@ -476,7 +358,7 @@ const ManageBanner: React.FC = () => {
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>
-                          </Button>                          
+                          </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
@@ -605,9 +487,9 @@ const ManageBanner: React.FC = () => {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Customer Details</DialogTitle>
+            <DialogTitle>Banner Details</DialogTitle>
           </DialogHeader>
-          {viewingDispensary && (
+          {/* {viewingDispensary && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-2">
                 <div>
@@ -683,7 +565,7 @@ const ManageBanner: React.FC = () => {
                 </Button>
               </div>
             </div>
-          )}
+          )} */}
         </DialogContent>
       </Dialog>
     </div>

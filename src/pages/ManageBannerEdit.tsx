@@ -4,15 +4,16 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash } from "lucide-react";
 
 
 interface KnowledgeBaseItem {
   id: string;
   title: string;  
-  videoUrl: string | null;  
+  bannerlink: string | null;  
   status: "active" | "inactive";
   createdAt: string;
+  profilePicture?: string;
 }
 
 const ManageBannerEdit: React.FC = () => {
@@ -26,7 +27,7 @@ const ManageBannerEdit: React.FC = () => {
 
   useEffect(() => {
     // Fetch the item from localStorage
-    const storedData = localStorage.getItem("manageServices");
+    const storedData = localStorage.getItem("BannersData");
     if (storedData) {
       const items: KnowledgeBaseItem[] = JSON.parse(storedData);
       const foundItem = items.find((i) => i.id === id);
@@ -50,35 +51,37 @@ const ManageBannerEdit: React.FC = () => {
 
     const formData = new FormData(event.currentTarget);
     const title = formData.get("title") as string;   
-    const videoUrl = formData.get("videoUrl") as string;    
+    const bannerlink = formData.get("bannerlink") as string;    
     const status = formData.get("status") as "active" | "inactive";
 
     const updatedItem: KnowledgeBaseItem = {
       id: item!.id,
       title,      
-      videoUrl: videoUrl || null,      
+      bannerlink: bannerlink || null,      
       status,
       createdAt: item!.createdAt,
+      profilePicture: imagePreview || item?.profilePicture || null,
     };
 
     // Update localStorage
-    const storedData = localStorage.getItem("manageServices");
+    const storedData = localStorage.getItem("BannersData");
     if (storedData) {
       const items: KnowledgeBaseItem[] = JSON.parse(storedData);
       const updatedItems = items.map((i) => (i.id === id ? updatedItem : i));
-      localStorage.setItem("manageServices", JSON.stringify(updatedItems));
+      localStorage.setItem("BannersData", JSON.stringify(updatedItems));
 
       // Show success message
       toast({
-        title: "Service Item Updated",
-        description: "Your Service item has been updated successfully.",
+        title: "Banner Updated",
+        description: "Your Banner was updated successfully.",
       });
 
       // Redirect back to the list page
       setTimeout(() => {
-        navigate("/services");
+        navigate("/banners");
       }, 1000);
     }
+    setIsSubmitting(false);
   };
 
   const handleCancel = () => {
@@ -108,97 +111,125 @@ const ManageBannerEdit: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <Button variant="outline" onClick={handleCancel} size="icon">
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Edit Banner
-        </h1>
-      </div>
+  <div className="flex items-center gap-2">
+    <Button variant="outline" onClick={handleCancel} size="icon">
+      <ArrowLeft className="h-5 w-5" />
+    </Button>
+    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+      Edit Banner
+    </h1>
+  </div>
 
-      <Card>
-       
-        <CardContent className="mt-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">
-                  Title <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  id="title"
-                  name="title"
-                  placeholder="Enter title"
-                  defaultValue={item.title}
-                  required
-                />
-              </div>                        
-
-              <div className="space-y-2">
-                <label htmlFor="videoUrl" className="text-sm font-medium">
-                  URL Link
-                </label>
-                <Input
-                  id="videoUrl"
-                  name="videoUrl"
-                  placeholder="https://www.youtube.com/watch?v=example"
-                  defaultValue={item.videoUrl || ""}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="fileUrl" className="text-sm font-medium">
-                  Upload File
-                </label>
-                <Input
-                  id="fileUrl"
-                  name="fileUrl"
-                  type="file"
-                  accept="image/*,application/pdf"
-                  onChange={handleImageChange}
-                />
-                {imagePreview && (
+  <Card>
+    <CardContent className="mt-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          {/* Left Side - Image Preview */}
+          <div className="flex justify-center items-center h-full">
+            <div className="relative w-full max-w-xs aspect-square border rounded-md flex items-center justify-center bg-gray-50 shadow">
+              {imagePreview || item?.profilePicture ? (
+                <>
                   <img
-                    src={imagePreview}
-                    alt="Profile Preview"
-                    className="w-24 h-24 rounded-md mt-2 border"
+                    src={imagePreview || item?.profilePicture}
+                    alt="Preview"
+                    className="object-contain w-full h-full rounded-md"
                   />
-                )}
-              </div>               
-              <div className="space-y-2">
-                <label htmlFor="status" className="text-sm font-medium">
-                  Status <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="status"
-                  name="status"
-                  className="w-full px-3 py-2 border rounded-md text-myers-darkBlue"
-                  defaultValue={item.status}
-                  required
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => setImagePreview(null)}
+                    className="absolute top-2 right-2 bg-white text-red-600 p-1 rounded-full shadow hover:bg-red-100"
+                    title="Remove Image"
+                  >
+                    <Trash className="w-4 h-4" />
+                  </button>
+                </>
+              ) : (
+                <span className="text-sm text-gray-400 text-center px-2">
+                  Image Preview
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Right Side - Inputs */}
+          <div className="space-y-4">
+            {/* Title */}
+            <div className="space-y-1.5">
+              <label htmlFor="title" className="text-sm font-medium">
+                Title <span className="text-red-500">*</span>
+              </label>
+              <Input
+                id="title"
+                name="title"
+                placeholder="Enter title"
+                defaultValue={item.title}
+                required
+              />
             </div>
 
-            <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
+            {/* Banner Link */}
+            <div className="space-y-1.5">
+              <label htmlFor="bannerlink" className="text-sm font-medium">
+                Banner Link
+              </label>
+              <Input
+                id="bannerlink"
+                name="bannerlink"
+                placeholder="https://www.youtube.com/watch?v=example"
+                defaultValue={item.bannerlink}
+              />
+            </div>           
+
+            {/* Status */}
+            <div className="space-y-1.5">
+              <label htmlFor="status" className="text-sm font-medium">
+                Status <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="status"
+                name="status"
+                className="w-full px-3 py-2 border rounded-md text-myers-darkBlue"
+                defaultValue={item.status}
+                required
               >
-                {isSubmitting ? "Updating..." : "Update Banner"}
-              </Button>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
             </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+            {/* File Upload */}
+            <div className="space-y-1.5">
+              <label htmlFor="fileUrl" className="text-sm font-medium">
+                Upload Banner
+              </label>
+              <Input
+                id="fileUrl"
+                name="fileUrl"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex justify-end space-x-2">
+          <Button type="button" variant="outline" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-myers-yellow text-myers-darkBlue hover:bg-yellow-400"
+          >
+            {isSubmitting ? "Updating..." : "Update Banner"}
+          </Button>
+        </div>
+      </form>
+    </CardContent>
+  </Card>
+</div>
+
   );
 };
 

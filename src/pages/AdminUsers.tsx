@@ -681,7 +681,7 @@ const AdminUsers: React.FC = () => {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Support Engineer Details</DialogTitle>
+            <DialogTitle>Admin User Details</DialogTitle>
           </DialogHeader>
           {viewingEngineer && (
             <div className="space-y-4">
@@ -703,7 +703,7 @@ const AdminUsers: React.FC = () => {
                     <p className="mt-1">{viewingEngineer.phone}</p>
                   </div>
                 )}
-                <div>
+                {/* <div>
                   <h3 className="text-sm font-medium text-gray-500">
                     Specialization
                   </h3>
@@ -712,7 +712,7 @@ const AdminUsers: React.FC = () => {
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Region</h3>
                   <p className="mt-1">{viewingEngineer.region}</p>
-                </div>
+                </div> */}
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Status</h3>
                   <Badge
@@ -722,12 +722,12 @@ const AdminUsers: React.FC = () => {
                     {viewingEngineer.status}
                   </Badge>
                 </div>
-                <div>
+                {/* <div>
                   <h3 className="text-sm font-medium text-gray-500">
                     Active Requests
                   </h3>
                   <p className="mt-1">{viewingEngineer.activeRequests}</p>
-                </div>
+                </div> */}
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">
                     Joined Date

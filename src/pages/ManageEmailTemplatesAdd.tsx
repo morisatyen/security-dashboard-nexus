@@ -139,7 +139,7 @@ const ManageEmailTemplatesAdd: React.FC = () => {
         <CardContent className="mt-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">Email Title <span className="text-red-500">*</span></Label>
+              <Label htmlFor="title">Email Subject <span className="text-red-500">*</span></Label>
               <Input 
                 id="title" 
                 value={title} 

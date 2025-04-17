@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -24,24 +24,24 @@ const ManageBannerAdd: React.FC = () => {
     setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
-    const title = formData.get("title") as string;   
-    const videoUrl = formData.get("videoUrl") as string;    
+    const title = formData.get("title") as string;
+    const videoUrl = formData.get("videoUrl") as string;
     const status = formData.get("status") as "active" | "inactive";
 
     const newItem = {
       id: Date.now().toString(),
-      title,      
-      videoUrl: videoUrl || null,      
+      title,
+      videoUrl: videoUrl || null,
       status,
       createdAt: new Date().toISOString().split("T")[0],
     };
 
     // Save to localStorage
     const existingItems = JSON.parse(
-      localStorage.getItem("manageServices") || "[]"
+      localStorage.getItem("BannersData") || "[]"
     );
     const updatedItems = [...existingItems, newItem];
-    localStorage.setItem("manageServices", JSON.stringify(updatedItems));
+    localStorage.setItem("BannersData", JSON.stringify(updatedItems));
 
     // Show success message
     toast({
@@ -69,7 +69,7 @@ const ManageBannerAdd: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -82,69 +82,113 @@ const ManageBannerAdd: React.FC = () => {
       </div>
 
       <Card>
-        
         <CardContent className="mt-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">
-                  Title <span className="text-red-500">*</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+              {/* Left Side - Image Preview */}
+              <div className="flex justify-center items-center h-full">
+                <label
+                  htmlFor="fileUrl"
+                  className="relative w-full max-w-xs aspect-square border rounded-md flex items-center justify-center bg-gray-50 shadow cursor-pointer"
+                >
+                  {imagePreview ? (
+                    <>
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="object-contain w-full h-full rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation(); // prevent triggering upload on remove
+                          setImagePreview(null);
+                        }}
+                        className="absolute top-2 right-2 bg-white text-red-600 p-1 rounded-full shadow hover:bg-red-100"
+                        title="Remove Image"
+                      >
+                        <Trash className="w-4 h-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <span className="text-sm text-gray-400 text-center px-2">
+                      Click to upload
+                    </span>
+                  )}
                 </label>
-                <Input
-                  id="title"
-                  name="title"
-                  placeholder="Enter title"
-                  required
-                />
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="videoUrl" className="text-sm font-medium">
-                  URL Link
-                </label>
-                <Input
-                  id="videoUrl"
-                  name="videoUrl"
-                  placeholder="https://www.youtube.com/watch?v=example"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="fileUrl" className="text-sm font-medium">
-                  Upload File
-                </label>
-                <Input
-                  id="fileUrl"
-                  name="fileUrl"
-                  type="file"
-                  accept="image/*,application/pdf"
-                  onChange={handleImageChange}
-                />
-                {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Profile Preview"
-                    className="w-24 h-24 rounded-md mt-2 border"
+              {/* Right Side - All Inputs */}
+              <div className="space-y-4">
+                {/* Title */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="title"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Title <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id="title"
+                    name="title"
+                    placeholder="Enter title"
+                    required
                   />
-                )}
-              </div>
+                </div>
 
-              <div className="space-y-2 relative">
-                <label htmlFor="status" className="text-sm font-medium">
-                  Status <span className="text-red-500">*</span>
-                </label>
-                <Select required>
-                  <SelectTrigger id="status" name="status" className="w-full">
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                  </SelectContent>
-                </Select>
+                {/* Banner Link */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="videoUrl"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Banner Link
+                  </label>
+                  <Input
+                    id="videoUrl"
+                    name="videoUrl"
+                    placeholder="https://www.youtube.com/watch?v=example"
+                  />
+                </div>
+
+                {/* Status */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="status"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Status <span className="text-red-500">*</span>
+                  </label>
+                  <Select required>
+                    <SelectTrigger id="status" name="status" className="w-full">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {/* File Upload -hidden if u */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="fileUrl"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    Upload Banner
+                  </label>
+                  <Input
+                    id="fileUrl"
+                    name="fileUrl"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                </div>
               </div>
             </div>
 
+            {/* Action Buttons */}
             <div className="flex justify-end space-x-2">
               <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel

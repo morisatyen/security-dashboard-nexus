@@ -554,7 +554,7 @@ const ManageServices: React.FC = () => {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Knowledge Base Item Details</DialogTitle>
+            <DialogTitle>Service Details</DialogTitle>
           </DialogHeader>
           {viewingItem && (
             <div className="space-y-4">
@@ -565,7 +565,7 @@ const ManageServices: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">
-                    Category
+                    Type
                   </h3>
                   <Badge
                     variant="outline"
