@@ -117,7 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const rolePermissions: Record<string, string[]> = {
       'Administrator': ['users.read', 'users.write', 'dispensaries.read', 'dispensaries.write', 'serviceRequests.read', 'serviceRequests.write', 'roles.read', 'roles.write'],
       'Support Engineer': ['dispensaries.read', 'serviceRequests.read', 'serviceRequests.write'],
-      'Manager': ['users.read', 'dispensaries.read', 'serviceRequests.read'],
+      'Manager': ['dispensaries.read', 'serviceRequests.read'],
     };
     
     // Check if the user's role has the required permission

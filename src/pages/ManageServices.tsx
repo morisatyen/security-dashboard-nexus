@@ -261,9 +261,10 @@ const ManageServices: React.FC = () => {
                   onChange={(e) => setCategoryFilter(e.target.value)}
                 >
                   <option value="">All Types of Services</option>
-                  <option value="Services">Services</option>
-                  <option value="Case Studies">Case Studies</option>
-                  <option value="Testimonials">Testimonials</option>
+                  <option value="technical support">Technical Support</option>
+                  <option value="Installation request">Installation & Upgrade Requests</option>
+                  <option value="Testing">Testing & Compliance</option>
+                  <option value="Security">Security & Emergency</option>
                 </select>
                 <select
                   className="px-3 py-2 rounded-md border text-myers-darkBlue"

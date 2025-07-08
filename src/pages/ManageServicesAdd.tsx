@@ -173,9 +173,10 @@ const ManageServicesAdd: React.FC = () => {
                     <SelectValue placeholder="Select Types of services" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="services">Services</SelectItem>
-                    <SelectItem value="casestudies">Case Studies</SelectItem>
-                    <SelectItem value="testimonials">Testimonials</SelectItem>
+                    <SelectItem value="services">Technical Support</SelectItem>
+                    <SelectItem value="casestudies">Installation & Upgrade Requests</SelectItem>
+                    <SelectItem value="Testing & Compliance">Testing & Compliance</SelectItem>
+                    <SelectItem value="testimonials">Security & Emergency</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -216,10 +216,11 @@ const ManageServicesEdit: React.FC = () => {
                   defaultValue={item.category}
                   required
                 >
-                  <option value="">Select Types of services</option>
-                  <option value="Services">Services</option>
-                  <option value="Case Studies">Case Studies</option>
-                  <option value="Testimonials">Testimonials</option>
+                  <option value="">All Types of Services</option>
+                  <option value="technical support">Technical Support</option>
+                  <option value="Installation request">Installation & Upgrade Requests</option>
+                  <option value="Testing">Testing & Compliance</option>
+                  <option value="Security">Security & Emergency</option>
                 </select>
               </div>
 
